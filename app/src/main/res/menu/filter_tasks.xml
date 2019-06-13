@@ -23,4 +23,7 @@
     <item
         android:id="@+id/completed"
         android:title="@string/nav_completed" />
+    <item
+        android:id="@+id/favorite"
+        android:title="@string/nav_favorite" />
 </menu>

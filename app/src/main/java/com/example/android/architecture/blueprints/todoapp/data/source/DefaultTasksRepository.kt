@@ -40,6 +40,7 @@ class DefaultTasksRepository(
     private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO
 ) : TasksRepository {
 
+
     private var cachedTasks: ConcurrentMap<String, Task>? = null
 
     override suspend fun getTasks(forceUpdate: Boolean): Result<List<Task>> {
@@ -181,6 +182,25 @@ class DefaultTasksRepository(
         }
     }
 
+    override suspend fun favorTask(task: Task) {
+        // Do in memory cache update to keep the app UI up to date
+        cacheAndPerform(task) {
+            it.isFavorite = true
+            coroutineScope {
+                launch { tasksRemoteDataSource.favorTask(it) }
+                launch { tasksLocalDataSource.favorTask(it) }
+            }
+        }
+    }
+
+    override suspend fun favorTask(taskId: String) {
+        withContext(ioDispatcher) {
+            getTaskWithId(taskId)?.let {
+                favorTask(it)
+            }
+        }
+    }
+
     override suspend fun activateTask(task: Task) = withContext(ioDispatcher) {
         // Do in memory cache update to keep the app UI up to date
         cacheAndPerform(task) {
@@ -252,7 +272,7 @@ class DefaultTasksRepository(
     private fun getTaskWithId(id: String) = cachedTasks?.get(id)
 
     private fun cacheTask(task: Task): Task {
-        val cachedTask = Task(task.title, task.description, task.isCompleted, task.id)
+        val cachedTask = Task(task.title, task.description, task.isCompleted, task.isFavorite,task.id)
         // Create if it doesn't exist.
         if (cachedTasks == null) {
             cachedTasks = ConcurrentHashMap()

@@ -90,6 +90,10 @@ class TaskDetailFragment : Fragment() {
         viewDataBinding = TaskdetailFragBinding.bind(view).apply {
             viewmodel = viewModel
             listener = object : TaskDetailUserActionsListener {
+                override fun onFavoriteChanged(v: View) {
+                    viewmodel?.setFavored((v as CheckBox).isChecked)
+                }
+
                 override fun onCompleteChanged(v: View) {
                     viewmodel?.setCompleted((v as CheckBox).isChecked)
                 }

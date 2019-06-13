@@ -24,4 +24,5 @@ import android.view.View
 interface TaskDetailUserActionsListener {
 
     fun onCompleteChanged(v: View)
+    fun onFavoriteChanged(v: View)
 }

@@ -109,6 +109,17 @@
                     android:text="@{viewmodel.task.description}"
                     android:textAppearance="?android:attr/textAppearanceMedium" />
 
+                    <CheckBox
+                        android:id="@+id/task_detail_favorite"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:layout_marginLeft="@dimen/activity_horizontal_margin"
+                        android:onClick="@{(view) -> listener.onFavoriteChanged(view)}"
+                        android:paddingTop="1dp"
+                        android:checked="@{viewmodel.favorite}"
+                        android:button="@android:drawable/btn_star"/>
+
                 </RelativeLayout>
             </LinearLayout>
         </com.example.android.architecture.blueprints.todoapp.ScrollChildSwipeRefreshLayout>

@@ -25,5 +25,7 @@ import com.example.android.architecture.blueprints.todoapp.data.Task
 interface TaskItemUserActionsListener {
     fun onCompleteChanged(task: Task, v: View)
 
+    fun onFavoriteChanged(task: Task, v: View)
+
     fun onTaskClicked(task: Task)
 }

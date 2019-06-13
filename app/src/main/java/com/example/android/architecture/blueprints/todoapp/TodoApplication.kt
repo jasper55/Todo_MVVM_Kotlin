@@ -4,6 +4,7 @@ import android.app.Application
 import com.example.android.architecture.blueprints.todoapp.data.source.TasksRepository
 import timber.log.Timber
 import timber.log.Timber.DebugTree
+import com.example.android.architecture.blueprints.todoapp.ServiceLocator
 
 /**
  * An application that lazily provides a repository. Note that this Service Locator pattern is

@@ -38,6 +38,10 @@ interface TasksDataSource {
 
     suspend fun completeTask(taskId: String)
 
+    suspend fun favorTask(task: Task)
+
+    suspend fun favorTask(taskId: String)
+
     suspend fun activateTask(task: Task)
 
     suspend fun activateTask(taskId: String)

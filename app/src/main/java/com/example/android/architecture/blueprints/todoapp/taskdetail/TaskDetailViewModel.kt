@@ -61,6 +61,10 @@ class TaskDetailViewModel(
         input?.isCompleted ?: false
     }
 
+    val favorite: LiveData<Boolean> = Transformations.map(_task) { input: Task? ->
+        input?.isFavorite ?: false
+    }
+
     val taskId: String?
         get() = _task.value?.id
 
@@ -128,5 +132,15 @@ class TaskDetailViewModel(
 
     private fun showSnackbarMessage(@StringRes message: Int) {
         _snackbarText.value = Event(message)
+    }
+
+    fun setFavored(favored: Boolean) = viewModelScope.launch {
+        val task = _task.value ?: return@launch
+        if (favored) {
+            tasksRepository.favorTask(task)
+            showSnackbarMessage(R.string.task_marked_favorite)
+        } else {
+            showSnackbarMessage(R.string.task_marked_unfavored)
+        }
     }
 }

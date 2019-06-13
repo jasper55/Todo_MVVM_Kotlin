@@ -113,6 +113,10 @@ class TasksViewModel(
                 setFilter(R.string.label_completed, R.string.no_tasks_completed,
                     R.drawable.ic_verified_user_96dp, false)
             }
+            TasksFilterType.FAVORITE_TASKS -> {
+                setFilter(R.string.label_favorite, R.string.favorite_tasks,
+                    R.drawable.ic_verified_user_96dp, false)
+            }
         }
     }
 
@@ -139,6 +143,15 @@ class TasksViewModel(
         } else {
             tasksRepository.activateTask(task)
             showSnackbarMessage(R.string.task_marked_active)
+        }
+    }
+
+    fun favorTask(task: Task, completed: Boolean) = viewModelScope.launch {
+        if (completed) {
+            tasksRepository.favorTask(task)
+            showSnackbarMessage(R.string.task_marked_favorite)
+        } else {
+            showSnackbarMessage(R.string.task_marked_unfavored)
         }
     }
 

@@ -54,5 +54,14 @@
             android:layout_marginLeft="@dimen/activity_horizontal_margin"
             android:textAppearance="@style/TextAppearance.AppCompat.Title"
             android:text="@{task.titleForList}" />
+
+        <CheckBox
+            android:id="@+id/favorite"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:onClick="@{(view) -> listener.onFavoriteChanged(task, view)}"
+            android:checked="@{task.favorite}"
+            android:button="@android:drawable/btn_star"/>
     </LinearLayout>
 </layout>

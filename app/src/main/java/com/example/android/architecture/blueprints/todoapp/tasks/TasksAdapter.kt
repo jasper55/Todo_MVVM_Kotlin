@@ -53,6 +53,11 @@ class TasksAdapter(
         }
 
         val userActionsListener = object : TaskItemUserActionsListener {
+            override fun onFavoriteChanged(task: Task, v: View) {
+                val checked = (v as CheckBox).isChecked
+                tasksViewModel.favorTask(task, checked)
+            }
+
             override fun onCompleteChanged(task: Task, v: View) {
                 val checked = (v as CheckBox).isChecked
                 tasksViewModel.completeTask(task, checked)

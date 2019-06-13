@@ -66,6 +66,15 @@ class TasksLocalDataSource internal constructor(
         // converting from a {@code taskId} to a {@link task} using its cached data.
     }
 
+    override suspend fun favorTask(task: Task) = withContext(ioDispatcher) {
+        tasksDao.updateFavorite(task.id, true)
+    }
+
+    override suspend fun favorTask(taskId: String) {
+        // Not required for the local data source because the {@link DefaultTasksRepository} handles
+        // converting from a {@code taskId} to a {@link task} using its cached data.
+    }
+
     override suspend fun activateTask(task: Task) = withContext(ioDispatcher) {
         tasksDao.updateCompleted(task.id, false)
     }

@@ -119,6 +119,7 @@ class TasksFragment : Fragment() {
                             when (it.itemId) {
                                 R.id.active -> TasksFilterType.ACTIVE_TASKS
                                 R.id.completed -> TasksFilterType.COMPLETED_TASKS
+                                R.id.favorite -> TasksFilterType.FAVORITE_TASKS
                                 else -> TasksFilterType.ALL_TASKS
                             }
                     )

@@ -73,7 +73,7 @@ object TasksRemoteDataSource : TasksDataSource {
     }
 
     override suspend fun completeTask(task: Task) {
-        val completedTask = Task(task.title, task.description, true, task.id)
+        val completedTask = Task(task.title, task.description, true, task.isFavorite, task.id)
         TASKS_SERVICE_DATA.put(task.id, completedTask)
     }
 
@@ -82,8 +82,19 @@ object TasksRemoteDataSource : TasksDataSource {
         // converting from a {@code taskId} to a {@link task} using its cached data.
     }
 
+    override suspend fun favorTask(task: Task) {
+        val favorTask = Task(task.title, task.description, task.isCompleted, true, task.id)
+        TASKS_SERVICE_DATA.put(task.id, favorTask)
+    }
+
+    override suspend fun favorTask(taskId: String) {
+        // Not required for the remote data source because the {@link DefaultTasksRepository} handles
+        // converting from a {@code taskId} to a {@link task} using its cached data.
+    }
+
+
     override suspend fun activateTask(task: Task) {
-        val activeTask = Task(task.title, task.description, false, task.id)
+        val activeTask = Task(task.title, task.description, false, task.isFavorite, task.id)
         TASKS_SERVICE_DATA.put(task.id, activeTask)
     }
 
