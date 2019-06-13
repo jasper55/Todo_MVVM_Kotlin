@@ -115,7 +115,7 @@ class TasksViewModel(
             }
             TasksFilterType.FAVORITE_TASKS -> {
                 setFilter(R.string.label_favorite, R.string.favorite_tasks,
-                    R.drawable.ic_verified_user_96dp, false)
+                    R.drawable.ic_verified_user_96dp, true)
             }
         }
     }
@@ -215,6 +215,9 @@ class TasksViewModel(
                             tasksToShow.add(task)
                         }
                         TasksFilterType.COMPLETED_TASKS -> if (task.isCompleted) {
+                            tasksToShow.add(task)
+                        }
+                        TasksFilterType.FAVORITE_TASKS -> if (task.isFavorite) {
                             tasksToShow.add(task)
                         }
                     }
