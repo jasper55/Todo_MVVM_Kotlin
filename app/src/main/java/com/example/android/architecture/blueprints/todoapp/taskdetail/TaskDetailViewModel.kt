@@ -90,6 +90,16 @@ class TaskDetailViewModel(
         }
     }
 
+    fun setFavored(favored: Boolean) = viewModelScope.launch {
+        val task = _task.value ?: return@launch
+        if (favored) {
+            tasksRepository.favorTask(task)
+            showSnackbarMessage(R.string.task_marked_favorite)
+        } else {
+            showSnackbarMessage(R.string.task_marked_unfavored)
+        }
+    }
+
     fun start(taskId: String?) {
         _dataLoading.value = true
 
@@ -134,13 +144,4 @@ class TaskDetailViewModel(
         _snackbarText.value = Event(message)
     }
 
-    fun setFavored(favored: Boolean) = viewModelScope.launch {
-        val task = _task.value ?: return@launch
-        if (favored) {
-            tasksRepository.favorTask(task)
-            showSnackbarMessage(R.string.task_marked_favorite)
-        } else {
-            showSnackbarMessage(R.string.task_marked_unfavored)
-        }
-    }
 }

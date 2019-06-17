@@ -48,6 +48,6 @@ data class Task @JvmOverloads constructor(
     val isEmpty
         get() = title.isEmpty() || description.isEmpty()
 
-    val isFavorized
-        get() = isFavorite
+//    val isFavorized
+//        get() = isFavorite
 }

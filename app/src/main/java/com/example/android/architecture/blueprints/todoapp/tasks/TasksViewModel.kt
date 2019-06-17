@@ -146,8 +146,8 @@ class TasksViewModel(
         }
     }
 
-    fun favorTask(task: Task, completed: Boolean) = viewModelScope.launch {
-        if (completed) {
+    fun favorTask(task: Task, favorite: Boolean) = viewModelScope.launch {
+        if (favorite) {
             tasksRepository.favorTask(task)
             showSnackbarMessage(R.string.task_marked_favorite)
         } else {
