@@ -29,7 +29,7 @@ import kotlinx.coroutines.withContext
  */
 class TasksLocalDataSource internal constructor(
         private val tasksDao: TasksDao,
-    private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO
+        private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO
 ) : TasksDataSource {
 
     override suspend fun getTasks(): Result<List<Task>> = withContext(ioDispatcher) {

@@ -28,6 +28,7 @@ import com.example.android.architecture.blueprints.todoapp.data.Result.Success
 import com.example.android.architecture.blueprints.todoapp.data.Task
 import com.example.android.architecture.blueprints.todoapp.data.source.TasksDataSource
 import com.example.android.architecture.blueprints.todoapp.data.source.TasksRepository
+import com.example.android.architecture.blueprints.todoapp.data.source.local.TasksLocalDataSource
 import com.example.android.architecture.blueprints.todoapp.util.ADD_EDIT_RESULT_OK
 import com.example.android.architecture.blueprints.todoapp.util.DELETE_RESULT_OK
 import com.example.android.architecture.blueprints.todoapp.util.EDIT_RESULT_OK
@@ -44,7 +45,7 @@ import java.util.ArrayList
  * getter method.
  */
 class TasksViewModel(
-    private val tasksRepository: TasksRepository
+    private val tasksRepository: TasksLocalDataSource
 ) : ViewModel() {
 
     private val _items = MutableLiveData<List<Task>>().apply { value = emptyList() }
@@ -201,7 +202,8 @@ class TasksViewModel(
         EspressoIdlingResource.increment() // Set app as busy.
 
         viewModelScope.launch {
-            val tasksResult = tasksRepository.getTasks(forceUpdate)
+            //val tasksResult = tasksRepository.getTasks(forceUpdate)
+            val tasksResult = tasksRepository.getTasks()
 
             if (tasksResult is Success) {
                 val tasks = tasksResult.data

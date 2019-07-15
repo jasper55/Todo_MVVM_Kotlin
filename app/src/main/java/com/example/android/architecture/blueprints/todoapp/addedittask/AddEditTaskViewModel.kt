@@ -25,6 +25,7 @@ import com.example.android.architecture.blueprints.todoapp.R
 import com.example.android.architecture.blueprints.todoapp.data.Result.Success
 import com.example.android.architecture.blueprints.todoapp.data.Task
 import com.example.android.architecture.blueprints.todoapp.data.source.TasksRepository
+import com.example.android.architecture.blueprints.todoapp.data.source.local.TasksLocalDataSource
 import kotlinx.coroutines.launch
 
 /**
@@ -37,7 +38,8 @@ import kotlinx.coroutines.launch
  * how to deal with more complex scenarios.
  */
 class AddEditTaskViewModel(
-    private val tasksRepository: TasksRepository
+    //private val tasksRepository: TasksRepository
+    private val tasksRepository: TasksLocalDataSource
 ) : ViewModel() {
 
     // Two-way databinding, exposing MutableLiveData

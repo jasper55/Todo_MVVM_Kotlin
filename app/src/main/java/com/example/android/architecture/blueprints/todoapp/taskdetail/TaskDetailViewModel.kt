@@ -27,6 +27,7 @@ import com.example.android.architecture.blueprints.todoapp.data.Result
 import com.example.android.architecture.blueprints.todoapp.data.Result.Success
 import com.example.android.architecture.blueprints.todoapp.data.Task
 import com.example.android.architecture.blueprints.todoapp.data.source.TasksRepository
+import com.example.android.architecture.blueprints.todoapp.data.source.local.TasksLocalDataSource
 import com.example.android.architecture.blueprints.todoapp.util.EspressoIdlingResource
 import kotlinx.coroutines.launch
 
@@ -35,7 +36,7 @@ import kotlinx.coroutines.launch
  * Fragment's actions listener.
  */
 class TaskDetailViewModel(
-    private val tasksRepository: TasksRepository
+    private val tasksRepository: TasksLocalDataSource
 ) : ViewModel() {
 
     private val _task = MutableLiveData<Task>()
@@ -109,7 +110,7 @@ class TaskDetailViewModel(
 
         viewModelScope.launch {
             if (taskId != null) {
-                tasksRepository.getTask(taskId, false).let { result ->
+                tasksRepository.getTask(taskId).let { result ->
                     if (result is Success) {
                         onTaskLoaded(result.data)
                     } else {
