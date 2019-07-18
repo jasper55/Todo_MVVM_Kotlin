@@ -1,44 +1,55 @@
 package com.example.android.architecture.blueprints.todoapp.util
 
+import android.app.DatePickerDialog
 import android.app.Dialog
 import android.app.TimePickerDialog
 import android.os.Bundle
 import android.text.format.DateFormat
+import android.widget.DatePicker
 import android.widget.TimePicker
 import androidx.fragment.app.DialogFragment
 
 import com.example.android.architecture.blueprints.todoapp.data.source.local.TasksLocalDataSource
 import java.util.*
 
-class TimePickerFragment : DialogFragment(), TimePickerDialog.OnTimeSetListener {
+class TimePickerFragment : DialogFragment(), DatePickerDialog.OnDateSetListener {
 
-    private var date: Long = 0
-    private var hour: Int = 0
-    private var min: Int = 0
+    private var year: Int = 0
+    private var mon: Int = 0
+    private var day: Int = 0
+    private var dateTime = Calendar.getInstance()
+    private var dateInMilliSeconds: Long = 0
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         // Use the current time as the default values for the picker
-        val c = Calendar.getInstance()
-        val hour = c.get(Calendar.HOUR_OF_DAY)
-        val minute = c.get(Calendar.MINUTE)
+        val c: Calendar = Calendar.getInstance()
+        val mYear: Int = c.get(Calendar.YEAR);
+        val mMonth: Int = c.get(Calendar.MONTH);
+        val mDay: Int = c.get(Calendar.DAY_OF_MONTH);
 
-        // Create a new instance of TimePickerDialog and return it
-        return TimePickerDialog(activity, this, hour, minute, DateFormat.is24HourFormat(activity))
+        // Get DatePicker Dialog
+        return DatePickerDialog(getActivity(), this, mYear, mMonth, mDay);
     }
 
-    override fun onTimeSet(view: TimePicker, hourOfDay: Int, minute: Int) {
-        date = hourOfDay.toLong() + minute.toLong()
-        hour = hourOfDay
-        min = minute
+
+    override fun onDateSet(view: DatePicker, year: Int, monthOfYear: Int, dayOfMonth: Int) {
+        dateTime.set(year, monthOfYear, dayOfMonth)
+        dateInMilliSeconds = dateTime.getTimeInMillis()
+        this.year = year
+        this.mon = monthOfYear
+        this.day = dayOfMonth
         // Do something with the time chosen by the user
+
+        dateTime.set(year, monthOfYear, dayOfMonth);
+        dateInMilliSeconds = dateTime.getTimeInMillis();
     }
 
     fun getLongFromTimePicker(): Long {
-        return date
+        return dateInMilliSeconds
     }
 
     fun getString(): String {
-        return "$hour + : + $min"
+        return "$day + / + $mon + / + $year"
     }
 
     fun fromLongToDate(date: Long): String {

@@ -66,11 +66,11 @@ class TaskDetailViewModel(
         input?.isFavorite ?: false
     }
 
-    val dueDateLong: LiveData<Long> = Transformations.map(_task) { input: Task? ->
+    val dueDate: LiveData<String> = Transformations.map(_task) { input: Task? ->
         input?.dueDate
     }
 
-    val dueDateString: LiveData<String> = dueDateLong.toString()
+    //val dueDateString: LiveData<String> = dueDate.toString()
 
     val taskId: String?
         get() = _task.value?.id
@@ -110,7 +110,7 @@ class TaskDetailViewModel(
 
     fun setDueDate(date: String) = viewModelScope.launch{
         val task = _task.value ?: return@launch
-        tasksRepository.setDueDate(task, )
+        tasksRepository.setDueDate(task, date)
     }
 
     fun start(taskId: String?) {

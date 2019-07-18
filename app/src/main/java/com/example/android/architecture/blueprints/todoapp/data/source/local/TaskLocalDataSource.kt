@@ -92,7 +92,7 @@ class TasksLocalDataSource internal constructor(
         tasksDao.deleteCompletedTasks()
     }
 
-    override suspend fun setDueDate(task: Task, date: Long) = withContext(ioDispatcher) {
+    override suspend fun setDueDate(task: Task, date: String) = withContext(ioDispatcher) {
         tasksDao.updateDate(task.id, date)
     }
 

@@ -225,13 +225,13 @@ class DefaultTasksRepository(
         }
     }
 
-    override suspend fun setDueDate(task: Task) {
+    override suspend fun setDueDate(task: Task,date: String) {
         // Do in memory cache update to keep the app UI up to date
         cacheAndPerform(task) {
-            it.isFavorite = true
+            //it.isFavorite = true
             coroutineScope {
-                launch { tasksRemoteDataSource.setDueDate(it) }
-                launch { tasksLocalDataSource.setDueDate(it) }
+                launch { tasksRemoteDataSource.setDueDate(task, date) }
+                launch { tasksLocalDataSource.setDueDate(task, date) }
             }
         }
     }

@@ -91,10 +91,10 @@ class TaskDetailFragment : Fragment() {
         viewDataBinding = TaskdetailFragBinding.bind(view).apply {
             viewmodel = viewModel
             listener = object : TaskDetailUserActionsListener {
+
                 override fun onDueDateChanged(v: View) {
-                    val timePicker = TimePickerFragment()
-                    viewModel?.setDueDate(timePicker.getString())
-                    TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+                    //val timePicker = TimePickerFragment()
+                    //viewModel?.setDueDate(timePicker.getString())
                 }
 
                 override fun onFavoriteChanged(v: View) {

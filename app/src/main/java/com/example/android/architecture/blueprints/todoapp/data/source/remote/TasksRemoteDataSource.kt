@@ -28,7 +28,6 @@ import kotlinx.coroutines.delay
  */
 object TasksRemoteDataSource : TasksDataSource {
 
-
     private const val SERVICE_LATENCY_IN_MILLIS = 2000L
 
     private var TASKS_SERVICE_DATA = LinkedHashMap<String, Task>(2)
@@ -114,9 +113,9 @@ object TasksRemoteDataSource : TasksDataSource {
         } as LinkedHashMap<String, Task>
     }
 
-    override suspend fun saveDate(task: Task) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
+    override suspend fun setDueDate(task: Task, date: String) {
+        val dueDateTask = Task(task.title, task.description, task.isCompleted, task.isFavorite, date ,task.id)
+        TASKS_SERVICE_DATA.put(task.id, dueDateTask) }
 
     override suspend fun deleteAllTasks() {
         TASKS_SERVICE_DATA.clear()

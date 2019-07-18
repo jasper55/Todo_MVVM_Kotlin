@@ -127,9 +127,9 @@
                         android:layout_below="@id/task_detail_description"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:onClick="onDueDateChanged"
+                        android:onClick="(view) -> listener.onDueDateChanged(view)"
                         android:paddingTop="4dp"
-                        android:text="@{viewmodel.dueDateString}"
+                        android:text="@{viewmodel.dueDate}"
                         android:textAppearance="?android:attr/textAppearanceMedium" />
 
 

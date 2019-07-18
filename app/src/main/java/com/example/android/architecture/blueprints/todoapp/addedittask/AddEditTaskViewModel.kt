@@ -67,7 +67,7 @@ class AddEditTaskViewModel(
 
     private var taskFavored = false
 
-    private var taskDueDate: Long = 0
+    private var taskDueDate: String = ""
 
     //private var dueDate: Long?
 

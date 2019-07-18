@@ -63,7 +63,7 @@
             android:layout_gravity="center_vertical"
             android:layout_marginLeft="@dimen/activity_horizontal_margin"
             android:textAppearance="@style/TextAppearance.AppCompat.Title"
-            android:text="@{task.dueDateString}" />
+            android:text="@{task.dueDate}" />
 
         <CheckBox
             android:id="@+id/favorite"
