@@ -42,6 +42,8 @@ interface TasksDataSource {
 
     suspend fun favorTask(taskId: String)
 
+    suspend fun unfavorTask(task: Task)
+
     suspend fun activateTask(task: Task)
 
     suspend fun activateTask(taskId: String)
@@ -51,4 +53,8 @@ interface TasksDataSource {
     suspend fun deleteAllTasks()
 
     suspend fun deleteTask(taskId: String)
+
+    suspend fun setDueDate(task: Task) {
+
+    }
 }

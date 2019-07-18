@@ -35,12 +35,13 @@ data class Task @JvmOverloads constructor(
         @ColumnInfo(name = "description") var description: String = "",
         @ColumnInfo(name = "completed") var isCompleted: Boolean = false,
         @ColumnInfo(name = "favorite") var isFavorite: Boolean = false,
+        @ColumnInfo(name = "dueDate") var dueDate: Long = 0,
         @PrimaryKey @ColumnInfo(name = "entryid") var id: String = UUID.randomUUID().toString()
 ) {
 
+    // is being accessed by the OverViewFragment
     val titleForList: String
         get() = if (title.isNotEmpty()) title else description
-
 
     val isActive
         get() = !isCompleted
@@ -48,6 +49,4 @@ data class Task @JvmOverloads constructor(
     val isEmpty
         get() = title.isEmpty() || description.isEmpty()
 
-//    val isFavorized
-//        get() = isFavorite
 }

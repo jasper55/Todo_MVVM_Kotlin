@@ -99,6 +99,18 @@
                     android:text="@{viewmodel.task.title}"
                     android:textAppearance="?android:attr/textAppearanceLarge" />
 
+                    <CheckBox
+                        android:id="@+id/task_detail_favorite"
+                        android:layout_toRightOf="@id/task_detail_description"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:layout_marginLeft="32dp"
+                        android:onClick="@{(view) -> listener.onFavoriteChanged(view)}"
+                        android:paddingTop="1dp"
+                        android:checked="@{viewmodel.favorite}"
+                        android:button="@android:drawable/btn_star"/>
+
                 <TextView
                     android:id="@+id/task_detail_description"
                     android:layout_toRightOf="@id/task_detail_complete"
@@ -109,17 +121,18 @@
                     android:text="@{viewmodel.task.description}"
                     android:textAppearance="?android:attr/textAppearanceMedium" />
 
-                    <CheckBox
-                        android:id="@+id/task_detail_favorite"
-                        android:layout_toRightOf="@id/task_detail_description"
+                    <TextView
+                        android:id="@+id/task_detail_due_date"
+                        android:layout_toRightOf="@id/task_detail_complete"
+                        android:layout_below="@id/task_detail_description"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_gravity="center_vertical"
-                        android:layout_marginLeft="@dimen/activity_horizontal_margin"
-                        android:onClick="@{(view) -> listener.onFavoriteChanged(view)}"
-                        android:paddingTop="1dp"
-                        android:checked="@{viewmodel.favorite}"
-                        android:button="@android:drawable/btn_star"/>
+                        android:onClick="onDueDateChanged"
+                        android:paddingTop="4dp"
+                        android:text="@{viewmodel.dueDateString}"
+                        android:textAppearance="?android:attr/textAppearanceMedium" />
+
+
 
                 </RelativeLayout>
             </LinearLayout>

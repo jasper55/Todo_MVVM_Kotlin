@@ -67,6 +67,10 @@ class AddEditTaskViewModel(
 
     private var taskFavored = false
 
+    private var taskDueDate: Long = 0
+
+    //private var dueDate: Long?
+
     fun start(taskId: String?) {
         _dataLoading.value?.let { isLoading ->
             // Already loading, ignore.
@@ -101,6 +105,7 @@ class AddEditTaskViewModel(
         description.value = task.description
         taskCompleted = task.isCompleted
         taskFavored = task.isFavorite
+        taskDueDate = task.dueDate
         _dataLoading.value = false
         isDataLoaded = true
     }
@@ -127,7 +132,7 @@ class AddEditTaskViewModel(
         if (isNewTask || currentTaskId == null) {
             createTask(Task(currentTitle, currentDescription))
         } else {
-            val task = Task(currentTitle, currentDescription, taskCompleted, taskFavored, currentTaskId)
+            val task = Task(currentTitle, currentDescription, taskCompleted, taskFavored, taskDueDate, currentTaskId)
             updateTask(task)
         }
     }

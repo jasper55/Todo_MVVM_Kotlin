@@ -18,6 +18,7 @@ package com.example.android.architecture.blueprints.todoapp.data.source
 import com.example.android.architecture.blueprints.todoapp.data.Result
 import com.example.android.architecture.blueprints.todoapp.data.Result.Success
 import com.example.android.architecture.blueprints.todoapp.data.Task
+import com.example.android.architecture.blueprints.todoapp.data.source.local.TasksLocalDataSource
 import com.example.android.architecture.blueprints.todoapp.util.EspressoIdlingResource
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
@@ -35,9 +36,9 @@ import java.util.concurrent.ConcurrentMap
  * data source fails. Remote is the source of truth.
  */
 class DefaultTasksRepository(
-    private val tasksRemoteDataSource: TasksDataSource,
-    private val tasksLocalDataSource: TasksDataSource,
-    private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO
+        private val tasksRemoteDataSource: TasksDataSource,
+        private val tasksLocalDataSource: TasksLocalDataSource,
+        private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO
 ) : TasksRepository {
 
 
@@ -193,6 +194,17 @@ class DefaultTasksRepository(
         }
     }
 
+    override suspend fun unfavorTask(task: Task) {
+        // Do in memory cache update to keep the app UI up to date
+        cacheAndPerform(task) {
+            it.isFavorite = false
+            coroutineScope {
+                launch { tasksRemoteDataSource.unfavorTask(it) }
+                launch { tasksLocalDataSource.unfavorTask(it) }
+            }
+        }
+    }
+
     override suspend fun favorTask(taskId: String) {
         withContext(ioDispatcher) {
             getTaskWithId(taskId)?.let {
@@ -210,6 +222,17 @@ class DefaultTasksRepository(
                 launch { tasksLocalDataSource.activateTask(it) }
             }
 
+        }
+    }
+
+    override suspend fun setDueDate(task: Task) {
+        // Do in memory cache update to keep the app UI up to date
+        cacheAndPerform(task) {
+            it.isFavorite = true
+            coroutineScope {
+                launch { tasksRemoteDataSource.setDueDate(it) }
+                launch { tasksLocalDataSource.setDueDate(it) }
+            }
         }
     }
 
@@ -272,7 +295,7 @@ class DefaultTasksRepository(
     private fun getTaskWithId(id: String) = cachedTasks?.get(id)
 
     private fun cacheTask(task: Task): Task {
-        val cachedTask = Task(task.title, task.description, task.isCompleted, task.isFavorite,task.id)
+        val cachedTask = Task(task.title, task.description, task.isCompleted, task.isFavorite, task.dueDate, task.id)
         // Create if it doesn't exist.
         if (cachedTasks == null) {
             cachedTasks = ConcurrentHashMap()

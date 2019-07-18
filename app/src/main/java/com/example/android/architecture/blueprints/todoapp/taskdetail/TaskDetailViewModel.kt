@@ -66,6 +66,12 @@ class TaskDetailViewModel(
         input?.isFavorite ?: false
     }
 
+    val dueDateLong: LiveData<Long> = Transformations.map(_task) { input: Task? ->
+        input?.dueDate
+    }
+
+    val dueDateString: LiveData<String> = dueDateLong.toString()
+
     val taskId: String?
         get() = _task.value?.id
 
@@ -97,8 +103,14 @@ class TaskDetailViewModel(
             tasksRepository.favorTask(task)
             showSnackbarMessage(R.string.task_marked_favorite)
         } else {
+            tasksRepository.unfavorTask(task)
             showSnackbarMessage(R.string.task_marked_unfavored)
         }
+    }
+
+    fun setDueDate(date: String) = viewModelScope.launch{
+        val task = _task.value ?: return@launch
+        tasksRepository.setDueDate(task, )
     }
 
     fun start(taskId: String?) {
