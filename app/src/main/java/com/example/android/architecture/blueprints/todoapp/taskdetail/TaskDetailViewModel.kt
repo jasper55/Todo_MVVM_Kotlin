@@ -97,6 +97,7 @@ class TaskDetailViewModel(
             tasksRepository.favorTask(task)
             showSnackbarMessage(R.string.task_marked_favorite)
         } else {
+            tasksRepository.unfavorTask(task)
             showSnackbarMessage(R.string.task_marked_unfavored)
         }
     }
