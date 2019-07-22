@@ -28,6 +28,7 @@ import kotlinx.coroutines.delay
  */
 object TasksRemoteDataSource : TasksDataSource {
 
+
     private const val SERVICE_LATENCY_IN_MILLIS = 2000L
 
     private var TASKS_SERVICE_DATA = LinkedHashMap<String, Task>(2)
@@ -92,6 +93,10 @@ object TasksRemoteDataSource : TasksDataSource {
         // converting from a {@code taskId} to a {@link task} using its cached data.
     }
 
+    override suspend fun unfavorTask(task: Task) {
+        val unfavorTask = Task(task.title, task.description, task.isCompleted, false, task.id)
+        TASKS_SERVICE_DATA.put(task.id, unfavorTask)
+    }
 
     override suspend fun activateTask(task: Task) {
         val activeTask = Task(task.title, task.description, false, task.isFavorite, task.id)

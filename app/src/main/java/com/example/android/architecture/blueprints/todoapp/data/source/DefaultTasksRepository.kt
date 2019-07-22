@@ -192,6 +192,16 @@ class DefaultTasksRepository(
             }
         }
     }
+    override suspend fun unfavorTask(task: Task) {
+        // Do in memory cache update to keep the app UI up to date
+        cacheAndPerform(task) {
+            it.isFavorite = true
+            coroutineScope {
+                launch { tasksRemoteDataSource.unfavorTask(it) }
+                launch { tasksLocalDataSource.unfavorTask(it) }
+            }
+        }
+    }
 
     override suspend fun favorTask(taskId: String) {
         withContext(ioDispatcher) {
