@@ -24,7 +24,6 @@ import com.example.android.architecture.blueprints.todoapp.Event
 import com.example.android.architecture.blueprints.todoapp.R
 import com.example.android.architecture.blueprints.todoapp.data.Result.Success
 import com.example.android.architecture.blueprints.todoapp.data.Task
-import com.example.android.architecture.blueprints.todoapp.data.source.TasksRepository
 import com.example.android.architecture.blueprints.todoapp.data.source.local.TasksLocalDataSource
 import kotlinx.coroutines.launch
 
@@ -67,7 +66,7 @@ class AddEditTaskViewModel(
 
     private var taskFavored = false
 
-    private var taskDueDate: String = ""
+    private var taskDueDate: String? = null
 
     //private var dueDate: Long?
 

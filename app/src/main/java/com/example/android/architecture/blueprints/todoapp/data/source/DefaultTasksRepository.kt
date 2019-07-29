@@ -18,7 +18,6 @@ package com.example.android.architecture.blueprints.todoapp.data.source
 import com.example.android.architecture.blueprints.todoapp.data.Result
 import com.example.android.architecture.blueprints.todoapp.data.Result.Success
 import com.example.android.architecture.blueprints.todoapp.data.Task
-import com.example.android.architecture.blueprints.todoapp.data.source.local.TasksLocalDataSource
 import com.example.android.architecture.blueprints.todoapp.util.EspressoIdlingResource
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
@@ -36,9 +35,9 @@ import java.util.concurrent.ConcurrentMap
  * data source fails. Remote is the source of truth.
  */
 class DefaultTasksRepository(
-        private val tasksRemoteDataSource: TasksDataSource,
-        private val tasksLocalDataSource: TasksLocalDataSource,
-        private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO
+    private val tasksRemoteDataSource: TasksDataSource,
+    private val tasksLocalDataSource: TasksDataSource,
+    private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO
 ) : TasksRepository {
 
 

@@ -40,9 +40,9 @@ interface TasksDataSource {
 
     suspend fun favorTask(task: Task)
 
-    suspend fun favorTask(taskId: String)
-
     suspend fun unfavorTask(task: Task)
+
+    suspend fun favorTask(taskId: String)
 
     suspend fun activateTask(task: Task)
 

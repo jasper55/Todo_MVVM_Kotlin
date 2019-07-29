@@ -18,6 +18,7 @@ package com.example.android.architecture.blueprints.todoapp.data
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import com.example.android.architecture.blueprints.todoapp.R
 import java.util.UUID
 
 /**
@@ -35,7 +36,7 @@ data class Task @JvmOverloads constructor(
         @ColumnInfo(name = "description") var description: String = "",
         @ColumnInfo(name = "completed") var isCompleted: Boolean = false,
         @ColumnInfo(name = "favorite") var isFavorite: Boolean = false,
-        @ColumnInfo(name = "dueDate") var dueDate: String = "",
+        @ColumnInfo(name = "dueDate") var dueDate: String? = "",
         @PrimaryKey @ColumnInfo(name = "entryid") var id: String = UUID.randomUUID().toString()
 ) {
 

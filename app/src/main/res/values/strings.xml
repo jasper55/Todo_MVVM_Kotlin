@@ -15,6 +15,7 @@
   -->
 
 <resources>
+    <integer name="dbVersion">2</integer>
     <string name="app_name">Todo</string>
     <string name="add_task">New Task</string>
     <string name="edit_task">Edit Task</string>
@@ -62,5 +63,7 @@
     <string name="successfully_deleted_task_message">Task was deleted</string>
     <string name="successfully_added_task_message">Task added</string>
     <string name="no_data_description"/>
+    <string name="no_due_date_set">set a date here</string>
+    <string name="due_date_hint">set date here</string>
 
 </resources>
