@@ -66,9 +66,10 @@ class TaskDetailViewModel(
         input?.isFavorite ?: false
     }
 
-    val dueDate: LiveData<String> = Transformations.map(_task) { input: Task? ->
-        input?.dueDate
-    }
+    val dueDate = "19.06.2016"
+    //val dueDate: LiveData<String> = Transformations.map(_task) { input: Task? ->
+      //  input?.dueDate
+    //}
 
     //val dueDateString: LiveData<String> = dueDate.toString()
 

@@ -22,7 +22,7 @@ import com.example.android.architecture.blueprints.todoapp.data.source.local.Tas
 import com.example.android.architecture.blueprints.todoapp.statistics.StatisticsViewModel
 import com.example.android.architecture.blueprints.todoapp.taskdetail.TaskDetailViewModel
 import com.example.android.architecture.blueprints.todoapp.tasks.TasksViewModel
-import com.example.android.architecture.blueprints.todoapp.util.TimePickerFragment
+import com.example.android.architecture.blueprints.todoapp.util.DatePickerFragment
 
 /**
  * A creator is used to inject the product ID into the ViewModel

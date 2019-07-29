@@ -194,6 +194,7 @@ class DefaultTasksRepository(
         }
     }
 
+
     override suspend fun unfavorTask(task: Task) {
         // Do in memory cache update to keep the app UI up to date
         cacheAndPerform(task) {

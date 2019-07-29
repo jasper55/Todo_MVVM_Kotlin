@@ -1,8 +1,11 @@
 package com.example.android.architecture.blueprints.todoapp.util
 
+import android.annotation.SuppressLint
 import android.app.DatePickerDialog
 import android.app.Dialog
+import android.app.PendingIntent.getActivity
 import android.app.TimePickerDialog
+import android.content.Context
 import android.os.Bundle
 import android.text.format.DateFormat
 import android.widget.DatePicker
@@ -12,7 +15,28 @@ import androidx.fragment.app.DialogFragment
 import com.example.android.architecture.blueprints.todoapp.data.source.local.TasksLocalDataSource
 import java.util.*
 
-class TimePickerFragment : DialogFragment(), DatePickerDialog.OnDateSetListener {
+object DatePickerFragment{
+
+
+    @SuppressLint("NewApi")
+    fun createDialog(context: Context) : DatePickerDialog  {
+        val c: Calendar = Calendar.getInstance()
+        val dYear: Int = c.get(Calendar.YEAR)
+        val dMonth: Int = c.get(Calendar.MONTH)
+        val dDay: Int = c.get(Calendar.DAY_OF_MONTH)
+
+        val datePicker = DatePicker(context)
+//        val listener = DatePickerDialog.OnDateSetListener((datePicker,dYear,dMonth,dDay)-> unit())
+
+       // val dialog = DatePickerDialog(context, this, dYear, dMonth, dDay)
+        val dialog = DatePickerDialog(context)
+
+        return dialog
+    }
+
+
+ /*
+    , DatePickerDialog.OnDateSetListener {
 
     private var year: Int = 0
     private var mon: Int = 0
@@ -55,4 +79,7 @@ class TimePickerFragment : DialogFragment(), DatePickerDialog.OnDateSetListener 
     fun fromLongToDate(date: Long): String {
         return date.toString()
     }
+}*/
+
 }
+
