@@ -92,11 +92,20 @@ class TaskDetailFragment : Fragment() {
                     TaskDetailUserActionsListener {
 
                 override fun onDueDateChanged(v: View) {
+                    //var year: Int
+                    //var mon: Int
+                    //var day: Int
+                    //val listner = DatePickerDialog.OnDateSetListener { datePicker, year, mon, day -> year = year }
+                    //var datePicker = DatePickerDialog(context, AlertDialog.THEME_DEVICE_DEFAULT_DARK,listner,year,mon,day,)
                     val myDate = DateUtil.parseToString(2019,10,29)
                     val dateLong = DateUtil.parseToLong(myDate)
-                    //val timePicker = TimePickerFragment()
-                    viewModel?.setDueDateLiveData(myDate)
-                    viewModel?.saveDueDate(dateLong)
+
+                    val datePickerDialog = DatePickerFragment.createDialog(getContext())
+                    val date = DatePickerFragment.getStringDate(context)
+                    val long = DateUtil.parseToLong(date)
+
+                    viewModel?.setDueDateLiveData(date)
+                    viewModel?.saveDueDate(long)
                 }
 
                 override fun onFavoriteChanged(v: View) {

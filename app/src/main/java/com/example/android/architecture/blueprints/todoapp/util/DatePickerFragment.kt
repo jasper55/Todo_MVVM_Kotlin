@@ -3,23 +3,17 @@ package com.example.android.architecture.blueprints.todoapp.util
 import android.annotation.SuppressLint
 import android.app.DatePickerDialog
 import android.app.Dialog
-import android.app.PendingIntent.getActivity
-import android.app.TimePickerDialog
 import android.content.Context
-import android.os.Bundle
-import android.text.format.DateFormat
 import android.widget.DatePicker
-import android.widget.TimePicker
-import androidx.fragment.app.DialogFragment
 
-import com.example.android.architecture.blueprints.todoapp.data.source.local.TasksLocalDataSource
 import java.util.*
+
 
 object DatePickerFragment{
 
 
     @SuppressLint("NewApi")
-    fun createDialog(context: Context) : DatePickerDialog  {
+    fun createDialog(context: Context?) : DatePickerDialog  {
         val c: Calendar = Calendar.getInstance()
         val dYear: Int = c.get(Calendar.YEAR)
         val dMonth: Int = c.get(Calendar.MONTH)
@@ -34,7 +28,34 @@ object DatePickerFragment{
         return dialog
     }
 
+    fun parseToString(year: Int, month: Int, day: Int): String{
+        return "$day.$month.$year"
+    }
 
+
+    val c: Calendar = Calendar.getInstance()
+    var dYear: Int = c.get(Calendar.YEAR)
+    var dMonth: Int = c.get(Calendar.MONTH)
+    var dDay: Int = c.get(Calendar.DAY_OF_MONTH)
+
+
+    fun onCreateDialog(context: Context?): Dialog {
+        return DatePickerDialog(context, datePickerListener, dYear, dMonth, dDay)
+    }
+
+    private val datePickerListener = DatePickerDialog.OnDateSetListener { view, selectedYear, selectedMonth, selectedDay ->
+        dDay = selectedDay
+        dMonth = selectedMonth
+        dYear = selectedYear
+    }
+
+    fun getStringDate(context: Context?): String {
+        val dialog = onCreateDialog(context)
+        dialog.show()
+        DatePickerDialog(context, datePickerListener, dYear, dMonth, dDay)
+        return "$dDay.$dMonth.$dYear"
+    }
+    }
  /*
     , DatePickerDialog.OnDateSetListener {
 
@@ -81,5 +102,5 @@ object DatePickerFragment{
     }
 }*/
 
-}
+
 
