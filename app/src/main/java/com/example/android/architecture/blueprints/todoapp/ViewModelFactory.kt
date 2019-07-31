@@ -15,6 +15,7 @@
  */
 package com.example.android.architecture.blueprints.todoapp
 
+import android.app.Application
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.example.android.architecture.blueprints.todoapp.addedittask.AddEditTaskViewModel
@@ -32,7 +33,8 @@ import com.example.android.architecture.blueprints.todoapp.util.DatePickerFragme
  * actually necessary in this case, as the product ID can be passed in a public method.
  */
 class ViewModelFactory constructor(
-        private val tasksRepository: TasksLocalDataSource
+        private val tasksRepository: TasksLocalDataSource,
+        private val application: Application
 ) : ViewModelProvider.NewInstanceFactory() {
 
     override fun <T : ViewModel> create(modelClass: Class<T>) =
@@ -41,7 +43,7 @@ class ViewModelFactory constructor(
                     isAssignableFrom(StatisticsViewModel::class.java) ->
                         StatisticsViewModel(tasksRepository)
                     isAssignableFrom(TaskDetailViewModel::class.java) ->
-                        TaskDetailViewModel(tasksRepository)
+                        TaskDetailViewModel(tasksRepository, application)
                     isAssignableFrom(AddEditTaskViewModel::class.java) ->
                         AddEditTaskViewModel(tasksRepository)
                     isAssignableFrom(TasksViewModel::class.java) ->

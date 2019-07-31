@@ -16,11 +16,9 @@
 package com.example.android.architecture.blueprints.todoapp.taskdetail
 
 import androidx.annotation.StringRes
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.Transformations
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.*
+
+import android.app.Application
 import com.example.android.architecture.blueprints.todoapp.Event
 import com.example.android.architecture.blueprints.todoapp.R
 import com.example.android.architecture.blueprints.todoapp.data.Result
@@ -28,6 +26,7 @@ import com.example.android.architecture.blueprints.todoapp.data.Result.Success
 import com.example.android.architecture.blueprints.todoapp.data.Task
 import com.example.android.architecture.blueprints.todoapp.data.source.TasksRepository
 import com.example.android.architecture.blueprints.todoapp.data.source.local.TasksLocalDataSource
+import com.example.android.architecture.blueprints.todoapp.util.DateUtil
 import com.example.android.architecture.blueprints.todoapp.util.EspressoIdlingResource
 import kotlinx.coroutines.launch
 
@@ -36,9 +35,11 @@ import kotlinx.coroutines.launch
  * Fragment's actions listener.
  */
 class TaskDetailViewModel(
-    private val tasksRepository: TasksLocalDataSource
-) : ViewModel() {
+    private val tasksRepository: TasksLocalDataSource,
+    application: Application
+) : AndroidViewModel(application) {
 
+    //private val context = getApplication<Application>().applicationContext
     private val _task = MutableLiveData<Task>()
     val task: LiveData<Task> = _task
 
@@ -146,6 +147,8 @@ class TaskDetailViewModel(
     private fun setTask(task: Task?) {
         this._task.value = task
         _isDataAvailable.value = task != null
+        val dateLong = _task.value?.dueDate
+        _dueDate.value = DateUtil.parseFromLong(_task.value?.dueDate,getApplication())
     }
 
     private fun onTaskLoaded(task: Task) {

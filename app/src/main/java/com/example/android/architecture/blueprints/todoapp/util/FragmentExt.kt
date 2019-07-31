@@ -31,6 +31,9 @@ const val DELETE_RESULT_OK = Activity.RESULT_FIRST_USER + 2
 const val EDIT_RESULT_OK = Activity.RESULT_FIRST_USER + 3
 
 fun <T : ViewModel> Fragment.obtainViewModel(viewModelClass: Class<T>): T {
-    val repository = (requireContext().applicationContext as TodoApplication).taskRepository
-    return ViewModelProviders.of(this, ViewModelFactory(repository)).get(viewModelClass)
+
+    val context = requireContext().applicationContext as TodoApplication
+    val repository = context.taskRepository
+
+    return ViewModelProviders.of(this, ViewModelFactory(repository, context)).get(viewModelClass)
 }
