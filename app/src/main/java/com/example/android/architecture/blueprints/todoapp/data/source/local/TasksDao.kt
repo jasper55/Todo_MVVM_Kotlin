@@ -73,7 +73,7 @@ interface TasksDao {
     suspend fun updateCompleted(taskId: String, completed: Boolean)
 
     @Query("UPDATE tasks SET dueDate = :dueDate WHERE entryid = :taskId")
-    suspend fun updateDate(taskId: String, dueDate: String)
+    suspend fun updateDate(taskId: String, dueDate: Long)
 
     @Query("UPDATE tasks SET favorite = :favorite WHERE entryid = :taskId")
     suspend fun updateFavorite(taskId: String, favorite: Boolean)

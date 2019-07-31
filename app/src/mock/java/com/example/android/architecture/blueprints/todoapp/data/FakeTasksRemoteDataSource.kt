@@ -44,7 +44,7 @@ object FakeTasksRemoteDataSource : TasksDataSource {
     }
 
     override suspend fun completeTask(task: Task) {
-        val completedTask = Task(task.title, task.description, true, task.isFavorite, task.id)
+        val completedTask = Task(task.title, task.description, true, task.isFavorite, task.dueDate, task.id)
         TASKS_SERVICE_DATA.put(task.id, completedTask)
     }
 
@@ -58,11 +58,11 @@ object FakeTasksRemoteDataSource : TasksDataSource {
     }
 
     override suspend fun unfavorTask(task: Task) {
-        val favorTask = Task(task.title, task.description, task.isCompleted, false, task.id)
+        val favorTask = Task(task.title, task.description, task.isCompleted, false, task.dueDate, task.id)
         TASKS_SERVICE_DATA.put(task.id, favorTask)
     }
 
-    override suspend fun setDueDate(task: Task, date: String) {
+    override suspend fun setDueDate(task: Task, date: Long) {
         val dueDateTask = Task(task.title, task.description, task.isCompleted, task.isFavorite, date, task.id)
         TASKS_SERVICE_DATA.put(task.id, dueDateTask)}
 

@@ -225,7 +225,7 @@ class DefaultTasksRepository(
         }
     }
 
-    override suspend fun setDueDate(task: Task,date: String) {
+    override suspend fun setDueDate(task: Task,date: Long) {
         // Do in memory cache update to keep the app UI up to date
         cacheAndPerform(task) {
             //it.isFavorite = true

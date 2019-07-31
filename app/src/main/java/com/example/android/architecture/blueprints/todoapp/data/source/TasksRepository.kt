@@ -41,7 +41,7 @@ interface TasksRepository {
 
     suspend fun activateTask(taskId: String)
 
-    suspend fun setDueDate(task: Task, date: String)
+    suspend fun setDueDate(task: Task, date: Long)
 
     suspend fun clearCompletedTasks()
 

@@ -42,6 +42,9 @@ class TaskDetailViewModel(
     private val _task = MutableLiveData<Task>()
     val task: LiveData<Task> = _task
 
+    private var _dueDate = MutableLiveData<String>()
+    var dueDate: LiveData<String> = _dueDate
+
     private val _isDataAvailable = MutableLiveData<Boolean>()
     val isDataAvailable: LiveData<Boolean> = _isDataAvailable
 
@@ -67,12 +70,10 @@ class TaskDetailViewModel(
     }
 
     //val dueDate = "19.06.2016"
-    val dueDate: LiveData<String> = Transformations.map(_task) { input: Task? ->
-        input?.dueDate
-    }
-
+ //   val dueDate: LiveData<String> = Transformations.map(_task) { input: Task? ->
+   //     input?.dueDate
+    //}
     //val dueDateString: LiveData<String> = dueDate.toString()
-
     val taskId: String?
         get() = _task.value?.id
 
@@ -109,9 +110,15 @@ class TaskDetailViewModel(
         }
     }
 
-    fun setDueDate(date: String) = viewModelScope.launch{
-        val task = _task.value ?: return@launch
-        tasksRepository.setDueDate(task, date)
+    fun setDueDateLiveData(date: String) {
+        _dueDate.value = date
+    }
+
+    fun saveDueDate(dateLong: Long) {
+        viewModelScope.launch {
+            val task = _task.value ?: return@launch
+            tasksRepository.setDueDate(task, dateLong)
+        }
     }
 
     fun start(taskId: String?) {

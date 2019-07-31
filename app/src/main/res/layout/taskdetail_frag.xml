@@ -130,6 +130,7 @@
                         android:paddingTop="4dp"
                         android:hint="@string/due_date_hint"
                         android:text="@{viewmodel.dueDate}"
+                        android:onClick="@{(view) -> listener.onDueDateChanged(view)}"
                         android:textAppearance="?android:attr/textAppearanceMedium" />
 
 

@@ -28,10 +28,7 @@ import androidx.navigation.fragment.findNavController
 import com.example.android.architecture.blueprints.todoapp.EventObserver
 import com.example.android.architecture.blueprints.todoapp.R
 import com.example.android.architecture.blueprints.todoapp.databinding.TaskdetailFragBinding
-import com.example.android.architecture.blueprints.todoapp.util.DELETE_RESULT_OK
-import com.example.android.architecture.blueprints.todoapp.util.DatePickerFragment
-import com.example.android.architecture.blueprints.todoapp.util.obtainViewModel
-import com.example.android.architecture.blueprints.todoapp.util.setupSnackbar
+import com.example.android.architecture.blueprints.todoapp.util.*
 import com.google.android.material.snackbar.Snackbar
 
 /**
@@ -90,11 +87,16 @@ class TaskDetailFragment : Fragment() {
         viewModel = obtainViewModel(TaskDetailViewModel::class.java)
         viewDataBinding = TaskdetailFragBinding.bind(view).apply {
             viewmodel = viewModel
-            listener = object : TaskDetailUserActionsListener {
+            listener = object :
+
+                    TaskDetailUserActionsListener {
 
                 override fun onDueDateChanged(v: View) {
+                    val myDate = DateUtil.parseToString(2019,10,29)
+                    val dateLong = DateUtil.parseToLong(myDate)
                     //val timePicker = TimePickerFragment()
-                    //viewModel?.setDueDate(timePicker.getString())
+                    viewModel?.setDueDateLiveData(myDate)
+                    viewModel?.saveDueDate(dateLong)
                 }
 
                 override fun onFavoriteChanged(v: View) {

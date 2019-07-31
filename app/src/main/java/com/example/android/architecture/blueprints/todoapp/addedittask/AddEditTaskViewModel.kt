@@ -66,9 +66,7 @@ class AddEditTaskViewModel(
 
     private var taskFavored = false
 
-    private var taskDueDate: String? = null
-
-    //private var dueDate: Long?
+    private var taskDueDate: Long? = null
 
     fun start(taskId: String?) {
         _dataLoading.value?.let { isLoading ->

@@ -54,5 +54,5 @@ interface TasksDataSource {
 
     suspend fun deleteTask(taskId: String)
 
-    suspend fun setDueDate(task: Task, date: String)
+    suspend fun setDueDate(task: Task, date: Long)
 }
