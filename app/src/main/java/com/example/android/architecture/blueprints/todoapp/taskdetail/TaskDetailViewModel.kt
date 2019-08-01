@@ -44,7 +44,7 @@ class TaskDetailViewModel(
     val task: LiveData<Task> = _task
 
     var _dueDate = MutableLiveData<String>()
-    //var dueDate: LiveData<String> = _dueDate
+    var dueDate: LiveData<String> = _dueDate
 
     private val _isDataAvailable = MutableLiveData<Boolean>()
     val isDataAvailable: LiveData<Boolean> = _isDataAvailable
@@ -71,9 +71,9 @@ class TaskDetailViewModel(
     }
 
     // TODO funktioniert so noch nicht
-    var dueDate: LiveData<String> = Transformations.map(_task) { input: Task? ->
-        DateUtil.parseFromLong(input?.dueDate ?: 0L,application)
-    }
+    //var dueDate: LiveData<String> = Transformations.map(_task) { input: Task? ->
+      //  DateUtil.parseFromLong(input?.dueDate ?: 0L,application)
+    //}
 
     val taskId: String?
         get() = _task.value?.id
@@ -145,7 +145,6 @@ class TaskDetailViewModel(
     private fun setTask(task: Task?) {
         this._task.value = task
         _isDataAvailable.value = task != null
-        val dateLong = _task.value?.dueDate
         _dueDate.value = DateUtil.parseFromLong(_task.value?.dueDate,getApplication())
     }
 

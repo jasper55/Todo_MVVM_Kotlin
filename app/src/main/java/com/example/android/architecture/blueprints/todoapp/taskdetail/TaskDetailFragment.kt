@@ -110,6 +110,7 @@ class TaskDetailFragment : Fragment() {
                 }
             }
         }
+
         viewDataBinding.setLifecycleOwner(this.viewLifecycleOwner)
         setHasOptionsMenu(true)
         return view
