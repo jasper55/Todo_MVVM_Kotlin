@@ -43,8 +43,8 @@ class TaskDetailViewModel(
     private val _task = MutableLiveData<Task>()
     val task: LiveData<Task> = _task
 
-    private var _dueDate = MutableLiveData<String>()
-    var dueDate: LiveData<String> = _dueDate
+    var _dueDate = MutableLiveData<String>()
+    //var dueDate: LiveData<String> = _dueDate
 
     private val _isDataAvailable = MutableLiveData<Boolean>()
     val isDataAvailable: LiveData<Boolean> = _isDataAvailable
@@ -70,11 +70,11 @@ class TaskDetailViewModel(
         input?.isFavorite ?: false
     }
 
-    //val dueDate = "19.06.2016"
- //   val dueDate: LiveData<String> = Transformations.map(_task) { input: Task? ->
-   //     input?.dueDate
-    //}
-    //val dueDateString: LiveData<String> = dueDate.toString()
+    // TODO funktioniert so noch nicht
+    var dueDate: LiveData<String> = Transformations.map(_task) { input: Task? ->
+        DateUtil.parseFromLong(input?.dueDate ?: 0L,application)
+    }
+
     val taskId: String?
         get() = _task.value?.id
 
@@ -111,11 +111,9 @@ class TaskDetailViewModel(
         }
     }
 
-    fun setDueDateLiveData(date: String) {
+    fun saveDueDate(dateLong: Long, date: String) {
+        // needed otherwise view not updated
         _dueDate.value = date
-    }
-
-    fun saveDueDate(dateLong: Long) {
         viewModelScope.launch {
             val task = _task.value ?: return@launch
             tasksRepository.setDueDate(task, dateLong)
