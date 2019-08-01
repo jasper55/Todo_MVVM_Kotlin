@@ -38,12 +38,8 @@ object DatePickerFragment {
     fun showDialog(context: Context?) {
         val dialog = DatePickerDialog(context, AlertDialog.THEME_DEVICE_DEFAULT_DARK, datePickerListener, dYear, dMonth, dDay) //DatePickerDialog(context, AlertDialog.THEME_DEVICE_DEFAULT_DARK, datePickerListener, dYear, dMonth, dDay)
         dialog.show()
-        //this.dDay = dDay
-        //this.dMonth = dMonth
-        //this.dYear = dYear
-        //val viewModel = ViewModelProviders.of(context)[TaskDetailFragment::class.java]
-        //viewModel.selectedDate.value = "$year $month $day"
     }
+
 
     fun getDate(): String {
         return "$dDay.${dMonth + 1}.$dYear"
