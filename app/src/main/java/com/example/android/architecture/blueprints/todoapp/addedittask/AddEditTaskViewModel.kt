@@ -24,7 +24,7 @@ import com.example.android.architecture.blueprints.todoapp.Event
 import com.example.android.architecture.blueprints.todoapp.R
 import com.example.android.architecture.blueprints.todoapp.data.Result.Success
 import com.example.android.architecture.blueprints.todoapp.data.Task
-import com.example.android.architecture.blueprints.todoapp.data.source.TasksRepository
+import com.example.android.architecture.blueprints.todoapp.data.source.local.TasksLocalDataSource
 import kotlinx.coroutines.launch
 
 /**
@@ -37,7 +37,8 @@ import kotlinx.coroutines.launch
  * how to deal with more complex scenarios.
  */
 class AddEditTaskViewModel(
-    private val tasksRepository: TasksRepository
+    //private val tasksRepository: TasksRepository
+    private val tasksRepository: TasksLocalDataSource
 ) : ViewModel() {
 
     // Two-way databinding, exposing MutableLiveData
@@ -64,6 +65,8 @@ class AddEditTaskViewModel(
     private var taskCompleted = false
 
     private var taskFavored = false
+
+    private var taskDueDate: Long = 0L
 
     fun start(taskId: String?) {
         _dataLoading.value?.let { isLoading ->
@@ -99,6 +102,7 @@ class AddEditTaskViewModel(
         description.value = task.description
         taskCompleted = task.isCompleted
         taskFavored = task.isFavorite
+        taskDueDate = task.dueDate
         _dataLoading.value = false
         isDataLoaded = true
     }
@@ -125,7 +129,7 @@ class AddEditTaskViewModel(
         if (isNewTask || currentTaskId == null) {
             createTask(Task(currentTitle, currentDescription))
         } else {
-            val task = Task(currentTitle, currentDescription, taskCompleted, taskFavored, currentTaskId)
+            val task = Task(currentTitle, currentDescription, taskCompleted, taskFavored, taskDueDate, currentTaskId)
             updateTask(task)
         }
     }

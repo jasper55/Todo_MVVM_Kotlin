@@ -33,11 +33,15 @@ interface TasksRepository {
 
     suspend fun favorTask(task: Task)
 
+    suspend fun unfavorTask(task: Task)
+
     suspend fun favorTask(taskId: String)
 
     suspend fun activateTask(task: Task)
 
     suspend fun activateTask(taskId: String)
+
+    suspend fun setDueDate(task: Task, date: Long)
 
     suspend fun clearCompletedTasks()
 

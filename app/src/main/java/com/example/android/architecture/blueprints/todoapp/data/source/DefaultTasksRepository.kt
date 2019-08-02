@@ -193,6 +193,18 @@ class DefaultTasksRepository(
         }
     }
 
+
+    override suspend fun unfavorTask(task: Task) {
+        // Do in memory cache update to keep the app UI up to date
+        cacheAndPerform(task) {
+            it.isFavorite = false
+            coroutineScope {
+                launch { tasksRemoteDataSource.unfavorTask(it) }
+                launch { tasksLocalDataSource.unfavorTask(it) }
+            }
+        }
+    }
+
     override suspend fun favorTask(taskId: String) {
         withContext(ioDispatcher) {
             getTaskWithId(taskId)?.let {
@@ -210,6 +222,17 @@ class DefaultTasksRepository(
                 launch { tasksLocalDataSource.activateTask(it) }
             }
 
+        }
+    }
+
+    override suspend fun setDueDate(task: Task,date: Long) {
+        // Do in memory cache update to keep the app UI up to date
+        cacheAndPerform(task) {
+            //it.isFavorite = true
+            coroutineScope {
+                launch { tasksRemoteDataSource.setDueDate(task, date) }
+                launch { tasksLocalDataSource.setDueDate(task, date) }
+            }
         }
     }
 
@@ -272,7 +295,7 @@ class DefaultTasksRepository(
     private fun getTaskWithId(id: String) = cachedTasks?.get(id)
 
     private fun cacheTask(task: Task): Task {
-        val cachedTask = Task(task.title, task.description, task.isCompleted, task.isFavorite,task.id)
+        val cachedTask = Task(task.title, task.description, task.isCompleted, task.isFavorite, task.dueDate, task.id)
         // Create if it doesn't exist.
         if (cachedTasks == null) {
             cachedTasks = ConcurrentHashMap()

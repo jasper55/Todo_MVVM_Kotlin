@@ -16,17 +16,17 @@
 package com.example.android.architecture.blueprints.todoapp.taskdetail
 
 import androidx.annotation.StringRes
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.Transformations
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.*
+
+import android.app.Application
 import com.example.android.architecture.blueprints.todoapp.Event
 import com.example.android.architecture.blueprints.todoapp.R
 import com.example.android.architecture.blueprints.todoapp.data.Result
 import com.example.android.architecture.blueprints.todoapp.data.Result.Success
 import com.example.android.architecture.blueprints.todoapp.data.Task
 import com.example.android.architecture.blueprints.todoapp.data.source.TasksRepository
+import com.example.android.architecture.blueprints.todoapp.data.source.local.TasksLocalDataSource
+import com.example.android.architecture.blueprints.todoapp.util.DateUtil
 import com.example.android.architecture.blueprints.todoapp.util.EspressoIdlingResource
 import kotlinx.coroutines.launch
 
@@ -35,11 +35,16 @@ import kotlinx.coroutines.launch
  * Fragment's actions listener.
  */
 class TaskDetailViewModel(
-    private val tasksRepository: TasksRepository
-) : ViewModel() {
+    private val tasksRepository: TasksLocalDataSource,
+    application: Application
+) : AndroidViewModel(application) {
 
+    //private val context = getApplication<Application>().applicationContext
     private val _task = MutableLiveData<Task>()
     val task: LiveData<Task> = _task
+
+    var _dueDate = MutableLiveData<String>()
+    var dueDate: LiveData<String> = _dueDate
 
     private val _isDataAvailable = MutableLiveData<Boolean>()
     val isDataAvailable: LiveData<Boolean> = _isDataAvailable
@@ -64,6 +69,11 @@ class TaskDetailViewModel(
     val favorite: LiveData<Boolean> = Transformations.map(_task) { input: Task? ->
         input?.isFavorite ?: false
     }
+
+    // TODO funktioniert so noch nicht
+    //var dueDate: LiveData<String> = Transformations.map(_task) { input: Task? ->
+      //  DateUtil.parseFromLong(input?.dueDate ?: 0L,application)
+    //}
 
     val taskId: String?
         get() = _task.value?.id
@@ -96,7 +106,17 @@ class TaskDetailViewModel(
             tasksRepository.favorTask(task)
             showSnackbarMessage(R.string.task_marked_favorite)
         } else {
+            tasksRepository.unfavorTask(task)
             showSnackbarMessage(R.string.task_marked_unfavored)
+        }
+    }
+
+    fun saveDueDate(dateLong: Long, date: String) {
+        // needed otherwise view not updated
+        _dueDate.value = date
+        viewModelScope.launch {
+            val task = _task.value ?: return@launch
+            tasksRepository.setDueDate(task, dateLong)
         }
     }
 
@@ -109,7 +129,7 @@ class TaskDetailViewModel(
 
         viewModelScope.launch {
             if (taskId != null) {
-                tasksRepository.getTask(taskId, false).let { result ->
+                tasksRepository.getTask(taskId).let { result ->
                     if (result is Success) {
                         onTaskLoaded(result.data)
                     } else {
@@ -125,6 +145,7 @@ class TaskDetailViewModel(
     private fun setTask(task: Task?) {
         this._task.value = task
         _isDataAvailable.value = task != null
+        _dueDate.value = DateUtil.parseFromLong(_task.value?.dueDate,getApplication())
     }
 
     private fun onTaskLoaded(task: Task) {

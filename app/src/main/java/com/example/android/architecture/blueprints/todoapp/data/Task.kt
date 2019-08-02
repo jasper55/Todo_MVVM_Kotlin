@@ -18,7 +18,8 @@ package com.example.android.architecture.blueprints.todoapp.data
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import java.util.UUID
+import com.example.android.architecture.blueprints.todoapp.R
+import java.util.*
 
 /**
  * Immutable model class for a Task. In order to compile with Room, we can't use @JvmOverloads to
@@ -35,12 +36,13 @@ data class Task @JvmOverloads constructor(
         @ColumnInfo(name = "description") var description: String = "",
         @ColumnInfo(name = "completed") var isCompleted: Boolean = false,
         @ColumnInfo(name = "favorite") var isFavorite: Boolean = false,
+        @ColumnInfo(name = "dueDate") var dueDate: Long = 0L,
         @PrimaryKey @ColumnInfo(name = "entryid") var id: String = UUID.randomUUID().toString()
 ) {
 
+    // is being accessed by the OverViewFragment
     val titleForList: String
         get() = if (title.isNotEmpty()) title else description
-
 
     val isActive
         get() = !isCompleted
@@ -48,6 +50,39 @@ data class Task @JvmOverloads constructor(
     val isEmpty
         get() = title.isEmpty() || description.isEmpty()
 
-//    val isFavorized
-//        get() = isFavorite
+    // Declare Compators
+    //var SORT_BY_ID: Comparator<Task> = Comparator<Task> { item1, item2 -> (item1.id.toInt() - item2.id.toInt()) }
+
+//    var SORT_BY_NAME: Comparator<Task> = Comparator<Task> { item1, item2 ->
+//        val i1 = item1.title.toLowerCase()
+//        val i2 = item2.title.toLowerCase()
+//        i1.compareTo(i2)
+//    }
+
+/*    var SORT_BY_DONE: Comparator<Task> = Comparator<Task> { item1, item2 ->
+        val b1 = item1.isCompleted
+        val b2 = item2.isCompleted
+
+        if (b1 == !b2) {
+            return@Comparator 1
+        }
+        if (!b1 == b2) {
+            -1
+        } else 0
+    }*/
+
+/*    var SORT_BY_PRIORITY: Comparator<Task> = Comparator<Task> { item1, item2 ->
+        val b1 = item1.isFavorite
+        val b2 = item2.isFavorite
+
+        if (b1 == !b2) {
+            return@Comparator 1
+        }
+        if (!b1 == b2) {
+            -1
+        } else 0
+    }*/
+
+    //var SORT_BY_DATE: Comparator<Task> = Comparator<Task> { item1, item2 -> (item1.dueDate.toInt() - item2.dueDate.toInt()) }
+
 }

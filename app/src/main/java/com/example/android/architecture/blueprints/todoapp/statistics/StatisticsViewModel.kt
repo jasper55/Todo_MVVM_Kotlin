@@ -23,6 +23,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.android.architecture.blueprints.todoapp.data.Result.Success
 import com.example.android.architecture.blueprints.todoapp.data.Task
 import com.example.android.architecture.blueprints.todoapp.data.source.TasksRepository
+import com.example.android.architecture.blueprints.todoapp.data.source.local.TasksLocalDataSource
 import com.example.android.architecture.blueprints.todoapp.util.EspressoIdlingResource
 import kotlinx.coroutines.launch
 
@@ -36,7 +37,7 @@ import kotlinx.coroutines.launch
  * preferable to having logic in the XML layout.
  */
 class StatisticsViewModel(
-    private val tasksRepository: TasksRepository
+    private val tasksRepository: TasksLocalDataSource
 ) : ViewModel() {
 
     private val _dataLoading = MutableLiveData<Boolean>()

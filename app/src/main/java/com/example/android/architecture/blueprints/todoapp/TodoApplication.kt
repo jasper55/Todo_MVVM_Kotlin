@@ -5,6 +5,7 @@ import com.example.android.architecture.blueprints.todoapp.data.source.TasksRepo
 import timber.log.Timber
 import timber.log.Timber.DebugTree
 import com.example.android.architecture.blueprints.todoapp.ServiceLocator
+import com.example.android.architecture.blueprints.todoapp.data.source.local.TasksLocalDataSource
 
 /**
  * An application that lazily provides a repository. Note that this Service Locator pattern is
@@ -15,7 +16,7 @@ import com.example.android.architecture.blueprints.todoapp.ServiceLocator
 class TodoApplication : Application() {
 
     // Depends on the flavor,
-    val taskRepository: TasksRepository
+    val taskRepository: TasksLocalDataSource
         get() = ServiceLocator.provideTasksRepository(this)
 
     override fun onCreate() {

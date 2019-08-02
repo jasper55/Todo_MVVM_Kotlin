@@ -15,6 +15,7 @@
   -->
 
 <resources>
+    <integer name="dbVersion">3</integer>
     <string name="app_name">Todo</string>
     <string name="add_task">New Task</string>
     <string name="edit_task">Edit Task</string>
@@ -50,17 +51,24 @@
     <string name="nav_active">Active</string>
     <string name="nav_completed">Completed</string>
     <string name="nav_favorite">Favorite</string>
+    <string name="nav_sort">sort Tasks</string>
     <string name="label_all">All Tasks</string>
     <string name="label_active">Active Tasks</string>
     <string name="label_completed">Completed Tasks</string>
     <string name="label_favorite">Important Tasks</string>
+    <string name="label_sorted_date">Tasks sorted by date</string>
+    <string name="label_sorted_name">Tasks sorted by name</string>
+    <string name="label_sorted_id">Tasks sorted by id</string>
     <string name="no_tasks_all">You have no tasks!</string>
     <string name="no_tasks_active">You have no active tasks!</string>
     <string name="no_tasks_completed">You have no completed tasks!</string>
     <string name="favorite_tasks">Your most important tasks!</string>
+    <string name="sorted_tasks">Tasks sorted by date</string>
     <string name="refresh">Refresh</string>
     <string name="successfully_deleted_task_message">Task was deleted</string>
     <string name="successfully_added_task_message">Task added</string>
     <string name="no_data_description"/>
+    <string name="no_due_date_set">set a date here</string>
+    <string name="due_date_hint">set date here</string>
 
 </resources>

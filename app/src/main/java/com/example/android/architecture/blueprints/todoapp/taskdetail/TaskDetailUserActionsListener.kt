@@ -16,6 +16,7 @@
 package com.example.android.architecture.blueprints.todoapp.taskdetail
 
 
+import android.content.Context
 import android.view.View
 
 /**
@@ -25,4 +26,5 @@ interface TaskDetailUserActionsListener {
 
     fun onCompleteChanged(v: View)
     fun onFavoriteChanged(v: View)
+    fun onDueDateChanged(v: View)
 }

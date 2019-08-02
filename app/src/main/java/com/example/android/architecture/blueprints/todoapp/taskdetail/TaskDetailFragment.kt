@@ -28,9 +28,7 @@ import androidx.navigation.fragment.findNavController
 import com.example.android.architecture.blueprints.todoapp.EventObserver
 import com.example.android.architecture.blueprints.todoapp.R
 import com.example.android.architecture.blueprints.todoapp.databinding.TaskdetailFragBinding
-import com.example.android.architecture.blueprints.todoapp.util.DELETE_RESULT_OK
-import com.example.android.architecture.blueprints.todoapp.util.obtainViewModel
-import com.example.android.architecture.blueprints.todoapp.util.setupSnackbar
+import com.example.android.architecture.blueprints.todoapp.util.*
 import com.google.android.material.snackbar.Snackbar
 
 /**
@@ -89,7 +87,20 @@ class TaskDetailFragment : Fragment() {
         viewModel = obtainViewModel(TaskDetailViewModel::class.java)
         viewDataBinding = TaskdetailFragBinding.bind(view).apply {
             viewmodel = viewModel
-            listener = object : TaskDetailUserActionsListener {
+            listener = object :
+
+                    TaskDetailUserActionsListener {
+
+                override fun onDueDateChanged(v: View) {
+                    //val picker = DatePickerFragment.createDialog(context)
+                    //val date = DateUtil.parseToString(picker.year,picker.month,picker.dayOfMonth)
+                    DatePickerFragment.showDialog(context)
+                    val date = DatePickerFragment.getDate()
+                    val long = DateUtil.parseToLong(date)
+
+                    viewModel?.saveDueDate(long, date)
+                }
+
                 override fun onFavoriteChanged(v: View) {
                     viewmodel?.setFavored((v as CheckBox).isChecked)
                 }
@@ -99,6 +110,7 @@ class TaskDetailFragment : Fragment() {
                 }
             }
         }
+
         viewDataBinding.setLifecycleOwner(this.viewLifecycleOwner)
         setHasOptionsMenu(true)
         return view

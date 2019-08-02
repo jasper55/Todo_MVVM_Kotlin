@@ -120,6 +120,7 @@ class TasksFragment : Fragment() {
                                 R.id.active -> TasksFilterType.ACTIVE_TASKS
                                 R.id.completed -> TasksFilterType.COMPLETED_TASKS
                                 R.id.favorite -> TasksFilterType.FAVORITE_TASKS
+                                R.id.sort -> TasksFilterType.SORT
                                 else -> TasksFilterType.ALL_TASKS
                             }
                     )

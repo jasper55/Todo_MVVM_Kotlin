@@ -28,12 +28,13 @@ import com.example.android.architecture.blueprints.todoapp.data.Result.Success
 import com.example.android.architecture.blueprints.todoapp.data.Task
 import com.example.android.architecture.blueprints.todoapp.data.source.TasksDataSource
 import com.example.android.architecture.blueprints.todoapp.data.source.TasksRepository
+import com.example.android.architecture.blueprints.todoapp.data.source.local.TasksLocalDataSource
 import com.example.android.architecture.blueprints.todoapp.util.ADD_EDIT_RESULT_OK
 import com.example.android.architecture.blueprints.todoapp.util.DELETE_RESULT_OK
 import com.example.android.architecture.blueprints.todoapp.util.EDIT_RESULT_OK
 import com.example.android.architecture.blueprints.todoapp.util.EspressoIdlingResource
 import kotlinx.coroutines.launch
-import java.util.ArrayList
+
 
 /**
  * Exposes the data to be used in the task list screen.
@@ -44,7 +45,7 @@ import java.util.ArrayList
  * getter method.
  */
 class TasksViewModel(
-    private val tasksRepository: TasksRepository
+        private val tasksRepository: TasksLocalDataSource
 ) : ViewModel() {
 
     private val _items = MutableLiveData<List<Task>>().apply { value = emptyList() }
@@ -69,6 +70,8 @@ class TasksViewModel(
     val snackbarMessage: LiveData<Event<Int>> = _snackbarText
 
     private var _currentFiltering = TasksFilterType.ALL_TASKS
+
+    private var _currentSorting = TasksFilterType.SORT_BY.DUE_DATE
 
     // Not used at the moment
     private val isDataLoadingError = MutableLiveData<Boolean>()
@@ -98,30 +101,47 @@ class TasksViewModel(
      */
     fun setFiltering(requestType: TasksFilterType) {
         _currentFiltering = requestType
+        _currentSorting
 
         // Depending on the filter type, set the filtering label, icon drawables, etc.
         when (requestType) {
             TasksFilterType.ALL_TASKS -> {
                 setFilter(R.string.label_all, R.string.no_tasks_all,
-                    R.drawable.logo_no_fill, true)
+                        R.drawable.logo_no_fill, true)
             }
             TasksFilterType.ACTIVE_TASKS -> {
                 setFilter(R.string.label_active, R.string.no_tasks_active,
-                    R.drawable.ic_check_circle_96dp, false)
+                        R.drawable.ic_check_circle_96dp, false)
             }
             TasksFilterType.COMPLETED_TASKS -> {
                 setFilter(R.string.label_completed, R.string.no_tasks_completed,
-                    R.drawable.ic_verified_user_96dp, false)
+                        R.drawable.ic_verified_user_96dp, false)
             }
             TasksFilterType.FAVORITE_TASKS -> {
                 setFilter(R.string.label_favorite, R.string.favorite_tasks,
-                    R.drawable.ic_verified_user_96dp, true)
+                        R.drawable.ic_verified_user_96dp, true)
+            }
+            TasksFilterType.SORT -> {
+                when (_currentSorting) {
+                    TasksFilterType.SORT_BY.DUE_DATE -> {
+                        setFilter(R.string.label_sorted_date, R.string.sorted_tasks,
+                                R.drawable.ic_verified_user_96dp, true)
+                    }
+                    TasksFilterType.SORT_BY.NAME -> {
+                        setFilter(R.string.label_sorted_name, R.string.sorted_tasks,
+                                R.drawable.ic_verified_user_96dp, true)
+                    }
+                    TasksFilterType.SORT_BY.ID -> {
+                        setFilter(R.string.label_sorted_id, R.string.sorted_tasks,
+                                R.drawable.ic_verified_user_96dp, true)
+                    }
+                }
             }
         }
     }
 
     private fun setFilter(@StringRes filteringLabelString: Int, @StringRes noTasksLabelString: Int,
-            @DrawableRes noTaskIconDrawable: Int, tasksAddVisible: Boolean) {
+                          @DrawableRes noTaskIconDrawable: Int, tasksAddVisible: Boolean) {
         _currentFilteringLabel.value = filteringLabelString
         _noTasksLabel.value = noTasksLabelString
         _noTaskIconRes.value = noTaskIconDrawable
@@ -151,6 +171,7 @@ class TasksViewModel(
             tasksRepository.favorTask(task)
             showSnackbarMessage(R.string.task_marked_favorite)
         } else {
+            tasksRepository.unfavorTask(task)
             showSnackbarMessage(R.string.task_marked_unfavored)
         }
     }
@@ -172,13 +193,13 @@ class TasksViewModel(
     fun showEditResultMessage(result: Int) {
         when (result) {
             EDIT_RESULT_OK -> _snackbarText.setValue(
-                Event(R.string.successfully_saved_task_message)
+                    Event(R.string.successfully_saved_task_message)
             )
             ADD_EDIT_RESULT_OK -> _snackbarText.setValue(
-                Event(R.string.successfully_added_task_message)
+                    Event(R.string.successfully_added_task_message)
             )
             DELETE_RESULT_OK -> _snackbarText.setValue(
-                Event(R.string.successfully_deleted_task_message)
+                    Event(R.string.successfully_deleted_task_message)
             )
         }
 
@@ -201,13 +222,37 @@ class TasksViewModel(
         EspressoIdlingResource.increment() // Set app as busy.
 
         viewModelScope.launch {
-            val tasksResult = tasksRepository.getTasks(forceUpdate)
+            //val tasksResult = tasksRepository.getTasks(forceUpdate)
+            val tasksResult = tasksRepository.getTasks()
 
             if (tasksResult is Success) {
                 val tasks = tasksResult.data
-
                 val tasksToShow = ArrayList<Task>()
+                var sortedList = tasks
+
                 // We filter the tasks based on the requestType
+                when (_currentFiltering) {
+                    TasksFilterType.SORT -> {
+                        when (_currentSorting) {
+                            TasksFilterType.SORT_BY.DUE_DATE -> {
+                                _currentSorting = TasksFilterType.SORT_BY.NAME
+                                sortedList = sortByDate(tasks)
+                            }
+                            TasksFilterType.SORT_BY.NAME -> {
+                                _currentSorting = TasksFilterType.SORT_BY.ID
+                                sortedList = sortByName(tasks)
+                            }
+                            TasksFilterType.SORT_BY.ID -> {
+                                _currentSorting = TasksFilterType.SORT_BY.DUE_DATE
+                                sortedList = sortByID(tasks)
+                            }
+                        }
+                        for (task in sortedList) {
+                            tasksToShow.add(task)
+                        }
+                    }
+
+                }
                 for (task in tasks) {
                     when (_currentFiltering) {
                         TasksFilterType.ALL_TASKS -> tasksToShow.add(task)
@@ -233,5 +278,20 @@ class TasksViewModel(
             EspressoIdlingResource.decrement() // Set app as idle.
             _dataLoading.value = false
         }
+    }
+
+    private fun sortByDate(tasks: List<Task>): List<Task> {
+        val sortedList = tasks.sortedBy { it.dueDate }
+        return sortedList
+    }
+
+    private fun sortByName(tasks: List<Task>): List<Task> {
+        val sortedList = tasks.sortedBy { it.title }
+        return sortedList
+    }
+
+    private fun sortByID(tasks: List<Task>): List<Task> {
+        val sortedList = tasks.sortedBy { it.id }
+        return sortedList
     }
 }
