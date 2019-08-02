@@ -38,4 +38,13 @@ enum class TasksFilterType {
      * Filters only the favored tasks.
      */
     FAVORITE_TASKS,
+
+    SORT;
+
+    /**
+     * sorts the tasks (id, name, expiry).
+     */
+    enum class SORT_BY{
+        DUE_DATE, NAME, ID
+    }
 }

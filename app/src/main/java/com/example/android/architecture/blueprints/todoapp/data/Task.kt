@@ -50,4 +50,39 @@ data class Task @JvmOverloads constructor(
     val isEmpty
         get() = title.isEmpty() || description.isEmpty()
 
+    // Declare Compators
+    //var SORT_BY_ID: Comparator<Task> = Comparator<Task> { item1, item2 -> (item1.id.toInt() - item2.id.toInt()) }
+
+//    var SORT_BY_NAME: Comparator<Task> = Comparator<Task> { item1, item2 ->
+//        val i1 = item1.title.toLowerCase()
+//        val i2 = item2.title.toLowerCase()
+//        i1.compareTo(i2)
+//    }
+
+/*    var SORT_BY_DONE: Comparator<Task> = Comparator<Task> { item1, item2 ->
+        val b1 = item1.isCompleted
+        val b2 = item2.isCompleted
+
+        if (b1 == !b2) {
+            return@Comparator 1
+        }
+        if (!b1 == b2) {
+            -1
+        } else 0
+    }*/
+
+/*    var SORT_BY_PRIORITY: Comparator<Task> = Comparator<Task> { item1, item2 ->
+        val b1 = item1.isFavorite
+        val b2 = item2.isFavorite
+
+        if (b1 == !b2) {
+            return@Comparator 1
+        }
+        if (!b1 == b2) {
+            -1
+        } else 0
+    }*/
+
+    //var SORT_BY_DATE: Comparator<Task> = Comparator<Task> { item1, item2 -> (item1.dueDate.toInt() - item2.dueDate.toInt()) }
+
 }
