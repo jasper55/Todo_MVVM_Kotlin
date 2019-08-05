@@ -46,6 +46,9 @@ class TaskDetailViewModel(
     var _dueDate = MutableLiveData<String>()
     var dueDate: LiveData<String> = _dueDate
 
+    var _time = MutableLiveData<String>()
+    var time: LiveData<String> = _time
+
     private val _isDataAvailable = MutableLiveData<Boolean>()
     val isDataAvailable: LiveData<Boolean> = _isDataAvailable
 
@@ -120,6 +123,14 @@ class TaskDetailViewModel(
         }
     }
 
+    fun saveTime(timeLong: Long, time: String) {
+        _time.value = time
+        viewModelScope.launch {
+            val task = _task.value ?: return@launch
+            tasksRepository.setTime(task, timeLong)
+        }
+    }
+
     fun start(taskId: String?) {
         _dataLoading.value = true
 
@@ -146,6 +157,7 @@ class TaskDetailViewModel(
         this._task.value = task
         _isDataAvailable.value = task != null
         _dueDate.value = DateUtil.parseFromLong(_task.value?.dueDate,getApplication())
+        _time.value = DateUtil.parseTimeFromLong(_task.value?.time,getApplication())
     }
 
     private fun onTaskLoaded(task: Task) {
@@ -164,5 +176,4 @@ class TaskDetailViewModel(
     private fun showSnackbarMessage(@StringRes message: Int) {
         _snackbarText.value = Event(message)
     }
-
 }

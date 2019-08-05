@@ -118,7 +118,7 @@ class TasksViewModel(
                         R.drawable.ic_verified_user_96dp, false)
             }
             TasksFilterType.FAVORITE_TASKS -> {
-                setFilter(R.string.label_favorite, R.string.favorite_tasks,
+                setFilter(R.string.label_favorite, R.string.no_favorite_tasks,
                         R.drawable.ic_verified_user_96dp, true)
             }
             TasksFilterType.SORT -> {
