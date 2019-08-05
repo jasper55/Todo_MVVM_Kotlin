@@ -69,9 +69,11 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:gravity="right"
+            android:layout_gravity="center_vertical"
             android:layout_weight="1"
             android:layout_marginLeft="@dimen/activity_horizontal_margin"
-            android:textAppearance="@style/TextAppearance.AppCompat.Light.Widget.PopupMenu.Small"
+            android:textAppearance="@style/TextAppearance.AppCompat.Small"
+            android:textColor="@{task.isExpired ? @color/colorRed : @color/colorGrey}"
             android:text="@{task.getTimeRemaining()}" />
     </LinearLayout>
 </layout>

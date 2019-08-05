@@ -30,6 +30,21 @@ object DateUtil {
     }
 
     fun getTimeRemainig(dueDate: Long): String {
+        val days = getDaysRemaining(dueDate)
+        if (days >= 0) {
+            return "$days days remaining"
+        } else {
+            return "${-days} days exceeded"
+        }
+    }
+
+    fun isExpired(dueDate: Long): Boolean {
+        val days = getDaysRemaining(dueDate)
+        if (days >= 0) { return false }
+        return true
+    }
+
+    private fun getDaysRemaining(dueDate: Long): Long {
         val c: Calendar = Calendar.getInstance()
         var dYear: Int = c.get(Calendar.YEAR)
         var dMonth: Int = c.get(Calendar.MONTH)
@@ -39,6 +54,6 @@ object DateUtil {
         val diff = dueDate - parseToLong(date)
 
         val days = TimeUnit.DAYS.convert(diff, TimeUnit.MILLISECONDS)
-        return "$days days remaining"
+        return days
     }
 }

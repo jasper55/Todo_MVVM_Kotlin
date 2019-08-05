@@ -20,6 +20,7 @@
     <color name="colorAccent">#42A5F5</color>
     <color name="colorTextPrimary">#000000</color>
     <color name="colorGrey">#757575</color>
+    <color name="colorRed">#F06292</color>
 
     <drawable name="completedTaskBackground">#EFFAFF</drawable>
 

@@ -55,6 +55,9 @@ data class Task @JvmOverloads constructor(
     val timeRemaining: String
             get() = DateUtil.getTimeRemainig(dueDate)
 
+    val isExpired: Boolean
+        get() = DateUtil.isExpired(dueDate)
+
     // Declare Compators
     //var SORT_BY_ID: Comparator<Task> = Comparator<Task> { item1, item2 -> (item1.id.toInt() - item2.id.toInt()) }
 
