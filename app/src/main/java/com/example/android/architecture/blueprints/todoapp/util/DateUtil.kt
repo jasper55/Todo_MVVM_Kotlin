@@ -38,7 +38,7 @@ object DateUtil {
         val date = parseToString(dYear, dMonth, dDay)
         val diff = dueDate - parseToLong(date)
 
-        val days = TimeUnit.DAYS.convert(-diff, TimeUnit.MILLISECONDS)
+        val days = TimeUnit.DAYS.convert(diff, TimeUnit.MILLISECONDS)
         return "$days days remaining"
     }
 }
