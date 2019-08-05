@@ -19,7 +19,9 @@ import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.example.android.architecture.blueprints.todoapp.R
+import com.example.android.architecture.blueprints.todoapp.util.DateUtil
 import java.util.*
+import java.util.concurrent.TimeUnit
 
 /**
  * Immutable model class for a Task. In order to compile with Room, we can't use @JvmOverloads to
@@ -49,6 +51,9 @@ data class Task @JvmOverloads constructor(
 
     val isEmpty
         get() = title.isEmpty() || description.isEmpty()
+
+    val timeRemaining: String
+            get() = DateUtil.getTimeRemainig(dueDate)
 
     // Declare Compators
     //var SORT_BY_ID: Comparator<Task> = Comparator<Task> { item1, item2 -> (item1.id.toInt() - item2.id.toInt()) }
