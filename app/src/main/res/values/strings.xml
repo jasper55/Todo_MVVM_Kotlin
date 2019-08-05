@@ -62,13 +62,15 @@
     <string name="no_tasks_all">You have no tasks!</string>
     <string name="no_tasks_active">You have no active tasks!</string>
     <string name="no_tasks_completed">You have no completed tasks!</string>
-    <string name="favorite_tasks">Your most important tasks!</string>
+    <string name="no_favorite_tasks">You have no important tasks!</string>
     <string name="sorted_tasks">Tasks sorted by date</string>
     <string name="refresh">Refresh</string>
     <string name="successfully_deleted_task_message">Task was deleted</string>
     <string name="successfully_added_task_message">Task added</string>
     <string name="no_data_description"/>
     <string name="no_due_date_set">set a date here</string>
+    <string name="no_time_set">set time here</string>
     <string name="due_date_hint">set date here</string>
+    <string name="time_hint">set time here</string>
 
 </resources>

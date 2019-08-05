@@ -1,7 +1,9 @@
 package com.example.android.architecture.blueprints.todoapp.util
 
 import android.content.Context
+import android.text.format.Time
 import com.example.android.architecture.blueprints.todoapp.R
+import com.google.common.util.concurrent.SimpleTimeLimiter
 import java.text.SimpleDateFormat
 import java.util.*
 import java.util.concurrent.TimeUnit
@@ -9,12 +11,19 @@ import java.util.concurrent.TimeUnit
 object DateUtil {
 
     val dateFormatter = SimpleDateFormat("dd.MM.yyyy")
+    val timeFormatter = SimpleDateFormat("HH:mm")
 
     fun parseToLong(myDate: String): Long {
 
         var date = dateFormatter.parse(myDate)
         return date.getTime()
     }
+
+    fun parseTimeToLong(time: String): Long {
+        var date = timeFormatter.parse(time)
+        return date.getTime()
+    }
+
 
     fun parseToString(year: Int, month: Int, day: Int): String {
         return "$day.${month + 1}.$year"
@@ -27,6 +36,15 @@ object DateUtil {
         }
         val d = Date(dueDate!!)
         return dateFormatter.format(d)
+    }
+
+    fun parseTimeFromLong(time: Long?, context: Context): String? {
+        val time = time!!
+        if (time == 0L) {
+            return context.getResources().getString(R.string.no_time_set)
+        }
+        val t = Date(time!!)
+        return timeFormatter.format(t)
     }
 
     fun getTimeRemainig(dueDate: Long): String {

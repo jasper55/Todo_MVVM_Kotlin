@@ -96,6 +96,9 @@ class TasksLocalDataSource internal constructor(
         tasksDao.updateDate(task.id, date)
     }
 
+    override suspend fun setTime(task: Task, time: Long) = withContext(ioDispatcher) {
+        tasksDao.updateTime(task.id, time)
+    }
 
     override suspend fun deleteAllTasks() = withContext(ioDispatcher) {
         tasksDao.deleteTasks()

@@ -91,6 +91,13 @@ class TaskDetailFragment : Fragment() {
 
                     TaskDetailUserActionsListener {
 
+                override fun onTimeChanged(v: View) {
+                    TimePickerFragment.showDialog(context)
+                    val time = TimePickerFragment.getTime()
+                    val long = DateUtil.parseTimeToLong(time)
+                    viewModel?.saveTime(long, time)
+                 }
+
                 override fun onDueDateChanged(v: View) {
                     //val picker = DatePickerFragment.createDialog(context)
                     //val date = DateUtil.parseToString(picker.year,picker.month,picker.dayOfMonth)

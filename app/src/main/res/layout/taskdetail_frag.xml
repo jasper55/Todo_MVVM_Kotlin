@@ -122,15 +122,27 @@
                     android:textAppearance="?android:attr/textAppearanceMedium" />
 
                     <TextView
-                        android:id="@+id/task_detail_due_date"
+                        android:id="@+id/task_due_date"
                         android:layout_toRightOf="@id/task_detail_complete"
                         android:layout_below="@id/task_detail_description"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:paddingTop="4dp"
+                        android:paddingTop="10dp"
                         android:hint="@string/due_date_hint"
                         android:text="@{viewmodel.dueDate}"
                         android:onClick="@{(view) -> listener.onDueDateChanged(view)}"
+                        android:textAppearance="?android:attr/textAppearanceMedium" />
+
+                    <TextView
+                        android:id="@+id/task_time"
+                        android:layout_toRightOf="@id/task_detail_complete"
+                        android:layout_below="@id/task_due_date"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:paddingTop="2dp"
+                        android:hint="@string/time_hint"
+                        android:text="@{viewmodel.time}"
+                        android:onClick="@{(view) -> listener.onTimeChanged(view)}"
                         android:textAppearance="?android:attr/textAppearanceMedium" />
 
 
