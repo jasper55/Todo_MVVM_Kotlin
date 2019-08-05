@@ -46,6 +46,15 @@
             android:onClick="@{(view) -> listener.onCompleteChanged(task, view)}"
             android:checked="@{task.completed}"/>
 
+        <CheckBox
+            android:id="@+id/favorite"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:onClick="@{(view) -> listener.onFavoriteChanged(task, view)}"
+            android:checked="@{task.favorite}"
+            android:button="@android:drawable/btn_star"/>
+
         <TextView
             android:id="@+id/title"
             android:layout_width="wrap_content"
@@ -55,23 +64,16 @@
             android:textAppearance="@style/TextAppearance.AppCompat.Title"
             android:text="@{task.titleForList}" />
 
-
-<!--        <TextView
-            android:id="@+id/dueDate"
+        <TextView
+            android:id="@+id/days_remaining"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:gravity="right"
             android:layout_gravity="center_vertical"
+            android:layout_weight="1"
             android:layout_marginLeft="@dimen/activity_horizontal_margin"
-            android:textAppearance="@style/TextAppearance.AppCompat.Title"
-            android:text="@{task.dueDate}" />-->
-
-        <CheckBox
-            android:id="@+id/favorite"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:onClick="@{(view) -> listener.onFavoriteChanged(task, view)}"
-            android:checked="@{task.favorite}"
-            android:button="@android:drawable/btn_star"/>
+            android:textAppearance="@style/TextAppearance.AppCompat.Small"
+            android:textColor="@{task.isExpired ? @color/colorRed : @color/colorGrey}"
+            android:text="@{task.getTimeRemaining()}" />
     </LinearLayout>
 </layout>
