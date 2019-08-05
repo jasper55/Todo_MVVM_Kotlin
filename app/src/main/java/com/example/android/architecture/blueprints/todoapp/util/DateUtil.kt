@@ -4,18 +4,20 @@ import android.content.Context
 import com.example.android.architecture.blueprints.todoapp.R
 import java.text.SimpleDateFormat
 import java.util.*
+import java.util.concurrent.TimeUnit
 
 object DateUtil {
 
-    //var sdf = SimpleDateFormat("yyyy/MM/dd HH:mm:ss")
+    val dateFormatter = SimpleDateFormat("dd.MM.yyyy")
+
     fun parseToLong(myDate: String): Long {
-        var sdf = SimpleDateFormat("dd.MM.yyyy")
-        var date = sdf.parse(myDate)
+
+        var date = dateFormatter.parse(myDate)
         return date.getTime()
     }
 
-    fun parseToString(year: Int, month: Int, day: Int): String{
-        return "$day.$month.$year"
+    fun parseToString(year: Int, month: Int, day: Int): String {
+        return "$day.${month + 1}.$year"
     }
 
     fun parseFromLong(dueDate: Long?, context: Context): String? {
@@ -24,8 +26,34 @@ object DateUtil {
             return context.getResources().getString(R.string.no_due_date_set)
         }
         val d = Date(dueDate!!)
-        var sdf = SimpleDateFormat("dd.MM.yyyy")
-        return  sdf.format(d)
+        return dateFormatter.format(d)
     }
 
+    fun getTimeRemainig(dueDate: Long): String {
+        val days = getDaysRemaining(dueDate)
+        if (days >= 0) {
+            return "$days days remaining"
+        } else {
+            return "${-days} days exceeded"
+        }
+    }
+
+    fun isExpired(dueDate: Long): Boolean {
+        val days = getDaysRemaining(dueDate)
+        if (days >= 0) { return false }
+        return true
+    }
+
+    private fun getDaysRemaining(dueDate: Long): Long {
+        val c: Calendar = Calendar.getInstance()
+        var dYear: Int = c.get(Calendar.YEAR)
+        var dMonth: Int = c.get(Calendar.MONTH)
+        var dDay: Int = c.get(Calendar.DAY_OF_MONTH)
+
+        val date = parseToString(dYear, dMonth, dDay)
+        val diff = dueDate - parseToLong(date)
+
+        val days = TimeUnit.DAYS.convert(diff, TimeUnit.MILLISECONDS)
+        return days
+    }
 }
