@@ -28,4 +28,5 @@ interface TaskDetailUserActionsListener {
     fun onFavoriteChanged(v: View)
     fun onDueDateChanged(v: View)
     fun onTimeChanged(v: View)
+    fun onAddContactClicked(v: View)
 }

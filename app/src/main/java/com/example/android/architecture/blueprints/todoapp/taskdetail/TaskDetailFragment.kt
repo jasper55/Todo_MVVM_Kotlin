@@ -15,6 +15,10 @@
  */
 package com.example.android.architecture.blueprints.todoapp.taskdetail
 
+import android.app.Activity
+import android.app.Application
+import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.Menu
@@ -28,6 +32,7 @@ import androidx.navigation.fragment.findNavController
 import com.example.android.architecture.blueprints.todoapp.EventObserver
 import com.example.android.architecture.blueprints.todoapp.R
 import com.example.android.architecture.blueprints.todoapp.databinding.TaskdetailFragBinding
+import com.example.android.architecture.blueprints.todoapp.tasks.TasksActivity
 import com.example.android.architecture.blueprints.todoapp.util.*
 import com.google.android.material.snackbar.Snackbar
 
@@ -91,6 +96,10 @@ class TaskDetailFragment : Fragment() {
 
                     TaskDetailUserActionsListener {
 
+                override fun onAddContactClicked(v: View) {
+                    ContactService.pickContact(this@TaskDetailFragment.context)
+                }
+
                 override fun onTimeChanged(v: View) {
                     TimePickerFragment.showDialog(context)
                     val time = TimePickerFragment.getTime()
@@ -121,6 +130,16 @@ class TaskDetailFragment : Fragment() {
         viewDataBinding.setLifecycleOwner(this.viewLifecycleOwner)
         setHasOptionsMenu(true)
         return view
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+
+        if (resultCode == Activity.RESULT_OK ){
+        when (requestCode) {
+                ContactService.CALL_PICK_CONTACT -> viewModel?._contactName.value = data?.let { ContactService.getName(it,viewModel.getApplication()) }
+            }
+        }
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {

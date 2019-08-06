@@ -121,6 +121,7 @@
                     android:text="@{viewmodel.task.description}"
                     android:textAppearance="?android:attr/textAppearanceMedium" />
 
+
                     <TextView
                         android:id="@+id/task_due_date_header"
                         android:layout_toRightOf="@id/task_detail_complete"
@@ -183,34 +184,60 @@
                         android:layout_height="1dp"
                         android:background="@color/colorAccent"/>
 
-                    <TextView
-                        android:id="@+id/task_contacs_header"
-                        android:layout_toRightOf="@id/task_detail_complete"
+                    <LinearLayout
+                        android:id="@+id/task_contacts_header_container"
                         android:layout_below="@id/separator_time"
+                        android:layout_toRightOf="@id/task_detail_complete"
+                        android:weightSum="1"
+                        android:orientation="horizontal"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+                    <TextView
+                        android:id="@+id/task_contacts_header"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_weight="0.8"
                         android:text="Contacs"
                         android:paddingTop="20dp"
                         android:textColor="@color/colorPrimaryDark"
                         android:textAppearance="?android:attr/textAppearanceMedium" />
 
+
+                    <Button
+                        android:id="@+id/add_contact_button"
+                        android:gravity="right"
+                        android:layout_gravity="bottom"
+                        android:paddingTop="20dp"
+                        android:layout_weight="0.2"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:onClick="@{(view) -> listener.onAddContactClicked(view)}"
+                        android:background="@drawable/ic_add"
+                        android:backgroundTint="@color/colorGrey"/>
+
+                    </LinearLayout>
+
                     <TextView
-                        android:id="@+id/task_contacs"
+                        android:id="@+id/task_contact_name"
                         android:layout_toRightOf="@id/task_detail_complete"
-                        android:layout_below="@id/task_contacs_header"
+                        android:layout_below="@id/task_contacts_header_container"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:paddingTop="2dp"
-                        android:hint="@string/time_hint"
-                        android:textAppearance="?android:attr/textAppearanceMedium" />
+                        android:text="@{viewmodel.contactName}"
+                        android:hint="@string/no_contact_hint"
+                        android:textAppearance="?android:attr/textAppearanceSmallInverse" />
+
 
                     <View
                         android:id="@+id/separator_contacs"
                         android:layout_width="match_parent"
                         android:layout_toRightOf="@id/task_detail_complete"
-                        android:layout_below="@id/task_contacs"
+                        android:layout_below="@id/task_contact_name"
                         android:layout_height="1dp"
                         android:background="@color/colorPrimaryDark"/>
+
 
 
 

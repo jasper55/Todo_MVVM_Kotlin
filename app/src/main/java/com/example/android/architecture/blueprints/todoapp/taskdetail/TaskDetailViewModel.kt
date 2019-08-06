@@ -49,6 +49,9 @@ class TaskDetailViewModel(
     var _time = MutableLiveData<String>()
     var time: LiveData<String> = _time
 
+    var _contactName = MutableLiveData<String>()
+    var contactName: LiveData<String> = _contactName
+
     private val _isDataAvailable = MutableLiveData<Boolean>()
     val isDataAvailable: LiveData<Boolean> = _isDataAvailable
 
