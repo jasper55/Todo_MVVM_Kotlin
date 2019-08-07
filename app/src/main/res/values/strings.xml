@@ -72,5 +72,6 @@
     <string name="no_time_set">set time here</string>
     <string name="due_date_hint">set date here</string>
     <string name="time_hint">set time here</string>
+    <string name="no_contact_hint">no contacts added yet</string>
 
 </resources>

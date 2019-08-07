@@ -35,11 +35,10 @@ import kotlinx.coroutines.launch
  * Fragment's actions listener.
  */
 class TaskDetailViewModel(
-    private val tasksRepository: TasksLocalDataSource,
-    application: Application
+        private val tasksRepository: TasksLocalDataSource,
+        application: Application
 ) : AndroidViewModel(application) {
 
-    //private val context = getApplication<Application>().applicationContext
     private val _task = MutableLiveData<Task>()
     val task: LiveData<Task> = _task
 
@@ -48,6 +47,9 @@ class TaskDetailViewModel(
 
     var _time = MutableLiveData<String>()
     var time: LiveData<String> = _time
+
+    var _contactName = MutableLiveData<String>()
+    var contactName: LiveData<String> = _contactName
 
     private val _isDataAvailable = MutableLiveData<Boolean>()
     val isDataAvailable: LiveData<Boolean> = _isDataAvailable
@@ -72,11 +74,6 @@ class TaskDetailViewModel(
     val favorite: LiveData<Boolean> = Transformations.map(_task) { input: Task? ->
         input?.isFavorite ?: false
     }
-
-    // TODO funktioniert so noch nicht
-    //var dueDate: LiveData<String> = Transformations.map(_task) { input: Task? ->
-      //  DateUtil.parseFromLong(input?.dueDate ?: 0L,application)
-    //}
 
     val taskId: String?
         get() = _task.value?.id
@@ -156,8 +153,12 @@ class TaskDetailViewModel(
     private fun setTask(task: Task?) {
         this._task.value = task
         _isDataAvailable.value = task != null
-        _dueDate.value = DateUtil.parseFromLong(_task.value?.dueDate,getApplication())
-        _time.value = DateUtil.parseTimeFromLong(_task.value?.time,getApplication())
+        _dueDate.value = DateUtil.parseFromLong(_task.value?.dueDate, getApplication())
+        _time.value = DateUtil.parseTimeFromLong(_task.value?.time, getApplication())
+
+        if (_contactName.value != null) {
+            contactName = _contactName
+        }
     }
 
     private fun onTaskLoaded(task: Task) {
