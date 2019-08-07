@@ -23,6 +23,17 @@ class IntentCallService {
             return name
         }
 
+        fun getContactID(data: Intent, context: Context?): String {
+            var name = ""
+            val contactData = data.data
+            val c = context!!.contentResolver.query(contactData, null, null, null, null)
+            if (c.moveToFirst()) {
+                name = c.getString(c.getColumnIndex(ContactsContract.Contacts.NAME_RAW_CONTACT_ID))
+                // TODO Fetch other Contact details as you want to use
+            }
+            return name
+        }
+
         fun startPickContactIntent(activity: Activity) {
             //val pickContactIntent = Intent(Intent.ACTION_PICK, ContactsContract.Contacts.CONTENT_URI)
             //startActivityForResult(activity,pickContactIntent, CALL_PICK_CONTACT,null)
