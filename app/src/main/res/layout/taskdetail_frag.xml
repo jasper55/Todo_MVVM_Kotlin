@@ -94,6 +94,7 @@
                         <RelativeLayout
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
+                            android:padding="5dp"
                             android:orientation="vertical">
                         <CheckBox
                             android:id="@+id/task_detail_complete2"
@@ -155,7 +156,6 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_below="@id/task_due_date_header"
-                        android:layout_toRightOf="@id/task_detail_complete"
                         android:hint="@string/due_date_hint"
                         android:onClick="@{(view) -> listener.onDueDateChanged(view)}"
                         android:paddingTop="2dp"
