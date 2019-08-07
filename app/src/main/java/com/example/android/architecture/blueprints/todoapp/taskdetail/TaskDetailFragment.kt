@@ -15,11 +15,13 @@
  */
 package com.example.android.architecture.blueprints.todoapp.taskdetail
 
+import android.Manifest
 import android.app.Activity
-import android.app.Application
-import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
+import android.net.Uri
 import android.os.Bundle
+import android.provider.ContactsContract
 import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuInflater
@@ -28,13 +30,14 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.CheckBox
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.LiveData
 import androidx.navigation.fragment.findNavController
 import com.example.android.architecture.blueprints.todoapp.EventObserver
 import com.example.android.architecture.blueprints.todoapp.R
 import com.example.android.architecture.blueprints.todoapp.databinding.TaskdetailFragBinding
-import com.example.android.architecture.blueprints.todoapp.tasks.TasksActivity
 import com.example.android.architecture.blueprints.todoapp.util.*
 import com.google.android.material.snackbar.Snackbar
+import timber.log.Timber
 
 /**
  * Main UI for the task detail screen.
@@ -43,6 +46,8 @@ class TaskDetailFragment : Fragment() {
     private lateinit var viewDataBinding: TaskdetailFragBinding
 
     private lateinit var viewModel: TaskDetailViewModel
+
+    private var contactsPermissionGranted = false
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
@@ -57,14 +62,14 @@ class TaskDetailFragment : Fragment() {
     private fun setupNavigation() {
         viewModel.deleteTaskCommand.observe(this, EventObserver {
             val action = TaskDetailFragmentDirections
-                .actionTaskDetailFragmentToTasksFragment(DELETE_RESULT_OK)
+                    .actionTaskDetailFragmentToTasksFragment(DELETE_RESULT_OK)
             findNavController().navigate(action)
         })
         viewModel.editTaskCommand.observe(this, EventObserver {
             val taskId = TaskDetailFragmentArgs.fromBundle(arguments!!).TASKID
             val action = TaskDetailFragmentDirections
-                .actionTaskDetailFragmentToAddEditTaskFragment(taskId,
-                    resources.getString(R.string.edit_task))
+                    .actionTaskDetailFragmentToAddEditTaskFragment(taskId,
+                            resources.getString(R.string.edit_task))
             findNavController().navigate(action)
         })
     }
@@ -97,7 +102,17 @@ class TaskDetailFragment : Fragment() {
                     TaskDetailUserActionsListener {
 
                 override fun onAddContactClicked(v: View) {
-                    ContactService.pickContact(this@TaskDetailFragment.context)
+                    if (contactsPermissionGranted) {
+                        //IntentCallService.startPickContactIntent(this@TaskDetailFragment.activity as Activity)
+
+                            Intent(Intent.ACTION_PICK, Uri.parse("content://contacts")).also { pickContactIntent ->
+                                pickContactIntent.type = ContactsContract.CommonDataKinds.Phone.CONTENT_TYPE // Show user only contacts w/ phone numbers
+                                startActivityForResult(pickContactIntent, IntentCallService.CALL_PICK_CONTACT)
+                            }
+
+                        } else requestPermissions(
+                            arrayOf(Manifest.permission.READ_CONTACTS),
+                            PermissionChecker.REQUEST_CONTACTS_CODE)
                 }
 
                 override fun onTimeChanged(v: View) {
@@ -105,7 +120,7 @@ class TaskDetailFragment : Fragment() {
                     val time = TimePickerFragment.getTime()
                     val long = DateUtil.parseTimeToLong(time)
                     viewModel?.saveTime(long, time)
-                 }
+                }
 
                 override fun onDueDateChanged(v: View) {
                     //val picker = DatePickerFragment.createDialog(context)
@@ -133,11 +148,33 @@ class TaskDetailFragment : Fragment() {
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-
-        if (resultCode == Activity.RESULT_OK ){
         when (requestCode) {
-                ContactService.CALL_PICK_CONTACT -> viewModel?._contactName.value = data?.let { ContactService.getName(it,viewModel.getApplication()) }
+            IntentCallService.CALL_PICK_CONTACT -> {
+                viewDataBinding.viewmodel?.let {
+                    view?.setupSnackbar(this, it.snackbarMessage, Snackbar.LENGTH_SHORT)
+                }
+                viewModel?._contactName.value = data?.let {
+                    IntentCallService.getContactName(it, this@TaskDetailFragment.context)
+                }!!
+            }
+        }
+    }
+
+    override fun onRequestPermissionsResult(
+            requestCode: Int,
+            permissions: Array<String>,
+            grantResults: IntArray
+    ) {
+        when (requestCode) {
+            PermissionChecker.REQUEST_CONTACTS_CODE -> {
+                if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    Timber.i("READ_CONTACTS permission granted")
+                    contactsPermissionGranted = true
+                    IntentCallService.startPickContactIntent(this@TaskDetailFragment.activity as Activity)
+                } else {
+                    //else do nothing - will be call back on next launch
+                    Timber.w("READ_CONTACTS permission refused")
+                }
             }
         }
     }

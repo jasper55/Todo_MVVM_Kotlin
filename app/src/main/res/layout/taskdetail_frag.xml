@@ -227,7 +227,7 @@
                         android:paddingTop="2dp"
                         android:text="@{viewmodel.contactName}"
                         android:hint="@string/no_contact_hint"
-                        android:textAppearance="?android:attr/textAppearanceSmallInverse" />
+                        android:textAppearance="?android:attr/textAppearanceSmall" />
 
 
                     <View
