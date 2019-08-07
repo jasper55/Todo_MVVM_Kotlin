@@ -16,7 +16,6 @@
 package com.example.android.architecture.blueprints.todoapp.taskdetail
 
 import android.Manifest
-import android.app.Activity
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
@@ -30,7 +29,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.CheckBox
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.LiveData
 import androidx.navigation.fragment.findNavController
 import com.example.android.architecture.blueprints.todoapp.EventObserver
 import com.example.android.architecture.blueprints.todoapp.R
@@ -103,13 +101,7 @@ class TaskDetailFragment : Fragment() {
 
                 override fun onAddContactClicked(v: View) {
                     if (contactsPermissionGranted) {
-                        //IntentCallService.startPickContactIntent(this@TaskDetailFragment.activity as Activity)
-
-                            Intent(Intent.ACTION_PICK, Uri.parse("content://contacts")).also { pickContactIntent ->
-                                pickContactIntent.type = ContactsContract.CommonDataKinds.Phone.CONTENT_TYPE // Show user only contacts w/ phone numbers
-                                startActivityForResult(pickContactIntent, IntentCallService.CALL_PICK_CONTACT)
-                            }
-
+                        startPickContactIntent()
                         } else requestPermissions(
                             arrayOf(Manifest.permission.READ_CONTACTS),
                             PermissionChecker.REQUEST_CONTACTS_CODE)
@@ -123,12 +115,9 @@ class TaskDetailFragment : Fragment() {
                 }
 
                 override fun onDueDateChanged(v: View) {
-                    //val picker = DatePickerFragment.createDialog(context)
-                    //val date = DateUtil.parseToString(picker.year,picker.month,picker.dayOfMonth)
                     DatePickerFragment.showDialog(context)
                     val date = DatePickerFragment.getDate()
                     val long = DateUtil.parseToLong(date)
-
                     viewModel?.saveDueDate(long, date)
                 }
 
@@ -154,7 +143,7 @@ class TaskDetailFragment : Fragment() {
                     view?.setupSnackbar(this, it.snackbarMessage, Snackbar.LENGTH_SHORT)
                 }
                 viewModel?._contactName.value = data?.let {
-                    IntentCallService.getContactName(it, this@TaskDetailFragment.context)
+                    IntentCallService.getContactName(it, context)
                 }!!
             }
         }
@@ -170,7 +159,7 @@ class TaskDetailFragment : Fragment() {
                 if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     Timber.i("READ_CONTACTS permission granted")
                     contactsPermissionGranted = true
-                    IntentCallService.startPickContactIntent(this@TaskDetailFragment.activity as Activity)
+                    startPickContactIntent()
                 } else {
                     //else do nothing - will be call back on next launch
                     Timber.w("READ_CONTACTS permission refused")
@@ -192,4 +181,12 @@ class TaskDetailFragment : Fragment() {
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         inflater.inflate(R.menu.taskdetail_fragment_menu, menu)
     }
+
+    fun startPickContactIntent(){
+        Intent(Intent.ACTION_PICK, Uri.parse("content://contacts")).also { pickContactIntent ->
+            pickContactIntent.type = ContactsContract.CommonDataKinds.Phone.CONTENT_TYPE // Show user only contacts w/ phone numbers
+            startActivityForResult(pickContactIntent, IntentCallService.CALL_PICK_CONTACT)
+        }
+    }
+
 }
