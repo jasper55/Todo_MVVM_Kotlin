@@ -18,11 +18,11 @@ class ContactBookService {
     companion object  {
 
         fun getContactName(data: Intent, context: Context?): String {
-            return getData(data,context,ContactsContract.Contacts.DISPLAY_NAME)
+            return getData(data,context,CommonDataKinds.Phone.DISPLAY_NAME)
         }
 
         fun getContactID(data: Intent, context: Context?): String {
-            return getData(data,context,ContactsContract.Contacts.NAME_RAW_CONTACT_ID)
+            return getData(data,context,CommonDataKinds.Phone.CONTACT_ID)
         }
         
         fun getNameFromId(id: String): String{
@@ -42,18 +42,18 @@ class ContactBookService {
         }
 
         fun getContactNameFromDB(contactId: String, context: Context?): String? {
-            val names = ArrayList<String>()
+            var name: String? = null
             val cursor = context!!.contentResolver.query(
                     CommonDataKinds.Phone.CONTENT_URI, null,
                     CommonDataKinds.Phone.CONTACT_ID + " = ?",
                     arrayOf<String>(contactId), null)
 
             while (cursor.moveToNext()) {
-                names.add(cursor.getString(cursor.getColumnIndex(CommonDataKinds.Phone.DISPLAY_NAME)))
+               name = cursor.getString(cursor.getColumnIndex(CommonDataKinds.Phone.DISPLAY_NAME))
             }
 
             cursor.close()
-            return names.toString()
+            return name
         }
 
         fun addContactToList(){
