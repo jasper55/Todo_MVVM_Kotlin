@@ -56,7 +56,7 @@ interface TasksDataSource {
 
     suspend fun setDueDate(task: Task, date: Long)
 
-    suspend fun setTime(task: Task, timeLong: Long) {
+    suspend fun setTime(task: Task, timeLong: Long)
 
-    }
+    suspend fun saveId(task: Task, id: String)
 }

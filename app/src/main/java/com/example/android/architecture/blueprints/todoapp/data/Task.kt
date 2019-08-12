@@ -40,6 +40,7 @@ data class Task @JvmOverloads constructor(
         @ColumnInfo(name = "favorite") var isFavorite: Boolean = false,
         @ColumnInfo(name = "dueDate") var dueDate: Long = 0L,
         @ColumnInfo(name = "time") var time: Long = 0L,
+        @ColumnInfo(name = "contactId") var contactId: String = "",
         @PrimaryKey @ColumnInfo(name = "entryid") var id: String = UUID.randomUUID().toString()
 ) {
 

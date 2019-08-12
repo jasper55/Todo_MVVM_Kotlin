@@ -15,19 +15,22 @@
  */
 package com.example.android.architecture.blueprints.todoapp.taskdetail
 
+import android.Manifest
 import androidx.annotation.StringRes
 import androidx.lifecycle.*
 
 import android.app.Application
+import android.content.Context
 import com.example.android.architecture.blueprints.todoapp.Event
 import com.example.android.architecture.blueprints.todoapp.R
 import com.example.android.architecture.blueprints.todoapp.data.Result
 import com.example.android.architecture.blueprints.todoapp.data.Result.Success
 import com.example.android.architecture.blueprints.todoapp.data.Task
-import com.example.android.architecture.blueprints.todoapp.data.source.TasksRepository
 import com.example.android.architecture.blueprints.todoapp.data.source.local.TasksLocalDataSource
+import com.example.android.architecture.blueprints.todoapp.util.ContactBookService
 import com.example.android.architecture.blueprints.todoapp.util.DateUtil
 import com.example.android.architecture.blueprints.todoapp.util.EspressoIdlingResource
+import com.example.android.architecture.blueprints.todoapp.util.PermissionChecker
 import kotlinx.coroutines.launch
 
 /**
@@ -50,6 +53,9 @@ class TaskDetailViewModel(
 
     var _contactName = MutableLiveData<String>()
     var contactName: LiveData<String> = _contactName
+
+    var _contactPermissionGranted = MutableLiveData<Boolean>()
+    var contactPermissionGranted : LiveData<Boolean> = _contactPermissionGranted
 
     private val _isDataAvailable = MutableLiveData<Boolean>()
     val isDataAvailable: LiveData<Boolean> = _isDataAvailable
@@ -128,7 +134,14 @@ class TaskDetailViewModel(
         }
     }
 
-    fun start(taskId: String?) {
+    fun saveContactId(contactId: String) {
+        viewModelScope.launch {
+            val task = _task.value ?: return@launch
+            tasksRepository.saveId(task, contactId)
+        }
+    }
+
+    fun start(taskId: String?, context: Context) {
         _dataLoading.value = true
 
         // Espresso does not work well with coroutines yet. See
@@ -139,7 +152,7 @@ class TaskDetailViewModel(
             if (taskId != null) {
                 tasksRepository.getTask(taskId).let { result ->
                     if (result is Success) {
-                        onTaskLoaded(result.data)
+                        onTaskLoaded(result.data, context)
                     } else {
                         onDataNotAvailable(result)
                     }
@@ -150,19 +163,23 @@ class TaskDetailViewModel(
         }
     }
 
-    private fun setTask(task: Task?) {
+    private fun setTask(task: Task?, context: Context) {
         this._task.value = task
         _isDataAvailable.value = task != null
         _dueDate.value = DateUtil.parseFromLong(_task.value?.dueDate, getApplication())
         _time.value = DateUtil.parseTimeFromLong(_task.value?.time, getApplication())
+        _contactPermissionGranted.value = PermissionChecker.checkPermission(PermissionChecker.REQUEST_CONTACTS_CODE,context)
+        if (_contactPermissionGranted.value!!) {
+            _contactName.value = _task.value?.contactId?.let { ContactBookService.getContactNameFromDB(it, context) }
+        } else { showSnackbarMessage(R.string.no_contact_permission) }
 
         if (_contactName.value != null) {
             contactName = _contactName
         }
     }
 
-    private fun onTaskLoaded(task: Task) {
-        setTask(task)
+    private fun onTaskLoaded(task: Task, context: Context) {
+        setTask(task, context)
     }
 
     private fun onDataNotAvailable(result: Result<Task>) {
@@ -170,8 +187,12 @@ class TaskDetailViewModel(
         _isDataAvailable.value = false
     }
 
+    fun onRefresh(context: Context) {
+        taskId?.let { start(it, context) }
+    }
+
     fun onRefresh() {
-        taskId?.let { start(it) }
+        //taskId?.let { start(it, context) }
     }
 
     private fun showSnackbarMessage(@StringRes message: Int) {

@@ -100,6 +100,10 @@ class TasksLocalDataSource internal constructor(
         tasksDao.updateTime(task.id, time)
     }
 
+    override suspend fun saveId(task: Task, contactId: String) {
+        tasksDao.saveContactId(task.id, contactId)
+    }
+
     override suspend fun deleteAllTasks() = withContext(ioDispatcher) {
         tasksDao.deleteTasks()
     }
@@ -107,4 +111,6 @@ class TasksLocalDataSource internal constructor(
     override suspend fun deleteTask(taskId: String) = withContext<Unit>(ioDispatcher) {
         tasksDao.deleteTaskById(taskId)
     }
+
+
 }

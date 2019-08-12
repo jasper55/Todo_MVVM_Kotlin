@@ -16,6 +16,7 @@
 package com.example.android.architecture.blueprints.todoapp.taskdetail
 
 import android.Manifest
+import android.app.Activity.RESULT_OK
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
@@ -45,11 +46,10 @@ class TaskDetailFragment : Fragment() {
 
     private lateinit var viewModel: TaskDetailViewModel
 
-    private var contactsPermissionGranted = false
-
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         setupFab()
+        requestPermission(PermissionChecker.REQUEST_CONTACTS_CODE)
         viewDataBinding.viewmodel?.let {
             view?.setupSnackbar(this, it.snackbarMessage, Snackbar.LENGTH_SHORT)
         }
@@ -83,7 +83,7 @@ class TaskDetailFragment : Fragment() {
         val taskId = arguments?.let {
             TaskDetailFragmentArgs.fromBundle(it).TASKID
         }
-        viewDataBinding.viewmodel?.start(taskId)
+        context?.let { viewDataBinding.viewmodel?.start(taskId, it) }
     }
 
     override fun onCreateView(
@@ -100,11 +100,9 @@ class TaskDetailFragment : Fragment() {
                     TaskDetailUserActionsListener {
 
                 override fun onAddContactClicked(v: View) {
-                    if (contactsPermissionGranted) {
+                    if (viewmodel?.contactPermissionGranted?.value!!) {
                         startPickContactIntent()
-                        } else requestPermissions(
-                            arrayOf(Manifest.permission.READ_CONTACTS),
-                            PermissionChecker.REQUEST_CONTACTS_CODE)
+                        } else requestPermission(PermissionChecker.REQUEST_ADD_CONTACT)
                 }
 
                 override fun onTimeChanged(v: View) {
@@ -136,15 +134,24 @@ class TaskDetailFragment : Fragment() {
         return view
     }
 
+    private fun requestPermission(code: Int) {
+        requestPermissions(
+                arrayOf(Manifest.permission.READ_CONTACTS),
+                code)
+    }
+
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        if(resultCode == RESULT_OK)
         when (requestCode) {
-            IntentCallService.CALL_PICK_CONTACT -> {
+            ContactBookService.CALL_PICK_CONTACT -> {
                 viewDataBinding.viewmodel?.let {
                     view?.setupSnackbar(this, it.snackbarMessage, Snackbar.LENGTH_SHORT)
                 }
                 viewModel?._contactName.value = data?.let {
-                    IntentCallService.getContactName(it, context)
+                    ContactBookService.getContactName(it, context)
                 }!!
+
+                viewModel?.saveContactId(data?.let { ContactBookService.getContactID(it, context) })
             }
         }
     }
@@ -155,15 +162,19 @@ class TaskDetailFragment : Fragment() {
             grantResults: IntArray
     ) {
         when (requestCode) {
-            PermissionChecker.REQUEST_CONTACTS_CODE -> {
+            PermissionChecker.REQUEST_ADD_CONTACT -> {
                 if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     Timber.i("READ_CONTACTS permission granted")
-                    contactsPermissionGranted = true
+                    viewDataBinding.viewmodel?._contactPermissionGranted?.value = true
                     startPickContactIntent()
                 } else {
                     //else do nothing - will be call back on next launch
                     Timber.w("READ_CONTACTS permission refused")
                 }
+            }
+
+            PermissionChecker.REQUEST_CONTACTS_CODE -> {
+                return
             }
         }
     }
@@ -185,7 +196,7 @@ class TaskDetailFragment : Fragment() {
     fun startPickContactIntent(){
         Intent(Intent.ACTION_PICK, Uri.parse("content://contacts")).also { pickContactIntent ->
             pickContactIntent.type = ContactsContract.CommonDataKinds.Phone.CONTENT_TYPE // Show user only contacts w/ phone numbers
-            startActivityForResult(pickContactIntent, IntentCallService.CALL_PICK_CONTACT)
+            startActivityForResult(pickContactIntent, ContactBookService.CALL_PICK_CONTACT)
         }
     }
 

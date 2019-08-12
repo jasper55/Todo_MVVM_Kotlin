@@ -81,6 +81,8 @@ interface TasksDao {
     @Query("UPDATE tasks SET favorite = :favorite WHERE entryid = :taskId")
     suspend fun updateFavorite(taskId: String, favorite: Boolean)
 
+    @Query("UPDATE tasks SET contactId = :contactId WHERE entryid = :taskId")
+    suspend fun saveContactId(taskId: String, contactId: String)
     /**
      * Delete a task by id.
      *
@@ -102,5 +104,7 @@ interface TasksDao {
      */
     @Query("DELETE FROM Tasks WHERE completed = 1")
     suspend fun deleteCompletedTasks(): Int
+
+
 
 }

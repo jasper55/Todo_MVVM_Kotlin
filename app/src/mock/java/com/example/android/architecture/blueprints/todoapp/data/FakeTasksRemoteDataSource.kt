@@ -26,6 +26,7 @@ import java.util.LinkedHashMap
  */
 object FakeTasksRemoteDataSource : TasksDataSource {
 
+
     private var TASKS_SERVICE_DATA: LinkedHashMap<String, Task> = LinkedHashMap()
 
     override suspend fun getTask(taskId: String): Result<Task> {
@@ -44,7 +45,7 @@ object FakeTasksRemoteDataSource : TasksDataSource {
     }
 
     override suspend fun completeTask(task: Task) {
-        val completedTask = Task(task.title, task.description, true, task.isFavorite, task.dueDate, task.time, task.id)
+        val completedTask = Task(task.title, task.description, true, task.isFavorite, task.dueDate, task.time, task.contactId, task.id)
         TASKS_SERVICE_DATA.put(task.id, completedTask)
     }
 
@@ -53,29 +54,37 @@ object FakeTasksRemoteDataSource : TasksDataSource {
     }
 
     override suspend fun favorTask(task: Task) {
-        val favorTask = Task(task.title, task.description, task.isCompleted, true, task.dueDate, task.time, task.id)
+        val favorTask = Task(task.title, task.description, task.isCompleted, true, task.dueDate, task.time, task.contactId, task.id)
         TASKS_SERVICE_DATA.put(task.id, favorTask)
     }
 
     override suspend fun unfavorTask(task: Task) {
-        val favorTask = Task(task.title, task.description, task.isCompleted, false, task.dueDate, task.time, task.id)
+        val favorTask = Task(task.title, task.description, task.isCompleted, false, task.dueDate, task.time, task.contactId, task.id)
         TASKS_SERVICE_DATA.put(task.id, favorTask)
     }
 
     override suspend fun setDueDate(task: Task, date: Long) {
-        val dueDateTask = Task(task.title, task.description, task.isCompleted, task.isFavorite, date, task.time, task.id)
-        TASKS_SERVICE_DATA.put(task.id, dueDateTask)}
+        val dueDateTask = Task(task.title, task.description, task.isCompleted, task.isFavorite, date, task.time, task.contactId, task.id)
+        TASKS_SERVICE_DATA.put(task.id, dueDateTask)
+    }
 
     override suspend fun setTime(task: Task, time: Long) {
-        val timeTask = Task(task.title, task.description, task.isCompleted, task.isFavorite, task.dueDate, time, task.id)
-        TASKS_SERVICE_DATA.put(task.id, timeTask)}
+        val timeTask = Task(task.title, task.description, task.isCompleted, task.isFavorite, task.dueDate, time, task.contactId, task.id)
+        TASKS_SERVICE_DATA.put(task.id, timeTask)
+    }
+
+    override suspend fun saveId(task: Task, contactId: String) {
+        val timeTask = Task(task.title, task.description, task.isCompleted, task.isFavorite, task.dueDate, task.time, contactId, task.id)
+        TASKS_SERVICE_DATA.put(task.id, timeTask)
+    }
+
 
     override suspend fun favorTask(taskId: String) {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
     override suspend fun activateTask(task: Task) {
-        val activeTask = Task(task.title, task.description, false, task.isFavorite, task.dueDate, task.time, task.id)
+        val activeTask = Task(task.title, task.description, false, task.isFavorite, task.dueDate, task.time, task.contactId, task.id)
         TASKS_SERVICE_DATA.put(task.id, activeTask)
     }
 
