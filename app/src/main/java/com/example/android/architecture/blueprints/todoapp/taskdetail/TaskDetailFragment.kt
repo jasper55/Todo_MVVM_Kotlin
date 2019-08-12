@@ -147,11 +147,15 @@ class TaskDetailFragment : Fragment() {
                 viewDataBinding.viewmodel?.let {
                     view?.setupSnackbar(this, it.snackbarMessage, Snackbar.LENGTH_SHORT)
                 }
-                viewModel?._contactName.value = data?.let {
-                    ContactBookService.getContactName(it, context)
-                }!!
+                val contactIdString = viewModel?.getContactIdString()
+                val newContactId = data?.let { ContactBookService.getContactID(it, context)}
 
-                viewModel?.saveContactId(data?.let { ContactBookService.getContactID(it, context) })
+                val contactString = ContactBookService.addContactToString(contactIdString!!, newContactId)
+                // initiate List which needs to be displayed by adapter
+                // ContactBookService.getContactListFromString(contactString)
+                viewModel?._contactName.value = contactString
+
+                contactString?.let { viewModel?.saveContactId(it) }
             }
         }
     }

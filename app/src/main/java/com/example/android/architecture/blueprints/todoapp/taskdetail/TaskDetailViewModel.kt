@@ -15,7 +15,6 @@
  */
 package com.example.android.architecture.blueprints.todoapp.taskdetail
 
-import android.Manifest
 import androidx.annotation.StringRes
 import androidx.lifecycle.*
 
@@ -170,12 +169,21 @@ class TaskDetailViewModel(
         _time.value = DateUtil.parseTimeFromLong(_task.value?.time, getApplication())
         _contactPermissionGranted.value = PermissionChecker.checkPermission(PermissionChecker.REQUEST_CONTACTS_CODE,context)
         if (_contactPermissionGranted.value!!) {
-            _contactName.value = _task.value?.contactId?.let { ContactBookService.getContactNameFromDB(it, context) }
+            //_contactName.value = _task.value?.contactId?.let { ContactBookService.getContactNameFromDB(it, context) }
+            //_contactName.value = _task.value?.contactId?.let { ContactBookService.stringToList("abud harald sebastian").toString() }
+            _contactName.value = getContactIdString()
         } else { showSnackbarMessage(R.string.no_contact_permission) }
 
         if (_contactName.value != null) {
             contactName = _contactName
         }
+    }
+
+    fun getContactIdString(): String?{
+        if (_contactPermissionGranted.value!!) {
+            return _task.value?.contactId
+        } else { showSnackbarMessage(R.string.no_contact_permission)
+        return ""}
     }
 
     private fun onTaskLoaded(task: Task, context: Context) {

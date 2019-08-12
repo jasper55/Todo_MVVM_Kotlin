@@ -1,16 +1,8 @@
 package com.example.android.architecture.blueprints.todoapp.util
 
-import android.app.Activity
 import android.content.Context
 import android.content.Intent
-import android.net.Uri
-import android.provider.ContactsContract
-import androidx.core.app.ActivityCompat.startActivityForResult
 import android.provider.ContactsContract.CommonDataKinds
-import androidx.room.util.CursorUtil.getColumnIndex
-import android.R.id
-
-
 
 
 class ContactBookService {
@@ -41,6 +33,10 @@ class ContactBookService {
             return item
         }
 
+        fun displayContactIds(): String{
+            return ""
+        }
+
         fun getContactNameFromDB(contactId: String, context: Context?): String? {
             var name: String? = null
             val cursor = context!!.contentResolver.query(
@@ -56,9 +52,22 @@ class ContactBookService {
             return name
         }
 
-        fun addContactToList(){
-            
+        fun addContactToString(contactName: String, oldString: String?): String {
+            if(oldString == null){
+                return contactName
+            }
+            val newString = "$oldString $contactName"
+            return newString
         }
+
+        fun stringToList(s : String) = s.trim().splitToSequence(' ')
+                .filter { it.isNotEmpty() } // or: .filter { it.isNotBlank() }
+                .toList()
+
+        fun getContactListFromString(contactString: String): List<String> {
+            return stringToList(contactString)
+        }
+
 
         val CALL_PICK_CONTACT = 1
     }
