@@ -68,6 +68,28 @@ class ContactBookService {
             return stringToList(contactString)
         }
 
+        fun deleteContactFromList(contactName: String, list: String): String {
+            if (list.contains(" $contactName")) {
+                 list.replace(" $contactName", "")
+            }
+            return list
+        }
+
+        fun getIdFromName(contactName: String, context: Context?): String {
+            var id: String? = null
+            val cursor = context!!.contentResolver.query(
+                    CommonDataKinds.Phone.CONTENT_URI, null,
+                    CommonDataKinds.Phone.DISPLAY_NAME + " = ?",
+                    arrayOf<String>(contactName), null)
+
+            while (cursor.moveToNext()) {
+                id = cursor.getString(cursor.getColumnIndex(CommonDataKinds.Phone.CONTACT_ID))
+            }
+
+            cursor.close()
+            return id!!
+        }
+
 
         val CALL_PICK_CONTACT = 1
     }

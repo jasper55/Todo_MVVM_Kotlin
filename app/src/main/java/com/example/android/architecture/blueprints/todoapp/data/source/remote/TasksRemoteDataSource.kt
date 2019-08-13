@@ -73,7 +73,7 @@ object TasksRemoteDataSource : TasksDataSource {
     }
 
     override suspend fun completeTask(task: Task) {
-        val completedTask = Task(task.title, task.description, true, task.isFavorite, task.dueDate, task.time, task.contactId, task.id)
+        val completedTask = Task(task.title, task.description, true, task.isFavorite, task.dueDate, task.time, task.contactIdString, task.id)
         TASKS_SERVICE_DATA.put(task.id, completedTask)
     }
 
@@ -83,7 +83,7 @@ object TasksRemoteDataSource : TasksDataSource {
     }
 
     override suspend fun favorTask(task: Task) {
-        val favorTask = Task(task.title, task.description, task.isCompleted, true, task.dueDate, task.time, task.contactId, task.id)
+        val favorTask = Task(task.title, task.description, task.isCompleted, true, task.dueDate, task.time, task.contactIdString, task.id)
         TASKS_SERVICE_DATA.put(task.id, favorTask)
     }
 
@@ -93,12 +93,12 @@ object TasksRemoteDataSource : TasksDataSource {
     }
 
     override suspend fun unfavorTask(task: Task) {
-        val unfavorTask = Task(task.title, task.description, task.isCompleted, false, task.dueDate, task.time, task.contactId, task.id)
+        val unfavorTask = Task(task.title, task.description, task.isCompleted, false, task.dueDate, task.time, task.contactIdString, task.id)
         TASKS_SERVICE_DATA.put(task.id, unfavorTask)
     }
 
     override suspend fun activateTask(task: Task) {
-        val activeTask = Task(task.title, task.description, false, task.isFavorite, task.dueDate, task.time, task.contactId, task.id)
+        val activeTask = Task(task.title, task.description, false, task.isFavorite, task.dueDate, task.time, task.contactIdString, task.id)
         TASKS_SERVICE_DATA.put(task.id, activeTask)
     }
 
@@ -114,16 +114,16 @@ object TasksRemoteDataSource : TasksDataSource {
     }
 
     override suspend fun setDueDate(task: Task, date: Long) {
-        val dueDateTask = Task(task.title, task.description, task.isCompleted, task.isFavorite, date, task.time, task.contactId, task.id)
+        val dueDateTask = Task(task.title, task.description, task.isCompleted, task.isFavorite, date, task.time, task.contactIdString, task.id)
         TASKS_SERVICE_DATA.put(task.id, dueDateTask)
     }
 
     override suspend fun setTime(task: Task, time: Long) {
-        val timeTask = Task(task.title, task.description, task.isCompleted, task.isFavorite, task.dueDate, time, task.contactId, task.id)
+        val timeTask = Task(task.title, task.description, task.isCompleted, task.isFavorite, task.dueDate, time, task.contactIdString, task.id)
         TASKS_SERVICE_DATA.put(task.id, timeTask)
     }
 
-    override suspend fun saveId(task: Task, contactId: String) {
+    override suspend fun saveContactId(task: Task, contactId: String) {
         val timeTask = Task(task.title, task.description, task.isCompleted, task.isFavorite, task.dueDate, task.time, contactId, task.id)
         TASKS_SERVICE_DATA.put(task.id, timeTask)
     }

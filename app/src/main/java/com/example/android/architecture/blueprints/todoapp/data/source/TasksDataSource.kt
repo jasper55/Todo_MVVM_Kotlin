@@ -58,5 +58,5 @@ interface TasksDataSource {
 
     suspend fun setTime(task: Task, timeLong: Long)
 
-    suspend fun saveId(task: Task, id: String)
+    suspend fun saveContactId(task: Task, id: String)
 }
