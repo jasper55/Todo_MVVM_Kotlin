@@ -15,17 +15,7 @@
   -->
 <layout xmlns:android="http://schemas.android.com/apk/res/android" >
 
-<data class=".Contact">
-    <import type="android.view.View.OnClickListener" />
 
-    <variable
-        name="contact"
-        type="com.example.android.architecture.blueprints.todoapp.contacts.Contact" />
-
-    <variable
-        name="listener"
-        type="com.example.android.architecture.blueprints.todoapp.contacts.ContactItemUserActionsListener"/>
-</data>
 
 <LinearLayout
     android:layout_width="match_parent"
@@ -42,8 +32,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical"
         android:layout_marginLeft="@dimen/activity_horizontal_margin"
-        android:textAppearance="@style/TextAppearance.AppCompat.Title"
-        android:text="@{contact.contactName}" />
+        android:textAppearance="@style/TextAppearance.AppCompat.Title" />
 
     <ImageButton
         android:id="@+id/sendEmailButton"
@@ -52,7 +41,6 @@
         android:gravity="right"
         android:layout_gravity="center_vertical"
         android:layout_weight="1"
-        android:onClick="@{(view) -> listener.onContactDeleted(contact)}"
         android:button="@android:drawable/ic_dialog_email"/>
 
     <ImageButton
@@ -63,7 +51,6 @@
         android:layout_gravity="center_vertical"
         android:layout_weight="1"
         android:layout_marginLeft="@dimen/activity_horizontal_margin"
-        android:onClick="@{(view) -> listener.onContactDeleted(contact)}"
         android:button="@android:drawable/ic_menu_delete"/>
 
 

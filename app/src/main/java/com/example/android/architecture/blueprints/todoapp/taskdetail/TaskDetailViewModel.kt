@@ -50,8 +50,8 @@ class TaskDetailViewModel(
     var _time = MutableLiveData<String>()
     var time: LiveData<String> = _time
 
-    var _contactName = MutableLiveData<String>()
-    var contactName: LiveData<String> = _contactName
+    var _contactIdString = MutableLiveData<String>()
+    var contactIdString: LiveData<String> = _contactIdString
 
     var _contactPermissionGranted = MutableLiveData<Boolean>()
     var contactPermissionGranted : LiveData<Boolean> = _contactPermissionGranted
@@ -136,7 +136,7 @@ class TaskDetailViewModel(
     fun saveContactId(contactId: String) {
         viewModelScope.launch {
             val task = _task.value ?: return@launch
-            tasksRepository.saveId(task, contactId)
+            tasksRepository.saveContactId(task, contactId)
         }
     }
 
@@ -171,17 +171,17 @@ class TaskDetailViewModel(
         if (_contactPermissionGranted.value!!) {
             //_contactName.value = _task.value?.contactId?.let { ContactBookService.getContactNameFromDB(it, context) }
             //_contactName.value = _task.value?.contactId?.let { ContactBookService.stringToList("abud harald sebastian").toString() }
-            _contactName.value = getContactIdString()
+            _contactIdString.value = getContactIdString()
         } else { showSnackbarMessage(R.string.no_contact_permission) }
 
-        if (_contactName.value != null) {
-            contactName = _contactName
+        if (_contactIdString.value != null) {
+            contactIdString = _contactIdString
         }
     }
 
     fun getContactIdString(): String?{
         if (_contactPermissionGranted.value!!) {
-            return _task.value?.contactId
+            return _task.value?.contactIdString
         } else { showSnackbarMessage(R.string.no_contact_permission)
         return ""}
     }

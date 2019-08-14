@@ -153,7 +153,7 @@ class TaskDetailFragment : Fragment() {
                 val contactString = ContactBookService.addContactToString(contactIdString!!, newContactId)
                 // initiate List which needs to be displayed by adapter
                 // ContactBookService.getContactListFromString(contactString)
-                viewModel?._contactName.value = contactString
+                viewModel?._contactIdString.value = contactString
 
                 contactString?.let { viewModel?.saveContactId(it) }
             }

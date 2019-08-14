@@ -247,7 +247,7 @@
                         android:layout_below="@id/task_contacts_header_container"
                         android:hint="@string/no_contact_hint"
                         android:paddingTop="2dp"
-                        android:text="@{viewmodel.contactName}"
+                        android:text="@{viewmodel.contactIdString}"
                         android:textAppearance="?android:attr/textAppearanceSmall" />
 
 
