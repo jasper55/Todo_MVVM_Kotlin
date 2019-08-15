@@ -18,6 +18,7 @@ package com.example.android.architecture.blueprints.todoapp.taskdetail
 
 import android.content.Context
 import android.view.View
+import com.example.android.architecture.blueprints.todoapp.contacts.Contact
 
 /**
  * Listener used with data binding to process user actions.

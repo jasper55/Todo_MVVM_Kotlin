@@ -22,6 +22,7 @@ import android.app.Application
 import android.content.Context
 import com.example.android.architecture.blueprints.todoapp.Event
 import com.example.android.architecture.blueprints.todoapp.R
+import com.example.android.architecture.blueprints.todoapp.contacts.Contact
 import com.example.android.architecture.blueprints.todoapp.data.Result
 import com.example.android.architecture.blueprints.todoapp.data.Result.Success
 import com.example.android.architecture.blueprints.todoapp.data.Task
@@ -41,7 +42,7 @@ class TaskDetailViewModel(
         application: Application
 ) : AndroidViewModel(application) {
 
-    private val _task = MutableLiveData<Task>()
+    val _task = MutableLiveData<Task>()
     val task: LiveData<Task> = _task
 
     var _dueDate = MutableLiveData<String>()
@@ -206,4 +207,5 @@ class TaskDetailViewModel(
     private fun showSnackbarMessage(@StringRes message: Int) {
         _snackbarText.value = Event(message)
     }
+
 }

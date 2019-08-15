@@ -25,6 +25,10 @@
             name="viewmodel"
             type="com.example.android.architecture.blueprints.todoapp.taskdetail.TaskDetailViewModel" />
 
+        <!--<variable-->
+            <!--name="contactViewModel"-->
+            <!--type="com.example.android.architecture.blueprints.todoapp.contacts.ContactsViewModell" />-->
+
         <variable
             name="listener"
             type="com.example.android.architecture.blueprints.todoapp.taskdetail.TaskDetailUserActionsListener" />
@@ -221,7 +225,7 @@
                             android:layout_height="wrap_content"
                             android:layout_weight="0.8"
                             android:paddingTop="20dp"
-                            android:text="Contacs"
+                            android:text="Contacts"
                             android:textAppearance="?android:attr/textAppearanceMedium"
                             android:textColor="@color/colorPrimaryDark" />
 
@@ -240,22 +244,20 @@
 
                     </LinearLayout>
 
-                    <TextView
-                        android:id="@+id/task_contact_name"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_below="@id/task_contacts_header_container"
-                        android:hint="@string/no_contact_hint"
-                        android:paddingTop="2dp"
-                        android:text="@{viewmodel.contactIdString}"
-                        android:textAppearance="?android:attr/textAppearanceSmall" />
+                    <ListView
+                        android:id="@+id/contact_list"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"/>
+
+
+                    <!--app:items="@{contactViewModel.items}"-->
 
 
                     <View
                         android:id="@+id/separator_contacs"
                         android:layout_width="match_parent"
                         android:layout_height="1dp"
-                        android:layout_below="@id/task_contact_name"
+                        android:layout_below="@id/contact_list"
                         android:background="@color/colorPrimaryDark"/>
 
 

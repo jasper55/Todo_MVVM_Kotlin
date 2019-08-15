@@ -13,46 +13,65 @@
   ~ See the License for the specific language governing permissions and
   ~ limitations under the License.
   -->
-<layout xmlns:android="http://schemas.android.com/apk/res/android" >
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <data>
+
+        <import type="android.view.View.OnClickListener" />
+
+        <variable
+            name="contact"
+            type="com.example.android.architecture.blueprints.todoapp.contacts.Contact" />
+
+        <variable
+            name="listener"
+            type="com.example.android.architecture.blueprints.todoapp.contacts.ContactItemUserActionsListener" />
+
+        <variable
+            name="task"
+            type="com.example.android.architecture.blueprints.todoapp.data.Task" />
+    </data>
 
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="?android:attr/listPreferredItemHeight"
+        android:orientation="horizontal"
+        android:paddingLeft="@dimen/activity_horizontal_margin"
+        android:paddingTop="@dimen/list_item_padding"
+        android:paddingRight="@dimen/activity_horizontal_margin"
+        android:paddingBottom="@dimen/list_item_padding">
 
-<LinearLayout
-    android:layout_width="match_parent"
-    android:layout_height="?android:attr/listPreferredItemHeight"
-    android:orientation="horizontal"
-    android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingBottom="@dimen/list_item_padding"
-    android:paddingTop="@dimen/list_item_padding">
+        <TextView
+            android:id="@+id/contactName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_marginLeft="@dimen/activity_horizontal_margin"
+            android:text="@{contact.contactName}"
+            android:textAppearance="@style/TextAppearance.AppCompat.Title" />
 
-    <TextView
-        android:id="@+id/contactName"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_vertical"
-        android:layout_marginLeft="@dimen/activity_horizontal_margin"
-        android:textAppearance="@style/TextAppearance.AppCompat.Title" />
+        <ImageButton
+            android:id="@+id/sendEmailButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_weight="1"
+            android:button="@android:drawable/ic_dialog_email"
+            android:gravity="right"
+            android:onClick="@{(view) -> listener.onSendEmailClicked(contact.contactEmail)}" />
 
-    <ImageButton
-        android:id="@+id/sendEmailButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:gravity="right"
-        android:layout_gravity="center_vertical"
-        android:layout_weight="1"
-        android:button="@android:drawable/ic_dialog_email"/>
-
-    <ImageButton
-        android:id="@+id/deleteContact"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:gravity="right"
-        android:layout_gravity="center_vertical"
-        android:layout_weight="1"
-        android:layout_marginLeft="@dimen/activity_horizontal_margin"
-        android:button="@android:drawable/ic_menu_delete"/>
+        <ImageButton
+            android:id="@+id/deleteContact"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_marginLeft="@dimen/activity_horizontal_margin"
+            android:layout_weight="1"
+            android:button="@android:drawable/ic_menu_delete"
+            android:gravity="right"
+            android:onClick="@{(view) -> listener.onContactDeleted(task, contact)}" />
 
 
-</LinearLayout>
+    </LinearLayout>
 </layout>

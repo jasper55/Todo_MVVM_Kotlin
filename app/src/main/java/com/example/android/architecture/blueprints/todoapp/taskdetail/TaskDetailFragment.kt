@@ -29,22 +29,35 @@ import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.widget.CheckBox
+import android.widget.ListView
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.example.android.architecture.blueprints.todoapp.EventObserver
 import com.example.android.architecture.blueprints.todoapp.R
+import com.example.android.architecture.blueprints.todoapp.contacts.Contact
+import com.example.android.architecture.blueprints.todoapp.contacts.ContactsAdapter
+import com.example.android.architecture.blueprints.todoapp.contacts.ContactItemUserActionsListener
+import com.example.android.architecture.blueprints.todoapp.contacts.ContactsViewModel
+import com.example.android.architecture.blueprints.todoapp.data.Task
+import com.example.android.architecture.blueprints.todoapp.databinding.ContactlistFragBinding
 import com.example.android.architecture.blueprints.todoapp.databinding.TaskdetailFragBinding
 import com.example.android.architecture.blueprints.todoapp.util.*
 import com.google.android.material.snackbar.Snackbar
 import timber.log.Timber
+import java.util.ArrayList
 
 /**
  * Main UI for the task detail screen.
  */
 class TaskDetailFragment : Fragment() {
-    private lateinit var viewDataBinding: TaskdetailFragBinding
+    private lateinit var viewDataBinding: TaskdetailFragBinding // is been generated because taskdetail_frag.xml
+    private lateinit var contactViewDataBinding: ContactlistFragBinding // is been generated because contactlist_frag.xml
+
 
     private lateinit var viewModel: TaskDetailViewModel
+    private lateinit var contactsViewModel: ContactsViewModel
+
+    private lateinit var listAdapter: ContactsAdapter
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
@@ -54,7 +67,19 @@ class TaskDetailFragment : Fragment() {
             view?.setupSnackbar(this, it.snackbarMessage, Snackbar.LENGTH_SHORT)
         }
 
+        setupContactList()
         setupNavigation()
+    }
+
+    private fun setupContactList() {
+
+        val viewModel = contactViewDataBinding.viewmodel
+        if (viewModel != null) {
+            listAdapter = ContactsAdapter(ArrayList(0), viewModel)
+            contactViewDataBinding.contactListView.adapter = listAdapter
+        } else {
+            Timber.w("ViewModel not initialized when attempting to set up adapter.")
+        }
     }
 
     private fun setupNavigation() {
@@ -91,9 +116,9 @@ class TaskDetailFragment : Fragment() {
             container: ViewGroup?,
             savedInstanceState: Bundle?
     ): View? {
-        val view = inflater.inflate(R.layout.taskdetail_frag, container, false)
+        val baseView = inflater.inflate(R.layout.taskdetail_frag, container, false)
         viewModel = obtainViewModel(TaskDetailViewModel::class.java)
-        viewDataBinding = TaskdetailFragBinding.bind(view).apply {
+        viewDataBinding = TaskdetailFragBinding.bind(baseView).apply {
             viewmodel = viewModel
             listener = object :
 
@@ -102,7 +127,7 @@ class TaskDetailFragment : Fragment() {
                 override fun onAddContactClicked(v: View) {
                     if (viewmodel?.contactPermissionGranted?.value!!) {
                         startPickContactIntent()
-                        } else requestPermission(PermissionChecker.REQUEST_ADD_CONTACT)
+                    } else requestPermission(PermissionChecker.REQUEST_ADD_CONTACT)
                 }
 
                 override fun onTimeChanged(v: View) {
@@ -129,9 +154,30 @@ class TaskDetailFragment : Fragment() {
             }
         }
 
+        val contactView = inflater.inflate(R.layout.contactlist_frag, container, false)
+        contactView.findViewById<ListView>(R.id.contact_list)
+        contactsViewModel = obtainViewModel(ContactsViewModel::class.java)
+        contactViewDataBinding = ContactlistFragBinding.bind(contactView).apply {
+            viewmodel = contactsViewModel
+            listener = object :
+
+                    ContactItemUserActionsListener {
+                override fun onSendEmailClicked(contactEmail: String) {
+                    viewmodel?.sendMailTo(contactEmail)
+                }
+
+                override fun onContactDeleted(task: Task, contact: Contact) {
+                    viewmodel?.deleteContact(task, contact)
+                }
+
+            }
+        }
+
         viewDataBinding.setLifecycleOwner(this.viewLifecycleOwner)
+        contactViewDataBinding.setLifecycleOwner(this.viewLifecycleOwner)
         setHasOptionsMenu(true)
-        return view
+
+        return baseView // only this view is return as the other view is declared inside the xml
     }
 
     private fun requestPermission(code: Int) {
@@ -141,23 +187,23 @@ class TaskDetailFragment : Fragment() {
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        if(resultCode == RESULT_OK)
-        when (requestCode) {
-            ContactBookService.CALL_PICK_CONTACT -> {
-                viewDataBinding.viewmodel?.let {
-                    view?.setupSnackbar(this, it.snackbarMessage, Snackbar.LENGTH_SHORT)
+        if (resultCode == RESULT_OK)
+            when (requestCode) {
+                ContactBookService.CALL_PICK_CONTACT -> {
+                    viewDataBinding.viewmodel?.let {
+                        view?.setupSnackbar(this, it.snackbarMessage, Snackbar.LENGTH_SHORT)
+                    }
+                    val contactIdString = viewModel?.getContactIdString()
+                    val newContactId = data?.let { ContactBookService.getContactID(it, context) }
+
+                    val contactString = ContactBookService.addContactToString(contactIdString!!, newContactId)
+                    // initiate List which needs to be displayed by adapter
+                    // ContactBookService.getContactListFromString(contactString)
+                    viewModel?._contactIdString.value = contactString
+
+                    contactString?.let { viewModel?.saveContactId(it) }
                 }
-                val contactIdString = viewModel?.getContactIdString()
-                val newContactId = data?.let { ContactBookService.getContactID(it, context)}
-
-                val contactString = ContactBookService.addContactToString(contactIdString!!, newContactId)
-                // initiate List which needs to be displayed by adapter
-                // ContactBookService.getContactListFromString(contactString)
-                viewModel?._contactIdString.value = contactString
-
-                contactString?.let { viewModel?.saveContactId(it) }
             }
-        }
     }
 
     override fun onRequestPermissionsResult(
@@ -197,7 +243,7 @@ class TaskDetailFragment : Fragment() {
         inflater.inflate(R.menu.taskdetail_fragment_menu, menu)
     }
 
-    fun startPickContactIntent(){
+    fun startPickContactIntent() {
         Intent(Intent.ACTION_PICK, Uri.parse("content://contacts")).also { pickContactIntent ->
             pickContactIntent.type = ContactsContract.CommonDataKinds.Phone.CONTENT_TYPE // Show user only contacts w/ phone numbers
             startActivityForResult(pickContactIntent, ContactBookService.CALL_PICK_CONTACT)

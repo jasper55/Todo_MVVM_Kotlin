@@ -1,12 +1,10 @@
 package com.example.android.architecture.blueprints.todoapp.contacts
 
 
-class Contact {
+data class Contact @JvmOverloads constructor(
 
-    var contactId: String? = null
-    var contactName: String? = null
-    var contactEmail: String? = null
-    var contactPhoneNumber: String? = null
+    var contactId: String? = null,
+    var contactName: String? = null,
+    var contactEmail: String? = null,
+    var contactPhoneNumber: String? = null)
 
-
-}

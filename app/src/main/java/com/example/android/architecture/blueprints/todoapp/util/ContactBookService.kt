@@ -3,6 +3,7 @@ package com.example.android.architecture.blueprints.todoapp.util
 import android.content.Context
 import android.content.Intent
 import android.provider.ContactsContract.CommonDataKinds
+import com.example.android.architecture.blueprints.todoapp.contacts.Contact
 
 
 class ContactBookService {
@@ -52,6 +53,30 @@ class ContactBookService {
             return name
         }
 
+        fun getContactInformationFromDB(contactId: String, context: Context?): Contact {
+            val contact = Contact()
+            var name: String? = null
+            var email: String? = null
+            var phoneNumber: String? = null
+            val cursor = context!!.contentResolver.query(
+                    CommonDataKinds.Phone.CONTENT_URI, null,
+                    CommonDataKinds.Phone.CONTACT_ID + " = ?",
+                    arrayOf<String>(contactId), null)
+
+            while (cursor.moveToNext()) {
+                name = cursor.getString(cursor.getColumnIndex(CommonDataKinds.Phone.DISPLAY_NAME))
+                email = cursor.getString(cursor.getColumnIndex(CommonDataKinds.Email.ADDRESS))
+                phoneNumber = cursor.getString(cursor.getColumnIndex(CommonDataKinds.Phone.NORMALIZED_NUMBER))
+            }
+
+            cursor.close()
+            contact.contactId = contactId
+            contact.contactName = name
+            contact.contactEmail = email
+            contact.contactPhoneNumber = phoneNumber
+            return contact
+        }
+
         fun addContactToString(contactName: String, oldString: String?): String {
             if(oldString == null){
                 return contactName
@@ -68,9 +93,9 @@ class ContactBookService {
             return stringToList(contactString)
         }
 
-        fun deleteContactFromList(contactName: String, list: String): String {
-            if (list.contains(" $contactName")) {
-                 list.replace(" $contactName", "")
+        fun deleteContactFromList(contactId: String, list: String): String {
+            if (list.contains(" $contactId")) {
+                 list.replace(" $contactId", "")
             }
             return list
         }
@@ -90,6 +115,17 @@ class ContactBookService {
             return id!!
         }
 
+        fun getContactArrayList(contactIdString: String, context: Context): ArrayList<Contact>{
+            val arrayList = ArrayList<Contact>()
+            val idList = stringToList(contactIdString)
+            for (i in idList.indices) {
+            val contactId = idList.get(i)
+            val contact = getContactInformationFromDB(contactId, context)
+                arrayList.add(contact)
+            }
+
+            return arrayList
+        }
 
         val CALL_PICK_CONTACT = 1
     }
