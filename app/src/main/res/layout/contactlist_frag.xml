@@ -26,11 +26,6 @@
         android:orientation="vertical"
         android:visibility="@{viewmodel.empty ? View.GONE : View.VISIBLE}">
 
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:text="contacts" />
-
 
         <FrameLayout
             android:layout_width="match_parent"
@@ -42,7 +37,6 @@
                 android:layout_height="wrap_content"
                 android:hint="@string/no_contact_hint"
                 android:paddingTop="2dp"
-                android:textAppearance="?android:attr/textAppearanceSmall"
                 app:items="@{viewmodel.items}" />
         </FrameLayout>
 

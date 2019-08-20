@@ -160,7 +160,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_below="@id/task_detail_description_container"
-                        android:paddingTop="20dp"
+                        android:paddingTop="30dp"
                         android:text="Date"
                         android:textAppearance="?android:attr/textAppearanceMedium"
                         android:textColor="@color/colorAccent" />

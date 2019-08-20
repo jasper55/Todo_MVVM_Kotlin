@@ -10,6 +10,6 @@ class ContactBookServiceTest{
         val contactString = "a b c"
         val contactToDelete = "a"
         val expectedString = "b c"
-//        assertEquals(ContactBookService.deleteContactFromList(contactToDelete,contactString), expectedString)
+        assertEquals(ContactBookService.deleteContactFromList(contactToDelete,contactString), expectedString)
     }
 }
