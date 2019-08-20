@@ -53,7 +53,7 @@ class ContactBookService {
             return name
         }
 
-        fun getContactInformationFromDB(contactId: String, context: Context?): Contact {
+        fun getContactInformationFromDB(taskId: String, contactId: String, context: Context?): Contact {
             val contact = Contact()
             var name: String? = null
             var email: String? = null
@@ -70,6 +70,7 @@ class ContactBookService {
             }
 
             cursor.close()
+            contact.taskId = taskId
             contact.contactId = contactId
             contact.contactName = name
             contact.contactEmail = email
@@ -116,12 +117,12 @@ class ContactBookService {
             return id!!
         }
 
-        fun getContactArrayListFromDB(contactIdString: String, context: Context): ArrayList<Contact>{
+        fun getContactArrayListFromDB(taskId: String, contactIdString: String, context: Context): ArrayList<Contact>{
             val arrayList = ArrayList<Contact>()
             val idList = stringToList(contactIdString)
             for (i in idList.indices) {
             val contactId = idList.get(i)
-            val contact = getContactInformationFromDB(contactId, context)
+            val contact = getContactInformationFromDB(taskId, contactId, context)
                 arrayList.add(contact)
             }
 

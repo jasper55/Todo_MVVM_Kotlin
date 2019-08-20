@@ -6,14 +6,13 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.example.android.architecture.blueprints.todoapp.R
-import com.example.android.architecture.blueprints.todoapp.data.Task
 import com.example.android.architecture.blueprints.todoapp.databinding.ContactlistFragBinding
 import com.example.android.architecture.blueprints.todoapp.util.obtainViewModel
 import timber.log.Timber
 import java.util.ArrayList
 
 
-class ContactsFragment: Fragment() {
+class ContactsFragment : Fragment() {
     private lateinit var contactViewDataBinding: ContactlistFragBinding // is been generated because contactlist_frag.xml
 
     private lateinit var contactsViewModel: ContactsViewModel
@@ -24,27 +23,17 @@ class ContactsFragment: Fragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
-        val bundle = this.arguments
-        if (bundle != null) {
-            taskId = bundle.getString("taskId") }
-//        viewDataBinding.viewmodel?.let {
-//            view?.setupSnackbar(this, it.snackbarMessage, Snackbar.LENGTH_SHORT)
-//        }
-//        val task = viewModel.task.value!!
-        contactViewDataBinding.viewmodel?.loadContacts(taskId,context)
-        setupContactList()
+        getTaskIdFromBundle()
+        setupContactListAdapter()
+        contactViewDataBinding.lifecycleOwner = this.viewLifecycleOwner
+        contactViewDataBinding.viewmodel?.loadContacts(taskId, context)
     }
-
 
     override fun onResume() {
         super.onResume()
-//        val taskId = arguments?.let {
-//            TaskDetailFragmentArgs.fromBundle(it).TASKID
-//        }
-        context?.let {
-            contactViewDataBinding.viewmodel?.loadContacts(taskId, it)
-        }
-        setupContactList()
+        getTaskIdFromBundle()
+        setupContactListAdapter()
+        contactViewDataBinding.viewmodel?.loadContacts(taskId, context)
     }
 
     override fun onCreateView(
@@ -74,7 +63,7 @@ class ContactsFragment: Fragment() {
         return contactView
     }
 
-    private fun setupContactList() {
+    private fun setupContactListAdapter() {
 
         val viewModel = contactViewDataBinding.viewmodel
         if (viewModel != null) {
@@ -85,8 +74,9 @@ class ContactsFragment: Fragment() {
         }
     }
 
-    fun getTaskId(): String{
-        return this.taskId
+    private fun getTaskIdFromBundle() {
+        val bundle = this.arguments
+        if (bundle != null) {
+            taskId = bundle.getString("taskId") }
     }
-
 }

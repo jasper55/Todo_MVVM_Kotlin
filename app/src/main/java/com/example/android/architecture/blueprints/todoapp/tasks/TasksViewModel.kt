@@ -251,7 +251,6 @@ class TasksViewModel(
                             tasksToShow.add(task)
                         }
                     }
-
                 }
                 for (task in tasks) {
                     when (_currentFiltering) {

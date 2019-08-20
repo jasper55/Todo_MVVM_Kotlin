@@ -146,6 +146,17 @@ class TaskDetailFragment : Fragment() {
 //        insertPoint.addView(contactView)
         taskId = TaskDetailFragmentArgs.fromBundle(arguments!!).TASKID
 
+        addContactsFragmentToView(taskId)
+
+        viewDataBinding.setLifecycleOwner(this.viewLifecycleOwner)
+//        contactViewDataBinding.setLifecycleOwner(this.viewLifecycleOwner)
+        setHasOptionsMenu(true)
+
+        return baseView // only this view is return as the other view is declared inside the xml
+    }
+
+    private fun addContactsFragmentToView(taskId: String) {
+
         val fm = fragmentManager
         val ft = fm!!.beginTransaction()
 
@@ -153,16 +164,9 @@ class TaskDetailFragment : Fragment() {
         val fragTwo = ContactsFragment()
         val bundle = Bundle()
         bundle.putString("taskId", taskId)
-//        fragTwo.setArguments(arguments)
         fragTwo.setArguments(bundle)
         ft.add(R.id.contact_list, fragTwo)
         ft.commit()
-
-        viewDataBinding.setLifecycleOwner(this.viewLifecycleOwner)
-//        contactViewDataBinding.setLifecycleOwner(this.viewLifecycleOwner)
-        setHasOptionsMenu(true)
-
-        return baseView // only this view is return as the other view is declared inside the xml
     }
 
 

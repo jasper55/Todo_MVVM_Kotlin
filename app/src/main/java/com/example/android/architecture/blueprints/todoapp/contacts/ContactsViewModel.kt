@@ -24,6 +24,8 @@ class ContactsViewModel(
         it.isEmpty()
     }
 
+//    private val taskId?: String by inject()
+
     private val _dataLoading = MutableLiveData<Boolean>()
     val dataLoading: LiveData<Boolean> = _dataLoading
 
@@ -35,13 +37,11 @@ class ContactsViewModel(
 
     fun deleteContact(contact: Contact) = viewModelScope.launch {
 
-        val frag = ContactsFragment()
-        val taskId = frag.getTaskId()
         // remove contact from itemList
         val itemList = items.value
         val newList = itemList?.minus(listOf(contact))
         _items.value = newList
-
+        val taskId = contact.taskId
 
         // remove contactID from contactIsString
         viewModelScope.launch {
@@ -74,7 +74,7 @@ class ContactsViewModel(
             if (taskResult is Result.Success) {
 
                 val contactIdString = taskResult.data.contactIdString
-                val contactList = ContactBookService.getContactArrayListFromDB(contactIdString, context!!)
+                val contactList = ContactBookService.getContactArrayListFromDB(taskId, contactIdString, context!!)
                 if (contactIdString == ""){
                     isDataLoadingError.value = false
                     _items.value = emptyList()

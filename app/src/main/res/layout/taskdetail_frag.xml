@@ -245,15 +245,10 @@
                     </LinearLayout>
 
                     <FrameLayout
-                        android:orientation="vertical"
                         android:layout_below="@id/task_contacts_header_container"
                         android:id="@+id/contact_list"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"/>
-
-
-                    <!--app:items="@{contactViewModel.items}"-->
-
 
                     <View
                         android:id="@+id/separator_contacs"
