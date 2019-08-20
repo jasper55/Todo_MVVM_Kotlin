@@ -77,6 +77,7 @@ class ContactBookService {
             return contact
         }
 
+
         fun addContactToString(contactName: String, oldString: String?): String {
             if(oldString == null){
                 return contactName
@@ -115,7 +116,7 @@ class ContactBookService {
             return id!!
         }
 
-        fun getContactArrayList(contactIdString: String, context: Context): ArrayList<Contact>{
+        fun getContactArrayListFromDB(contactIdString: String, context: Context): ArrayList<Contact>{
             val arrayList = ArrayList<Contact>()
             val idList = stringToList(contactIdString)
             for (i in idList.indices) {

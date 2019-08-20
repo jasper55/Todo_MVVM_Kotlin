@@ -27,7 +27,7 @@
 
         <!--<variable-->
             <!--name="contactViewModel"-->
-            <!--type="com.example.android.architecture.blueprints.todoapp.contacts.ContactsViewModell" />-->
+            <!--type="com.example.android.architecture.blueprints.todoapp.contacts.ContactsViewModel" />-->
 
         <variable
             name="listener"
@@ -244,7 +244,9 @@
 
                     </LinearLayout>
 
-                    <ListView
+                    <FrameLayout
+                        android:orientation="vertical"
+                        android:layout_below="@id/task_contacts_header_container"
                         android:id="@+id/contact_list"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"/>

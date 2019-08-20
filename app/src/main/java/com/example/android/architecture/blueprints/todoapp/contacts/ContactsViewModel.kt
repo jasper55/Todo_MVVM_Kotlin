@@ -1,10 +1,15 @@
 package com.example.android.architecture.blueprints.todoapp.contacts
 
 import android.app.Application
+import android.content.Context
 import androidx.lifecycle.*
+import com.example.android.architecture.blueprints.todoapp.Event
+import com.example.android.architecture.blueprints.todoapp.data.Result
 import com.example.android.architecture.blueprints.todoapp.data.Task
+import com.example.android.architecture.blueprints.todoapp.R
 import com.example.android.architecture.blueprints.todoapp.data.source.local.TasksLocalDataSource
 import com.example.android.architecture.blueprints.todoapp.util.ContactBookService
+import com.example.android.architecture.blueprints.todoapp.util.EspressoIdlingResource
 import kotlinx.coroutines.launch
 
 class ContactsViewModel(
@@ -15,25 +20,76 @@ class ContactsViewModel(
     private val _items = MutableLiveData<List<Contact>>().apply { value = emptyList() }
     val items: LiveData<List<Contact>> = _items
 
-    private val _items2 = MutableLiveData<List<Contact>>().apply { value = emptyList() }
-    val items2: LiveData<List<Contact>> = _items2
+    val empty: LiveData<Boolean> = Transformations.map(_items) {
+        it.isEmpty()
+    }
 
-    fun deleteContact(task: Task, contact: Contact) = viewModelScope.launch {
+    private val _dataLoading = MutableLiveData<Boolean>()
+    val dataLoading: LiveData<Boolean> = _dataLoading
 
+    private val _snackbarText = MutableLiveData<Event<Int>>()
+    val snackbarMessage: LiveData<Event<Int>> = _snackbarText
+
+    // Not used at the moment
+    private val isDataLoadingError = MutableLiveData<Boolean>()
+
+    fun deleteContact(contact: Contact) = viewModelScope.launch {
+
+        val frag = ContactsFragment()
+        val taskId = frag.getTaskId()
         // remove contact from itemList
         val itemList = items.value
         val newList = itemList?.minus(listOf(contact))
-//       __ itemList?.remove(contact)
-//        itemList?.removeAt(contact)
         _items.value = newList
 
-        // remove contactID from contactIsString
-        val newListString = contact.contactId?.let { ContactBookService.deleteContactFromList(it, task.contactIdString) }
 
-        // updateContactIdString
-        newListString?.let {
-            tasksRepository.saveContactId(task, newListString)
+        // remove contactID from contactIsString
+        viewModelScope.launch {
+            val taskResult = taskId?.let { tasksRepository.getTask(it) }
+            if (taskResult is Result.Success) {
+
+                val task = taskResult.data
+                val contactIdString = task.contactIdString
+                val newListString = contact.contactId?.let { ContactBookService.deleteContactFromList(it, contactIdString) }
+
+                // updateContactIdString
+                newListString?.let {
+                    tasksRepository.saveContactId(task, newListString)
 //            showSnackbarMessage(R.string.task_marked_complete)
+                }
+            }
+        }
+    }
+
+
+    fun loadContacts(taskId: String?, context: Context?) {
+
+        _dataLoading.value = true
+        // Espresso does not work well with coroutines yet. See
+        // https://github.com/Kotlin/kotlinx.coroutines/issues/982
+        EspressoIdlingResource.increment() // Set app as busy.
+
+        viewModelScope.launch {
+            val taskResult = taskId?.let { tasksRepository.getTask(it) }
+            if (taskResult is Result.Success) {
+
+                val contactIdString = taskResult.data.contactIdString
+                val contactList = ContactBookService.getContactArrayListFromDB(contactIdString, context!!)
+                if (contactIdString == ""){
+                    isDataLoadingError.value = false
+                    _items.value = emptyList()
+                    _snackbarText.value = Event(R.string.loading_tasks_error)
+                } else {
+                isDataLoadingError.value = false
+                _items.value = ArrayList(contactList) }
+            } else {
+                isDataLoadingError.value = false
+                _items.value = emptyList()
+                _snackbarText.value = Event(R.string.loading_tasks_error)
+            }
+
+            EspressoIdlingResource.decrement() // Set app as idle.
+            _dataLoading.value = false
         }
     }
 

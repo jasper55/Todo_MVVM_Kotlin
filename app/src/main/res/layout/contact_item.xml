@@ -27,9 +27,9 @@
             name="listener"
             type="com.example.android.architecture.blueprints.todoapp.contacts.ContactItemUserActionsListener" />
 
-        <variable
-            name="task"
-            type="com.example.android.architecture.blueprints.todoapp.data.Task" />
+        <!--<variable-->
+            <!--name="task"-->
+            <!--type="com.example.android.architecture.blueprints.todoapp.data.Task" />-->
     </data>
 
 
@@ -70,7 +70,7 @@
             android:layout_weight="1"
             android:button="@android:drawable/ic_menu_delete"
             android:gravity="right"
-            android:onClick="@{(view) -> listener.onContactDeleted(task, contact)}" />
+            android:onClick="@{(view) -> listener.onContactDeleted(contact)}" />
 
 
     </LinearLayout>

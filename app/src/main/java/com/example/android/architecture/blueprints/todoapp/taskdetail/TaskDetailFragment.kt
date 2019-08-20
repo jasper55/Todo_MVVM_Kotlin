@@ -29,22 +29,17 @@ import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.widget.CheckBox
-import android.widget.ListView
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.example.android.architecture.blueprints.todoapp.EventObserver
 import com.example.android.architecture.blueprints.todoapp.R
-import com.example.android.architecture.blueprints.todoapp.contacts.Contact
-import com.example.android.architecture.blueprints.todoapp.contacts.ContactsAdapter
-import com.example.android.architecture.blueprints.todoapp.contacts.ContactItemUserActionsListener
-import com.example.android.architecture.blueprints.todoapp.contacts.ContactsViewModel
-import com.example.android.architecture.blueprints.todoapp.data.Task
+import com.example.android.architecture.blueprints.todoapp.contacts.*
 import com.example.android.architecture.blueprints.todoapp.databinding.ContactlistFragBinding
 import com.example.android.architecture.blueprints.todoapp.databinding.TaskdetailFragBinding
 import com.example.android.architecture.blueprints.todoapp.util.*
 import com.google.android.material.snackbar.Snackbar
 import timber.log.Timber
-import java.util.ArrayList
+
 
 /**
  * Main UI for the task detail screen.
@@ -59,6 +54,8 @@ class TaskDetailFragment : Fragment() {
 
     private lateinit var listAdapter: ContactsAdapter
 
+    private lateinit var taskId: String
+
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         setupFab()
@@ -66,20 +63,8 @@ class TaskDetailFragment : Fragment() {
         viewDataBinding.viewmodel?.let {
             view?.setupSnackbar(this, it.snackbarMessage, Snackbar.LENGTH_SHORT)
         }
-
-        setupContactList()
+//        taskId = TaskDetailFragmentArgs.fromBundle(arguments!!).TASKID
         setupNavigation()
-    }
-
-    private fun setupContactList() {
-
-        val viewModel = contactViewDataBinding.viewmodel
-        if (viewModel != null) {
-            listAdapter = ContactsAdapter(ArrayList(0), viewModel)
-            contactViewDataBinding.contactListView.adapter = listAdapter
-        } else {
-            Timber.w("ViewModel not initialized when attempting to set up adapter.")
-        }
     }
 
     private fun setupNavigation() {
@@ -89,7 +74,7 @@ class TaskDetailFragment : Fragment() {
             findNavController().navigate(action)
         })
         viewModel.editTaskCommand.observe(this, EventObserver {
-            val taskId = TaskDetailFragmentArgs.fromBundle(arguments!!).TASKID
+//            val taskId = TaskDetailFragmentArgs.fromBundle(arguments!!).TASKID
             val action = TaskDetailFragmentDirections
                     .actionTaskDetailFragmentToAddEditTaskFragment(taskId,
                             resources.getString(R.string.edit_task))
@@ -105,10 +90,13 @@ class TaskDetailFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
-        val taskId = arguments?.let {
-            TaskDetailFragmentArgs.fromBundle(it).TASKID
+//        val taskId = arguments?.let {
+//            TaskDetailFragmentArgs.fromBundle(it).TASKID
+//        }
+
+        context?.let {
+            viewDataBinding.viewmodel?.start(taskId, it)
         }
-        context?.let { viewDataBinding.viewmodel?.start(taskId, it) }
     }
 
     override fun onCreateView(
@@ -154,31 +142,29 @@ class TaskDetailFragment : Fragment() {
             }
         }
 
-        val contactView = inflater.inflate(R.layout.contactlist_frag, container, false)
-        contactView.findViewById<ListView>(R.id.contact_list)
-        contactsViewModel = obtainViewModel(ContactsViewModel::class.java)
-        contactViewDataBinding = ContactlistFragBinding.bind(contactView).apply {
-            viewmodel = contactsViewModel
-            listener = object :
+//        val insertPoint = container!!.findViewById<ListView>(R.id.contact_list)
+//        insertPoint.addView(contactView)
+        taskId = TaskDetailFragmentArgs.fromBundle(arguments!!).TASKID
 
-                    ContactItemUserActionsListener {
-                override fun onSendEmailClicked(contactEmail: String) {
-                    viewmodel?.sendMailTo(contactEmail)
-                }
+        val fm = fragmentManager
+        val ft = fm!!.beginTransaction()
 
-                override fun onContactDeleted(task: Task, contact: Contact) {
-                    viewmodel?.deleteContact(task, contact)
-                }
-
-            }
-        }
+        fm.beginTransaction()
+        val fragTwo = ContactsFragment()
+        val bundle = Bundle()
+        bundle.putString("taskId", taskId)
+//        fragTwo.setArguments(arguments)
+        fragTwo.setArguments(bundle)
+        ft.add(R.id.contact_list, fragTwo)
+        ft.commit()
 
         viewDataBinding.setLifecycleOwner(this.viewLifecycleOwner)
-        contactViewDataBinding.setLifecycleOwner(this.viewLifecycleOwner)
+//        contactViewDataBinding.setLifecycleOwner(this.viewLifecycleOwner)
         setHasOptionsMenu(true)
 
         return baseView // only this view is return as the other view is declared inside the xml
     }
+
 
     private fun requestPermission(code: Int) {
         requestPermissions(

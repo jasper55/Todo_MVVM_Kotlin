@@ -5,7 +5,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.BaseAdapter
 import androidx.databinding.DataBindingUtil
-import com.example.android.architecture.blueprints.todoapp.data.Task
 import com.example.android.architecture.blueprints.todoapp.databinding.ContactItemBinding
 
 class ContactsAdapter(
@@ -37,8 +36,8 @@ class ContactsAdapter(
         }
 
         val userActionsListener = object : ContactItemUserActionsListener {
-            override fun onContactDeleted(task: Task, contact: Contact) {
-                viewModel.deleteContact(task, contact)
+            override fun onContactDeleted(contact: Contact) {
+                viewModel.deleteContact(contact)
             }
 
             override fun onSendEmailClicked(contactEmail: String) {
