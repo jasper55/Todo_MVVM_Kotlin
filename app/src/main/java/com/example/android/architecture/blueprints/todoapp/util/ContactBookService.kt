@@ -96,13 +96,16 @@ class ContactBookService {
         }
 
         fun deleteContactFromList(contactId: String, list: String): String {
+            var newList: String = ""
             if (list.contains(" $contactId")) {
-                 list.replace(" $contactId", "")
+                newList = list.replace(" $contactId", "")
             }
             else if (list.contains("$contactId ")) {
-                list.replace("$contactId ", "")
+                newList = list.replace("$contactId ", "")
             }
-            return list
+            val suffix = " "
+            newList.removeSuffix(suffix)
+            return newList
         }
 
         fun getIdFromName(contactName: String, context: Context?): String {
