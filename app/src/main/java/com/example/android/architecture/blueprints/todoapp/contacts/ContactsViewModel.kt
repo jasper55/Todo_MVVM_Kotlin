@@ -35,32 +35,34 @@ class ContactsViewModel(
     // Not used at the moment
     private val isDataLoadingError = MutableLiveData<Boolean>()
 
-    fun deleteContact(contact: Contact) = viewModelScope.launch {
+    fun deleteContact(contact: Contact) {
 
-        // remove contact from itemList
+        // remove contact from itemList (for the view)
         val itemList = items.value
         val newList = itemList?.minus(listOf(contact))
         _items.value = newList
         val taskId = contact.taskId
 
-        // remove contactID from contactIsString
-        viewModelScope.launch {
-            val taskResult = taskId?.let { tasksRepository.getTask(it) }
-            if (taskResult is Result.Success) {
+        deleteContactFromDB(contact,taskId)
+    }
 
-                val task = taskResult.data
-                val contactIdString = task.contactIdString
-                val newListString = contact.contactId?.let { ContactBookService.deleteContactFromList(it, contactIdString) }
+    fun deleteContactFromDB(contact: Contact,taskId: String?) = viewModelScope.launch {
+        val taskResult = taskId?.let {
+            tasksRepository.getTask(it)
+        }
+        if (taskResult is Result.Success) {
 
-                // updateContactIdString
-                newListString?.let {
-                    tasksRepository.saveContactId(task, newListString)
+            val task = taskResult.data
+            val contactIdString = task.contactIdString
+            val newListString = contact.contactId?.let { ContactBookService.deleteContactFromList(it, contactIdString) }
+
+            // updateContactIdString
+            newListString?.let {
+                tasksRepository.saveContactId(task, newListString)
 //            showSnackbarMessage(R.string.task_marked_complete)
-                }
             }
         }
     }
-
 
     fun loadContacts(taskId: String?, context: Context?) {
 

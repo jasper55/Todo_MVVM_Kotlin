@@ -99,6 +99,9 @@ class ContactBookService {
             if (list.contains(" $contactId")) {
                  list.replace(" $contactId", "")
             }
+            else if (list.contains("$contactId ")) {
+                list.replace("$contactId ", "")
+            }
             return list
         }
 
