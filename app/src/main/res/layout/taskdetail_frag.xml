@@ -150,6 +150,7 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_below="@id/task_title_footnote"
+                                android:paddingTop="5dp"
                                 android:text="@{viewmodel.task.description}"
                                 android:textAppearance="?android:attr/textAppearanceMedium" />
 
@@ -245,13 +246,14 @@
                             android:layout_height="wrap_content"
                             android:orientation="horizontal"
                             android:padding="8dp"
-                            android:weightSum="1">
+                            android:weightSum="10">
 
                             <TextView
                                 android:id="@+id/task_contacts_header"
                                 android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_weight="0.9"
+                                android:layout_height="match_parent"
+                                android:layout_weight="9"
+                                android:layout_gravity="center_vertical"
                                 android:text="Contacts"
                                 android:textAppearance="?android:attr/textAppearanceMedium"
                                 android:textColor="@color/colorPrimaryDark" />
@@ -260,7 +262,7 @@
                                 android:id="@+id/add_contact_button"
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
-                                android:layout_weight="0.1"
+                                android:layout_weight="1"
                                 android:background="@drawable/ic_add"
                                 android:backgroundTint="@color/colorGrey"
                                 android:gravity="end"
