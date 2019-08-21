@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "649839283282",
+    "firebase_url": "https://todoapp-jasper.firebaseio.com",
+    "project_id": "todoapp-jasper",
+    "storage_bucket": "todoapp-jasper.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:649839283282:android:fb1445265032a414",
+        "android_client_info": {
+          "package_name": "com.example.android.architecture.blueprints.todomvvmlivekotlin.mock"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "649839283282-bvllk3drsu507nv8jvtqcjui5lufb8ak.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.android.architecture.blueprints.todoapp",
+            "certificate_hash": "5d4664ad196152576f047cacfcaca078371dadc1"
+          }
+        },
+        {
+          "client_id": "649839283282-tr8uac0lgrk6b15s1ai0pd754fei8uan.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB0JDCWz8zk4k2jIg321xyCZo4rx4mzX3E"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "649839283282-tr8uac0lgrk6b15s1ai0pd754fei8uan.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
