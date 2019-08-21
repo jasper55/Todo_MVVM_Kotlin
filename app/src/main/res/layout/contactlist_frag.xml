@@ -36,7 +36,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="@string/no_contact_hint"
-                android:paddingTop="2dp"
+                android:paddingTop="10dp"
                 app:items="@{viewmodel.items}" />
         </FrameLayout>
 

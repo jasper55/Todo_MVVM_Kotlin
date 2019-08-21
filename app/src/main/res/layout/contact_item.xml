@@ -22,13 +22,14 @@
         android:orientation="horizontal"
         android:paddingTop="@dimen/list_item_padding"
         android:paddingBottom="@dimen/list_item_padding"
-        android:weightSum="1">
+        android:weightSum="20">
 
         <TextView
             android:id="@+id/contactName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
+            android:layout_weight="18"
             android:text="@{contact.contactName}"
             android:textAppearance="?android:attr/textAppearanceMedium" />
 
@@ -38,10 +39,9 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
             android:background="@android:color/transparent"
-            android:layout_weight="0.1"
+            android:layout_weight="1"
             android:gravity="right"
             android:onClick="@{(view) -> listener.onSendEmailClicked(contact.contactEmail)}"
-            app:iconTint="@color/colorPrimaryDark"
             app:srcCompat="@android:drawable/ic_dialog_email" />
 
         <ImageButton
@@ -49,10 +49,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
-            android:layout_marginLeft="8dp"
-            android:layout_weight="0.1"
+            android:layout_marginLeft="4dp"
+            android:layout_weight="1"
             android:gravity="right"
-            android:iconTint="@color/colorPrimaryDark"
             android:background="@android:color/transparent"
             android:onClick="@{(view) -> listener.onContactDeleted(contact)}"
             app:srcCompat="@android:drawable/ic_menu_delete" />
