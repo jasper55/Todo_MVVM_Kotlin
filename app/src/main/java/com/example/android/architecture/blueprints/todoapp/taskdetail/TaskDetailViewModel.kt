@@ -22,12 +22,10 @@ import android.app.Application
 import android.content.Context
 import com.example.android.architecture.blueprints.todoapp.Event
 import com.example.android.architecture.blueprints.todoapp.R
-import com.example.android.architecture.blueprints.todoapp.contacts.Contact
 import com.example.android.architecture.blueprints.todoapp.data.Result
 import com.example.android.architecture.blueprints.todoapp.data.Result.Success
 import com.example.android.architecture.blueprints.todoapp.data.Task
 import com.example.android.architecture.blueprints.todoapp.data.source.local.TasksLocalDataSource
-import com.example.android.architecture.blueprints.todoapp.util.ContactBookService
 import com.example.android.architecture.blueprints.todoapp.util.DateUtil
 import com.example.android.architecture.blueprints.todoapp.util.EspressoIdlingResource
 import com.example.android.architecture.blueprints.todoapp.util.PermissionChecker
@@ -81,7 +79,7 @@ class TaskDetailViewModel(
         input?.isFavorite ?: false
     }
 
-    val taskId: String?
+    val taskId: Int?
         get() = _task.value?.id
 
     fun deleteTask() = viewModelScope.launch {
@@ -141,7 +139,7 @@ class TaskDetailViewModel(
         }
     }
 
-    fun start(taskId: String?, context: Context) {
+    fun start(taskId: Int?, context: Context) {
         _dataLoading.value = true
 
         // Espresso does not work well with coroutines yet. See

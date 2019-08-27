@@ -5,7 +5,6 @@ import android.content.Context
 import androidx.lifecycle.*
 import com.example.android.architecture.blueprints.todoapp.Event
 import com.example.android.architecture.blueprints.todoapp.data.Result
-import com.example.android.architecture.blueprints.todoapp.data.Task
 import com.example.android.architecture.blueprints.todoapp.R
 import com.example.android.architecture.blueprints.todoapp.data.source.local.TasksLocalDataSource
 import com.example.android.architecture.blueprints.todoapp.util.ContactBookService
@@ -46,7 +45,7 @@ class ContactsViewModel(
         deleteContactFromDB(contact,taskId)
     }
 
-    fun deleteContactFromDB(contact: Contact,taskId: String?) = viewModelScope.launch {
+    fun deleteContactFromDB(contact: Contact,taskId: Int?) = viewModelScope.launch {
         val taskResult = taskId?.let {
             tasksRepository.getTask(it)
         }
@@ -64,7 +63,7 @@ class ContactsViewModel(
         }
     }
 
-    fun loadContacts(taskId: String?, context: Context?) {
+    fun loadContacts(taskId: Int?, context: Context?) {
 
         _dataLoading.value = true
         // Espresso does not work well with coroutines yet. See

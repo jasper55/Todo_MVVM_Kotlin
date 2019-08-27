@@ -40,7 +40,7 @@ class TasksLocalDataSource internal constructor(
         }
     }
 
-    override suspend fun getTask(taskId: String): Result<Task> = withContext(ioDispatcher) {
+    override suspend fun getTask(taskId: Int): Result<Task> = withContext(ioDispatcher) {
         try {
             val task = tasksDao.getTaskById(taskId)
             if (task != null) {
@@ -61,7 +61,7 @@ class TasksLocalDataSource internal constructor(
         tasksDao.updateCompleted(task.id, true)
     }
 
-    override suspend fun completeTask(taskId: String) {
+    override suspend fun completeTask(taskId: Int) {
         // Not required for the local data source because the {@link DefaultTasksRepository} handles
         // converting from a {@code taskId} to a {@link task} using its cached data.
     }
@@ -74,7 +74,7 @@ class TasksLocalDataSource internal constructor(
         tasksDao.updateFavorite(task.id, false)
     }
 
-    override suspend fun favorTask(taskId: String) {
+    override suspend fun favorTask(taskId: Int) {
         // Not required for the local data source because the {@link DefaultTasksRepository} handles
         // converting from a {@code taskId} to a {@link task} using its cached data.
     }
@@ -83,7 +83,7 @@ class TasksLocalDataSource internal constructor(
         tasksDao.updateCompleted(task.id, false)
     }
 
-    override suspend fun activateTask(taskId: String) {
+    override suspend fun activateTask(taskId: Int) {
         // Not required for the local data source because the {@link DefaultTasksRepository} handles
         // converting from a {@code taskId} to a {@link task} using its cached data.
     }
@@ -108,7 +108,7 @@ class TasksLocalDataSource internal constructor(
         tasksDao.deleteTasks()
     }
 
-    override suspend fun deleteTask(taskId: String) = withContext<Unit>(ioDispatcher) {
+    override suspend fun deleteTask(taskId: Int) = withContext<Unit>(ioDispatcher) {
         tasksDao.deleteTaskById(taskId)
     }
 

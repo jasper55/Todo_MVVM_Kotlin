@@ -31,10 +31,13 @@ import com.example.android.architecture.blueprints.todoapp.EventObserver
 import com.example.android.architecture.blueprints.todoapp.R
 import com.example.android.architecture.blueprints.todoapp.data.Task
 import com.example.android.architecture.blueprints.todoapp.databinding.TasksFragBinding
+import com.example.android.architecture.blueprints.todoapp.firebase.FirebaseDatabaseHelper
 import com.example.android.architecture.blueprints.todoapp.util.obtainViewModel
 import com.example.android.architecture.blueprints.todoapp.util.setupSnackbar
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.snackbar.Snackbar
+import com.google.firebase.database.DatabaseReference
+import com.google.firebase.database.FirebaseDatabase
 import timber.log.Timber
 import java.util.ArrayList
 
@@ -45,6 +48,8 @@ class TasksFragment : Fragment() {
 
     private lateinit var viewDataBinding: TasksFragBinding
     private lateinit var listAdapter: TasksAdapter
+    private lateinit var database: FirebaseDatabase
+    private lateinit var dbReference: DatabaseReference
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
             savedInstanceState: Bundle?): View? {
@@ -87,6 +92,12 @@ class TasksFragment : Fragment() {
         setupNavigation()
         setupFab()
         viewDataBinding.viewmodel?.loadTasks(true)
+        saveDataToFirebase()
+    }
+
+    private fun saveDataToFirebase() {
+        val firebaseHelper = FirebaseDatabaseHelper()
+        firebaseHelper.saveToDatabase(viewDataBinding.viewmodel?.items?.value!!)
     }
 
     private fun setupNavigation() {
@@ -142,12 +153,12 @@ class TasksFragment : Fragment() {
 
     private fun navigateToAddNewTask() {
         val action = TasksFragmentDirections
-            .actionTasksFragmentToAddEditTaskFragment(null,
+            .actionTasksFragmentToAddEditTaskFragment(-1,
                 resources.getString(R.string.add_task))
         findNavController().navigate(action)
     }
 
-    private fun openTaskDetails(taskId: String) {
+    private fun openTaskDetails(taskId: Int) {
         val action = TasksFragmentDirections.actionTasksFragmentToTaskDetailFragment(taskId)
         findNavController().navigate(action)
     }

@@ -76,7 +76,7 @@ class AddEditTaskFragment : Fragment() {
         viewDataBinding.viewmodel?.start(getTaskId())
     }
 
-    private fun getTaskId(): String? {
+    private fun getTaskId(): Int? {
         return arguments?.let {
             AddEditTaskFragmentArgs.fromBundle(it).TASKID
         }

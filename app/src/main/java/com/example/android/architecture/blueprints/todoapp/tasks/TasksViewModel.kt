@@ -76,8 +76,8 @@ class TasksViewModel(
     // Not used at the moment
     private val isDataLoadingError = MutableLiveData<Boolean>()
 
-    private val _openTaskEvent = MutableLiveData<Event<String>>()
-    val openTaskEvent: LiveData<Event<String>> = _openTaskEvent
+    private val _openTaskEvent = MutableLiveData<Event<Int>>()
+    val openTaskEvent: LiveData<Event<Int>> = _openTaskEvent
 
     private val _newTaskEvent = MutableLiveData<Event<Unit>>()
     val newTaskEvent: LiveData<Event<Unit>> = _newTaskEvent
@@ -186,7 +186,7 @@ class TasksViewModel(
     /**
      * Called by the [TasksAdapter].
      */
-    internal fun openTask(taskId: String) {
+    internal fun openTask(taskId: Int) {
         _openTaskEvent.value = Event(taskId)
     }
 

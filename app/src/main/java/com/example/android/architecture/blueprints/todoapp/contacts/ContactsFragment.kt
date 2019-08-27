@@ -18,7 +18,7 @@ class ContactsFragment : Fragment() {
     private lateinit var contactsViewModel: ContactsViewModel
 
     private lateinit var listAdapter: ContactsAdapter
-    private lateinit var taskId: String
+    private var taskId: Int = -1
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
@@ -77,6 +77,6 @@ class ContactsFragment : Fragment() {
     private fun getTaskIdFromBundle() {
         val bundle = this.arguments
         if (bundle != null) {
-            taskId = bundle.getString("taskId") }
+            taskId = bundle.getInt("taskId") }
     }
 }

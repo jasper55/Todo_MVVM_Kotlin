@@ -1,10 +1,8 @@
 package com.example.android.architecture.blueprints.todoapp.util
 
-import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.app.DatePickerDialog
 import android.content.Context
-import android.widget.DatePicker
 
 import java.util.*
 
@@ -29,5 +27,9 @@ object DatePickerFragment {
 
     fun getDate(): String {
         return "$dDay.${dMonth + 1}.$dYear"
+    }
+
+    fun getCurrentDate(): Long{
+        return (dYear+ dMonth+ dDay).toLong()
     }
 }

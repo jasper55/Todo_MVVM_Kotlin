@@ -44,7 +44,7 @@ interface TasksDao {
      * @return the task with taskId.
      */
     @Query("SELECT * FROM Tasks WHERE entryid = :taskId")
-    suspend fun getTaskById(taskId: String): Task?
+    suspend fun getTaskById(taskId: Int): Task?
 
     /**
      * Insert a task in the database. If the task already exists, replace it.
@@ -70,26 +70,26 @@ interface TasksDao {
      * @param completed status to be updated
      */
     @Query("UPDATE tasks SET completed = :completed WHERE entryid = :taskId")
-    suspend fun updateCompleted(taskId: String, completed: Boolean)
+    suspend fun updateCompleted(taskId: Int, completed: Boolean)
 
     @Query("UPDATE tasks SET dueDate = :dueDate WHERE entryid = :taskId")
-    suspend fun updateDate(taskId: String, dueDate: Long)
+    suspend fun updateDate(taskId: Int, dueDate: Long)
 
     @Query("UPDATE tasks SET time = :time WHERE entryid = :taskId")
-    suspend fun updateTime(taskId: String, time: Long)
+    suspend fun updateTime(taskId: Int, time: Long)
 
     @Query("UPDATE tasks SET favorite = :favorite WHERE entryid = :taskId")
-    suspend fun updateFavorite(taskId: String, favorite: Boolean)
+    suspend fun updateFavorite(taskId: Int, favorite: Boolean)
 
     @Query("UPDATE tasks SET contactIdString = :contactIdString WHERE entryid = :taskId")
-    suspend fun saveContactId(taskId: String, contactIdString: String)
+    suspend fun saveContactId(taskId: Int, contactIdString: String)
     /**
      * Delete a task by id.
      *
      * @return the number of tasks deleted. This should always be 1.
      */
     @Query("DELETE FROM Tasks WHERE entryid = :taskId")
-    suspend fun deleteTaskById(taskId: String): Int
+    suspend fun deleteTaskById(taskId: Int): Int
 
     /**
      * Delete all tasks.

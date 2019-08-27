@@ -41,7 +41,7 @@ class DefaultTasksRepository(
 ) : TasksRepository {
 
 
-    private var cachedTasks: ConcurrentMap<String, Task>? = null
+    private var cachedTasks: ConcurrentMap<Int, Task>? = null
 
     override suspend fun getTasks(forceUpdate: Boolean): Result<List<Task>> {
 
@@ -103,7 +103,7 @@ class DefaultTasksRepository(
     /**
      * Relies on [getTasks] to fetch data and picks the task with the same ID.
      */
-    override suspend fun getTask(taskId: String, forceUpdate: Boolean): Result<Task> {
+    override suspend fun getTask(taskId: Int, forceUpdate: Boolean): Result<Task> {
 
         EspressoIdlingResource.increment() // Set app as busy.
 
@@ -128,8 +128,8 @@ class DefaultTasksRepository(
     }
 
     private suspend fun fetchTaskFromRemoteOrLocal(
-        taskId: String,
-        forceUpdate: Boolean
+            taskId: Int,
+            forceUpdate: Boolean
     ): Result<Task> {
         // Remote first
         val remoteTask = tasksRemoteDataSource.getTask(taskId)
@@ -174,7 +174,7 @@ class DefaultTasksRepository(
         }
     }
 
-    override suspend fun completeTask(taskId: String) {
+    override suspend fun completeTask(taskId: Int) {
         withContext(ioDispatcher) {
             getTaskWithId(taskId)?.let {
                 completeTask(it)
@@ -205,7 +205,7 @@ class DefaultTasksRepository(
         }
     }
 
-    override suspend fun favorTask(taskId: String) {
+    override suspend fun favorTask(taskId: Int) {
         withContext(ioDispatcher) {
             getTaskWithId(taskId)?.let {
                 favorTask(it)
@@ -236,7 +236,7 @@ class DefaultTasksRepository(
         }
     }
 
-    override suspend fun activateTask(taskId: String)  {
+    override suspend fun activateTask(taskId: Int)  {
         withContext(ioDispatcher) {
             getTaskWithId(taskId)?.let {
                 activateTask(it)
@@ -264,7 +264,7 @@ class DefaultTasksRepository(
         cachedTasks?.clear()
     }
 
-    override suspend fun deleteTask(taskId: String) {
+    override suspend fun deleteTask(taskId: Int) {
         coroutineScope {
             launch { tasksRemoteDataSource.deleteTask(taskId) }
             launch { tasksLocalDataSource.deleteTask(taskId) }
@@ -292,10 +292,10 @@ class DefaultTasksRepository(
         tasksLocalDataSource.saveTask(task)
     }
 
-    private fun getTaskWithId(id: String) = cachedTasks?.get(id)
+    private fun getTaskWithId(id: Int) = cachedTasks?.get(id)
 
     private fun cacheTask(task: Task): Task {
-        val cachedTask = Task(task.title, task.description, task.isCompleted, task.isFavorite, task.dueDate, task.time, task.id)
+        val cachedTask = Task(task.title, task.description, task.isCompleted, task.isFavorite, task.dueDate, task.time, task.contactIdString)
         // Create if it doesn't exist.
         if (cachedTasks == null) {
             cachedTasks = ConcurrentHashMap()

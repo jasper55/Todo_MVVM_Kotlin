@@ -30,7 +30,7 @@ object TasksRemoteDataSource : TasksDataSource {
 
     private const val SERVICE_LATENCY_IN_MILLIS = 2000L
 
-    private var TASKS_SERVICE_DATA = LinkedHashMap<String, Task>(2)
+    private var TASKS_SERVICE_DATA = LinkedHashMap<Int, Task>(2)
 
     init {
         addTask("Build tower in Pisa", "Ground looks good, no foundation work required.")
@@ -54,7 +54,7 @@ object TasksRemoteDataSource : TasksDataSource {
      * source implementation, this would be fired if the server can't be contacted or the server
      * returns an error.
      */
-    override suspend fun getTask(taskId: String): Result<Task> {
+    override suspend fun getTask(taskId: Int): Result<Task> {
 
         // Simulate network by delaying the execution.
         delay(SERVICE_LATENCY_IN_MILLIS)
@@ -65,44 +65,44 @@ object TasksRemoteDataSource : TasksDataSource {
     }
 
     private fun addTask(title: String, description: String) {
-        val newTask = Task(title, description)
-        TASKS_SERVICE_DATA.put(newTask.id, newTask)
+        val newTask = Task(title, description, false, false, 0, 0, "")
+        TASKS_SERVICE_DATA.put(newTask.id!!, newTask)
     }
     override suspend fun saveTask(task: Task) {
-        TASKS_SERVICE_DATA.put(task.id, task)
+        TASKS_SERVICE_DATA.put(task.id!!, task)
     }
 
     override suspend fun completeTask(task: Task) {
-        val completedTask = Task(task.title, task.description, true, task.isFavorite, task.dueDate, task.time, task.contactIdString, task.id)
-        TASKS_SERVICE_DATA.put(task.id, completedTask)
+        val completedTask = Task(task.title, task.description, true, task.isFavorite, task.dueDate, task.time, task.contactIdString)
+        TASKS_SERVICE_DATA.put(task.id!!, completedTask)
     }
 
-    override suspend fun completeTask(taskId: String) {
+    override suspend fun completeTask(taskId: Int) {
         // Not required for the remote data source because the {@link DefaultTasksRepository} handles
         // converting from a {@code taskId} to a {@link task} using its cached data.
     }
 
     override suspend fun favorTask(task: Task) {
-        val favorTask = Task(task.title, task.description, task.isCompleted, true, task.dueDate, task.time, task.contactIdString, task.id)
-        TASKS_SERVICE_DATA.put(task.id, favorTask)
+        val favorTask = Task(task.title, task.description, task.isCompleted, true, task.dueDate, task.time, task.contactIdString)
+        TASKS_SERVICE_DATA.put(task.id!!, favorTask)
     }
 
-    override suspend fun favorTask(taskId: String) {
+    override suspend fun favorTask(taskId: Int) {
         // Not required for the remote data source because the {@link DefaultTasksRepository} handles
         // converting from a {@code taskId} to a {@link task} using its cached data.
     }
 
     override suspend fun unfavorTask(task: Task) {
-        val unfavorTask = Task(task.title, task.description, task.isCompleted, false, task.dueDate, task.time, task.contactIdString, task.id)
-        TASKS_SERVICE_DATA.put(task.id, unfavorTask)
+        val unfavorTask = Task(task.title, task.description, task.isCompleted, false, task.dueDate, task.time, task.contactIdString)
+        TASKS_SERVICE_DATA.put(task.id!!, unfavorTask)
     }
 
     override suspend fun activateTask(task: Task) {
-        val activeTask = Task(task.title, task.description, false, task.isFavorite, task.dueDate, task.time, task.contactIdString, task.id)
-        TASKS_SERVICE_DATA.put(task.id, activeTask)
+        val activeTask = Task(task.title, task.description, false, task.isFavorite, task.dueDate, task.time, task.contactIdString)
+        TASKS_SERVICE_DATA.put(task.id!!, activeTask)
     }
 
-    override suspend fun activateTask(taskId: String) {
+    override suspend fun activateTask(taskId: Int) {
         // Not required for the remote data source because the {@link DefaultTasksRepository} handles
         // converting from a {@code taskId} to a {@link task} using its cached data.
     }
@@ -110,22 +110,22 @@ object TasksRemoteDataSource : TasksDataSource {
     override suspend fun clearCompletedTasks() {
         TASKS_SERVICE_DATA = TASKS_SERVICE_DATA.filterValues {
             !it.isCompleted
-        } as LinkedHashMap<String, Task>
+        } as LinkedHashMap<Int, Task>
     }
 
     override suspend fun setDueDate(task: Task, date: Long) {
-        val dueDateTask = Task(task.title, task.description, task.isCompleted, task.isFavorite, date, task.time, task.contactIdString, task.id)
-        TASKS_SERVICE_DATA.put(task.id, dueDateTask)
+        val dueDateTask = Task(task.title, task.description, task.isCompleted, task.isFavorite, date, task.time, task.contactIdString)
+        TASKS_SERVICE_DATA.put(task.id!!, dueDateTask)
     }
 
     override suspend fun setTime(task: Task, time: Long) {
-        val timeTask = Task(task.title, task.description, task.isCompleted, task.isFavorite, task.dueDate, time, task.contactIdString, task.id)
-        TASKS_SERVICE_DATA.put(task.id, timeTask)
+        val timeTask = Task(task.title, task.description, task.isCompleted, task.isFavorite, task.dueDate, time, task.contactIdString)
+        TASKS_SERVICE_DATA.put(task.id!!, timeTask)
     }
 
     override suspend fun saveContactId(task: Task, contactId: String) {
-        val timeTask = Task(task.title, task.description, task.isCompleted, task.isFavorite, task.dueDate, task.time, contactId, task.id)
-        TASKS_SERVICE_DATA.put(task.id, timeTask)
+        val timeTask = Task(task.title, task.description, task.isCompleted, task.isFavorite, task.dueDate, task.time, contactId)
+        TASKS_SERVICE_DATA.put(task.id!!, timeTask)
     }
 
 
@@ -133,7 +133,7 @@ object TasksRemoteDataSource : TasksDataSource {
         TASKS_SERVICE_DATA.clear()
     }
 
-    override suspend fun deleteTask(taskId: String) {
+    override suspend fun deleteTask(taskId: Int) {
         TASKS_SERVICE_DATA.remove(taskId)
     }
 }

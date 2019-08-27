@@ -30,29 +30,29 @@ interface TasksDataSource {
 
     suspend fun getTasks(): Result<List<Task>>
 
-    suspend fun getTask(taskId: String): Result<Task>
+    suspend fun getTask(taskId: Int): Result<Task>
 
     suspend fun saveTask(task: Task)
 
     suspend fun completeTask(task: Task)
 
-    suspend fun completeTask(taskId: String)
+    suspend fun completeTask(taskId: Int)
 
     suspend fun favorTask(task: Task)
 
     suspend fun unfavorTask(task: Task)
 
-    suspend fun favorTask(taskId: String)
+    suspend fun favorTask(taskId: Int)
 
     suspend fun activateTask(task: Task)
 
-    suspend fun activateTask(taskId: String)
+    suspend fun activateTask(taskId: Int)
 
     suspend fun clearCompletedTasks()
 
     suspend fun deleteAllTasks()
 
-    suspend fun deleteTask(taskId: String)
+    suspend fun deleteTask(taskId: Int)
 
     suspend fun setDueDate(task: Task, date: Long)
 

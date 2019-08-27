@@ -38,6 +38,8 @@ import com.example.android.architecture.blueprints.todoapp.databinding.Contactli
 import com.example.android.architecture.blueprints.todoapp.databinding.TaskdetailFragBinding
 import com.example.android.architecture.blueprints.todoapp.util.*
 import com.google.android.material.snackbar.Snackbar
+import com.google.firebase.database.DatabaseReference
+import com.google.firebase.database.FirebaseDatabase
 import timber.log.Timber
 
 
@@ -48,13 +50,15 @@ class TaskDetailFragment : Fragment() {
     private lateinit var viewDataBinding: TaskdetailFragBinding // is been generated because taskdetail_frag.xml
     private lateinit var contactViewDataBinding: ContactlistFragBinding // is been generated because contactlist_frag.xml
 
+    private lateinit var database: FirebaseDatabase
+    private lateinit var dbReference: DatabaseReference
 
     private lateinit var viewModel: TaskDetailViewModel
     private lateinit var contactsViewModel: ContactsViewModel
 
     private lateinit var listAdapter: ContactsAdapter
 
-    private lateinit var taskId: String
+    private var taskId: Int = -1
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
@@ -74,7 +78,7 @@ class TaskDetailFragment : Fragment() {
             findNavController().navigate(action)
         })
         viewModel.editTaskCommand.observe(this, EventObserver {
-//            val taskId = TaskDetailFragmentArgs.fromBundle(arguments!!).TASKID
+            val taskId = TaskDetailFragmentArgs.fromBundle(arguments!!).TASKID
             val action = TaskDetailFragmentDirections
                     .actionTaskDetailFragmentToAddEditTaskFragment(taskId,
                             resources.getString(R.string.edit_task))
@@ -98,6 +102,8 @@ class TaskDetailFragment : Fragment() {
             viewDataBinding.viewmodel?.start(taskId, it)
         }
     }
+
+
 
     override fun onCreateView(
             inflater: LayoutInflater,
@@ -155,7 +161,7 @@ class TaskDetailFragment : Fragment() {
         return baseView // only this view is return as the other view is declared inside the xml
     }
 
-    private fun addContactsFragmentToView(taskId: String) {
+    private fun addContactsFragmentToView(taskId: Int) {
 
         val fm = fragmentManager
         val ft = fm!!.beginTransaction()
@@ -163,7 +169,7 @@ class TaskDetailFragment : Fragment() {
         fm.beginTransaction()
         val fragTwo = ContactsFragment()
         val bundle = Bundle()
-        bundle.putString("taskId", taskId)
+        bundle.putInt("taskId", taskId)
         fragTwo.setArguments(bundle)
         ft.add(R.id.contact_list, fragTwo)
         ft.commit()
