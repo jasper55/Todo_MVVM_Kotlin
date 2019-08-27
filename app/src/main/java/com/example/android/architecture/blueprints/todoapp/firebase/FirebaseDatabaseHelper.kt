@@ -6,6 +6,7 @@ import com.google.firebase.database.*
 import com.google.gson.Gson
 import org.json.JSONArray
 import org.json.JSONObject
+import timber.log.Timber
 
 class FirebaseDatabaseHelper{
 
@@ -97,19 +98,23 @@ class FirebaseDatabaseHelper{
 
 
     fun saveToDatabase(todoList: List<Task>) {
-//        val availableSalads: List<Salad> = mutableListOf(
-//                Salad("Gherkin", "Fresh and delicious"),
-//                Salad("Lettuce", "Easy to prepare"),
-//                Salad("Tomato", "Boring but healthy"),
-//                Salad("Zucchini", "Healthy and gross")
-//        )
         todoList.forEach {
-            val key = dbReference.child("task").push().key
-            it.id = key!!.toInt()
-            dbReference.child("task").child(key).setValue(it)
+//            val key = dbReference.child("task").push().key
+//            it.id = key!!.toInt()
+//            Timber.i("$key")
+            dbReference.child("task ${it.id}").setValue(it)
         }
+        Timber.i("Firebase database updated")
     }
 
+    fun deleteData(){
+        dbReference.database.getReference("Tasks").removeValue()
+        Timber.i("Firebase data deleted")
+    }
+
+    fun deleteTask(taskId: Int){
+        dbReference.child("task $taskId").removeValue()
+    }
 
 }
 

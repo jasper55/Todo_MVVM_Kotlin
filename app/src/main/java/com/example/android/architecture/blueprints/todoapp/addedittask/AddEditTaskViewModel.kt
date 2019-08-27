@@ -25,6 +25,7 @@ import com.example.android.architecture.blueprints.todoapp.R
 import com.example.android.architecture.blueprints.todoapp.data.Result.Success
 import com.example.android.architecture.blueprints.todoapp.data.Task
 import com.example.android.architecture.blueprints.todoapp.data.source.local.TasksLocalDataSource
+import com.example.android.architecture.blueprints.todoapp.util.DatePickerFragment
 import kotlinx.coroutines.launch
 import kotlin.math.absoluteValue
 
@@ -67,7 +68,7 @@ class AddEditTaskViewModel(
 
     private var taskFavored = false
 
-    private var taskDueDate: Long = 0L
+    private var taskDueDate: Long = DatePickerFragment.getCurrentDate()
 
     private var taskTime: Long = 0L
 

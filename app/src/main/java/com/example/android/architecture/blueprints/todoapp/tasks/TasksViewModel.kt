@@ -29,6 +29,7 @@ import com.example.android.architecture.blueprints.todoapp.data.Task
 import com.example.android.architecture.blueprints.todoapp.data.source.TasksDataSource
 import com.example.android.architecture.blueprints.todoapp.data.source.TasksRepository
 import com.example.android.architecture.blueprints.todoapp.data.source.local.TasksLocalDataSource
+import com.example.android.architecture.blueprints.todoapp.firebase.FirebaseDatabaseHelper
 import com.example.android.architecture.blueprints.todoapp.util.ADD_EDIT_RESULT_OK
 import com.example.android.architecture.blueprints.todoapp.util.DELETE_RESULT_OK
 import com.example.android.architecture.blueprints.todoapp.util.EDIT_RESULT_OK
@@ -99,6 +100,12 @@ class TasksViewModel(
      * [TasksFilterType.COMPLETED_TASKS], or
      * [TasksFilterType.ACTIVE_TASKS]
      */
+    fun saveDataToFirebase() {
+        val firebaseHelper = FirebaseDatabaseHelper()
+        firebaseHelper.deleteData()
+        firebaseHelper.saveToDatabase(items?.value!!)
+    }
+
     fun setFiltering(requestType: TasksFilterType) {
         _currentFiltering = requestType
         _currentSorting
@@ -274,9 +281,12 @@ class TasksViewModel(
                 _snackbarText.value = Event(R.string.loading_tasks_error)
             }
 
+            saveDataToFirebase()
+
             EspressoIdlingResource.decrement() // Set app as idle.
             _dataLoading.value = false
         }
+
     }
 
     private fun sortByDate(tasks: List<Task>): List<Task> {

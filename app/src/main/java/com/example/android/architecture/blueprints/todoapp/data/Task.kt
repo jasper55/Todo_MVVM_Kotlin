@@ -36,7 +36,7 @@ data class Task @JvmOverloads constructor(
         @ColumnInfo(name = "description") var description: String = "",
         @ColumnInfo(name = "completed") var isCompleted: Boolean = false,
         @ColumnInfo(name = "favorite") var isFavorite: Boolean = false,
-        @ColumnInfo(name = "dueDate") var dueDate: Long = DatePickerFragment.getCurrentDate(),
+        @ColumnInfo(name = "dueDate") var dueDate: Long = 0L,
         @ColumnInfo(name = "time") var time: Long = 0L,
         @ColumnInfo(name = "contactIdString") var contactIdString: String = ""
 ) {
@@ -47,9 +47,6 @@ data class Task @JvmOverloads constructor(
     // is being accessed by the OverViewFragment
     val titleForList: String
         get() = if (title.isNotEmpty()) title else description
-
-    val idForList: String
-        get() = id.toString()
 
     val isActive
         get() = !isCompleted

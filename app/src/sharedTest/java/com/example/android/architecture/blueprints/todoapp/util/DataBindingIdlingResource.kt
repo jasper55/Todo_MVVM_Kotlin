@@ -39,14 +39,14 @@ class DataBindingIdlingResource : IdlingResource {
     private val idlingCallbacks = mutableListOf<IdlingResource.ResourceCallback>()
     // give it a unique id to workaround an espresso bug where you cannot register/unregister
     // an idling resource w/ the same name.
-    private val id = UUID.randomUUID().toString()
+    private val id = 0
     // holds whether isIdle is called and the result was false. We track this to avoid calling
     // onTransitionToIdle callbacks if Espresso never thought we were idle in the first place.
     private var wasNotIdle = false
 
     lateinit var activity: FragmentActivity
 
-    override fun getName() = "DataBinding $id"
+    override fun getName() = "$id"
 
     override fun isIdleNow(): Boolean {
         val idle = !getBindings().any { it.hasPendingBindings() }

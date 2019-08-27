@@ -48,8 +48,6 @@ class TasksFragment : Fragment() {
 
     private lateinit var viewDataBinding: TasksFragBinding
     private lateinit var listAdapter: TasksAdapter
-    private lateinit var database: FirebaseDatabase
-    private lateinit var dbReference: DatabaseReference
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
             savedInstanceState: Bundle?): View? {
@@ -92,12 +90,7 @@ class TasksFragment : Fragment() {
         setupNavigation()
         setupFab()
         viewDataBinding.viewmodel?.loadTasks(true)
-        saveDataToFirebase()
-    }
-
-    private fun saveDataToFirebase() {
-        val firebaseHelper = FirebaseDatabaseHelper()
-        firebaseHelper.saveToDatabase(viewDataBinding.viewmodel?.items?.value!!)
+        viewDataBinding.viewmodel?.saveDataToFirebase()
     }
 
     private fun setupNavigation() {
