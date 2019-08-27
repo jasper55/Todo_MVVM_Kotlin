@@ -16,6 +16,8 @@
 
 package com.example.android.architecture.blueprints.todoapp.tasks
 
+import android.content.Context
+import android.net.ConnectivityManager
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.Menu
@@ -23,6 +25,7 @@ import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.PopupMenu
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
@@ -31,13 +34,10 @@ import com.example.android.architecture.blueprints.todoapp.EventObserver
 import com.example.android.architecture.blueprints.todoapp.R
 import com.example.android.architecture.blueprints.todoapp.data.Task
 import com.example.android.architecture.blueprints.todoapp.databinding.TasksFragBinding
-import com.example.android.architecture.blueprints.todoapp.firebase.FirebaseDatabaseHelper
 import com.example.android.architecture.blueprints.todoapp.util.obtainViewModel
 import com.example.android.architecture.blueprints.todoapp.util.setupSnackbar
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.snackbar.Snackbar
-import com.google.firebase.database.DatabaseReference
-import com.google.firebase.database.FirebaseDatabase
 import timber.log.Timber
 import java.util.ArrayList
 
@@ -50,7 +50,7 @@ class TasksFragment : Fragment() {
     private lateinit var listAdapter: TasksAdapter
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
-            savedInstanceState: Bundle?): View? {
+                              savedInstanceState: Bundle?): View? {
         viewDataBinding = TasksFragBinding.inflate(inflater, container, false).apply {
             viewmodel = obtainViewModel(TasksViewModel::class.java)
         }
@@ -59,21 +59,21 @@ class TasksFragment : Fragment() {
     }
 
     override fun onOptionsItemSelected(item: MenuItem) =
-        when (item.itemId) {
-            R.id.menu_clear -> {
-                viewDataBinding.viewmodel?.clearCompletedTasks()
-                true
+            when (item.itemId) {
+                R.id.menu_clear -> {
+                    viewDataBinding.viewmodel?.clearCompletedTasks()
+                    true
+                }
+                R.id.menu_filter -> {
+                    showFilteringPopUpMenu()
+                    true
+                }
+                R.id.menu_refresh -> {
+                    viewDataBinding.viewmodel?.loadTasks(true)
+                    true
+                }
+                else -> false
             }
-            R.id.menu_filter -> {
-                showFilteringPopUpMenu()
-                true
-            }
-            R.id.menu_refresh -> {
-                viewDataBinding.viewmodel?.loadTasks(true)
-                true
-            }
-            else -> false
-        }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         inflater.inflate(R.menu.tasks_fragment_menu, menu)
@@ -90,7 +90,14 @@ class TasksFragment : Fragment() {
         setupNavigation()
         setupFab()
         viewDataBinding.viewmodel?.loadTasks(true)
-        viewDataBinding.viewmodel?.saveDataToFirebase()
+        updateFirebaseDb()
+    }
+
+    private fun updateFirebaseDb() {
+        if (isConnectivityAvailable(activity as AppCompatActivity)) {
+            viewDataBinding.viewmodel?.saveDataToFirebase()
+        } else
+            viewDataBinding.viewmodel?.showNoInternetConnection()
     }
 
     private fun setupNavigation() {
@@ -146,8 +153,8 @@ class TasksFragment : Fragment() {
 
     private fun navigateToAddNewTask() {
         val action = TasksFragmentDirections
-            .actionTasksFragmentToAddEditTaskFragment(-1,
-                resources.getString(R.string.add_task))
+                .actionTasksFragmentToAddEditTaskFragment(-1,
+                        resources.getString(R.string.add_task))
         findNavController().navigate(action)
     }
 
@@ -164,6 +171,11 @@ class TasksFragment : Fragment() {
         } else {
             Timber.w("ViewModel not initialized when attempting to set up adapter.")
         }
+    }
+
+    private fun isConnectivityAvailable(activity: AppCompatActivity): Boolean {
+        return (activity.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager)
+                .activeNetworkInfo?.isConnected == true
     }
 
     private fun setupRefreshLayout() {

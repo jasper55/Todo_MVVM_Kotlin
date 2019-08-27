@@ -163,6 +163,10 @@ class TasksViewModel(
         }
     }
 
+    fun showNoInternetConnection(){
+        showSnackbarMessage(R.string.no_internet_connection)
+    }
+
     fun completeTask(task: Task, completed: Boolean) = viewModelScope.launch {
         if (completed) {
             tasksRepository.completeTask(task)
