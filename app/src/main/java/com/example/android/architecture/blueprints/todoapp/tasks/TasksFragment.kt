@@ -83,14 +83,20 @@ class TasksFragment : Fragment() {
         super.onActivityCreated(savedInstanceState)
 
         // Set the lifecycle owner to the lifecycle of the view
+        val viewmodel = viewDataBinding.viewmodel
         viewDataBinding.lifecycleOwner = this.viewLifecycleOwner
         setupSnackbar(Snackbar.LENGTH_SHORT)
         setupListAdapter()
         setupRefreshLayout()
         setupNavigation()
         setupFab()
-        viewDataBinding.viewmodel?.loadTasks(true)
-        updateFirebaseDb()
+        viewmodel?.loadTasks(true)
+        if (viewmodel?.items?.value == emptyList<Task>()) {
+            viewmodel.getTaskListFromFirebase()
+            // tst
+        } else {
+            //updateFirebaseDb()
+        }
     }
 
     private fun updateFirebaseDb() {
@@ -98,7 +104,7 @@ class TasksFragment : Fragment() {
             viewDataBinding.viewmodel?.saveDataToFirebase()
         } else
             setupSnackbar(Snackbar.LENGTH_LONG, context!!.getColor(R.color.colorRed))
-            viewDataBinding.viewmodel?.showNoInternetConnection()
+        viewDataBinding.viewmodel?.showNoInternetConnection()
 //        setupSnackbar()
     }
 

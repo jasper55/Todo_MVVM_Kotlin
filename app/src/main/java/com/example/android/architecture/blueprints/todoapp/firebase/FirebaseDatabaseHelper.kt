@@ -12,7 +12,7 @@ class FirebaseDatabaseHelper{
 
     private var database: FirebaseDatabase
     private var dbReference: DatabaseReference
-    private lateinit var todoList: ArrayList<Task>
+    private var todoList = arrayListOf<Task>()
 
     constructor() {
         this.database = FirebaseDatabase.getInstance()
@@ -80,12 +80,14 @@ class FirebaseDatabaseHelper{
         return jsonObject
     }
 
-    fun readTasks(){
-        val listener = object : ValueEventListener {
+    fun readTasks(): List<Task>{
 
+        val listener = object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
-                todoList = ArrayList()
-                dataSnapshot.children.mapNotNullTo(todoList) { it.getValue<Task>(Task::class.java) }
+              //  todoList = ArrayList()
+                //dataSnapshot.children.mapNotNullTo(todoList) { it.getValue(Task::class.java) }
+                val td = dataSnapshot.value as HashMap<String, Task>
+                todoList.addAll(td.values)
             }
 
             override fun onCancelled(p0: DatabaseError) {
@@ -93,7 +95,8 @@ class FirebaseDatabaseHelper{
             }
         }
 
-        dbReference.addValueEventListener(listener)
+        dbReference.addListenerForSingleValueEvent(listener)
+        return todoList
     }
 
 

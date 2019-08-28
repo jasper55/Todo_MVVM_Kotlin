@@ -49,7 +49,7 @@ class TasksViewModel(
         private val tasksRepository: TasksLocalDataSource
 ) : ViewModel() {
 
-    private val _items = MutableLiveData<List<Task>>().apply { value = emptyList() }
+    val _items = MutableLiveData<List<Task>>().apply { value = emptyList() }
     val items: LiveData<List<Task>> = _items
 
     private val _dataLoading = MutableLiveData<Boolean>()
@@ -100,11 +100,6 @@ class TasksViewModel(
      * [TasksFilterType.COMPLETED_TASKS], or
      * [TasksFilterType.ACTIVE_TASKS]
      */
-    fun saveDataToFirebase() {
-        val firebaseHelper = FirebaseDatabaseHelper()
-        firebaseHelper.deleteData()
-        firebaseHelper.saveToDatabase(items?.value!!)
-    }
 
     fun setFiltering(requestType: TasksFilterType) {
         _currentFiltering = requestType
@@ -285,12 +280,29 @@ class TasksViewModel(
                 _snackbarText.value = Event(R.string.loading_tasks_error)
             }
 
-            saveDataToFirebase()
-
             EspressoIdlingResource.decrement() // Set app as idle.
             _dataLoading.value = false
         }
 
+    }
+
+    fun saveDataToFirebase() {
+        val firebaseHelper = FirebaseDatabaseHelper()
+        firebaseHelper.deleteData()
+        firebaseHelper.saveToDatabase(items?.value!!)
+    }
+
+    fun getTaskListFromFirebase() {
+        val firebaseHelper = FirebaseDatabaseHelper()
+
+        viewModelScope.launch {
+            _items.value = firebaseHelper.readTasks()
+            items.value?.forEach {
+                //tasksRepository.saveTask(it)
+                _snackbarText.value = Event(R.string.tasks_retrieved_from_db)
+                //loadTasks(false)
+            }
+        }
     }
 
     private fun sortByDate(tasks: List<Task>): List<Task> {
