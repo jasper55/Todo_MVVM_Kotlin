@@ -84,17 +84,14 @@ class FirebaseDatabaseHelper{
 
         val listener = object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
-              //  todoList = ArrayList()
-                //dataSnapshot.children.mapNotNullTo(todoList) { it.getValue(Task::class.java) }
-                val td = dataSnapshot.value as HashMap<String, Task>
-                todoList.addAll(td.values)
+                dataSnapshot.value?.let { val td = it as HashMap<String, Task>
+                    todoList.addAll(td.values)}
             }
 
             override fun onCancelled(p0: DatabaseError) {
                 TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
             }
         }
-
         dbReference.addListenerForSingleValueEvent(listener)
         return todoList
     }

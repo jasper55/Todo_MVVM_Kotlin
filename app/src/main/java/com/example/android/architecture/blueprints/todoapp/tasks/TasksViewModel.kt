@@ -15,8 +15,11 @@
  */
 package com.example.android.architecture.blueprints.todoapp.tasks
 
+import android.content.Context
+import android.net.ConnectivityManager
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
+import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Transformations
@@ -27,7 +30,6 @@ import com.example.android.architecture.blueprints.todoapp.R
 import com.example.android.architecture.blueprints.todoapp.data.Result.Success
 import com.example.android.architecture.blueprints.todoapp.data.Task
 import com.example.android.architecture.blueprints.todoapp.data.source.TasksDataSource
-import com.example.android.architecture.blueprints.todoapp.data.source.TasksRepository
 import com.example.android.architecture.blueprints.todoapp.data.source.local.TasksLocalDataSource
 import com.example.android.architecture.blueprints.todoapp.firebase.FirebaseDatabaseHelper
 import com.example.android.architecture.blueprints.todoapp.util.ADD_EDIT_RESULT_OK
@@ -54,6 +56,9 @@ class TasksViewModel(
 
     private val _dataLoading = MutableLiveData<Boolean>()
     val dataLoading: LiveData<Boolean> = _dataLoading
+
+    val _isInternetAvailable = MutableLiveData<Boolean>()
+    val isInternetAvailable: LiveData<Boolean> = _isInternetAvailable
 
     private val _currentFilteringLabel = MutableLiveData<Int>()
     val currentFilteringLabel: LiveData<Int> = _currentFilteringLabel
@@ -158,7 +163,7 @@ class TasksViewModel(
         }
     }
 
-    fun showNoInternetConnection(){
+    fun showNoInternetConnection() {
         showSnackbarMessage(R.string.no_internet_connection)
     }
 
@@ -286,24 +291,47 @@ class TasksViewModel(
 
     }
 
+    fun saveDataIfInternetAvailable(activity: AppCompatActivity) {
+        val connection = (activity.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager)
+                .activeNetworkInfo?.isConnected == true
+        if (connection) {
+            saveDataToFirebase()
+        } else {
+            showNoInternetConnection()
+        }
+    }
+
     fun saveDataToFirebase() {
         val firebaseHelper = FirebaseDatabaseHelper()
         firebaseHelper.deleteData()
         firebaseHelper.saveToDatabase(items?.value!!)
+        _snackbarText.value = Event(R.string.tasks_saved_to_remote_db)
     }
 
-    fun getTaskListFromFirebase() {
-        val firebaseHelper = FirebaseDatabaseHelper()
-
-        viewModelScope.launch {
+    private fun getTaskListFromFirebase(activity: AppCompatActivity) = viewModelScope.launch {
+        val connection = (activity.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager)
+                .activeNetworkInfo?.isConnected == true
+        if (connection) {
+            val firebaseHelper = FirebaseDatabaseHelper()
             _items.value = firebaseHelper.readTasks()
             items.value?.forEach {
                 //tasksRepository.saveTask(it)
-                _snackbarText.value = Event(R.string.tasks_retrieved_from_db)
-                //loadTasks(false)
             }
+            _snackbarText.value = Event(R.string.tasks_retrieved_from_db)
+            //loadTasks(false)
+        } else {
+            showNoInternetConnection()
         }
     }
+
+    fun loadDataFromFBIfAvailable(activity: AppCompatActivity) {
+        if (items?.value == emptyList<Task>()) {
+            getTaskListFromFirebase(activity)
+        } else {
+            saveDataIfInternetAvailable(activity)
+        }
+    }
+
 
     private fun sortByDate(tasks: List<Task>): List<Task> {
         val sortedList = tasks.sortedBy { it.dueDate }

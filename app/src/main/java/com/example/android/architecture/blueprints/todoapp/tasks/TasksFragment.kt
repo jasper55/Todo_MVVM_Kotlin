@@ -16,8 +16,6 @@
 
 package com.example.android.architecture.blueprints.todoapp.tasks
 
-import android.content.Context
-import android.net.ConnectivityManager
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.Menu
@@ -82,6 +80,7 @@ class TasksFragment : Fragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
+        val activity = activity as AppCompatActivity
         // Set the lifecycle owner to the lifecycle of the view
         val viewmodel = viewDataBinding.viewmodel
         viewDataBinding.lifecycleOwner = this.viewLifecycleOwner
@@ -91,21 +90,8 @@ class TasksFragment : Fragment() {
         setupNavigation()
         setupFab()
         viewmodel?.loadTasks(true)
-        if (viewmodel?.items?.value == emptyList<Task>()) {
-            viewmodel.getTaskListFromFirebase()
-            // tst
-        } else {
-            //updateFirebaseDb()
-        }
-    }
-
-    private fun updateFirebaseDb() {
-        if (isConnectivityAvailable(activity as AppCompatActivity)) {
-            viewDataBinding.viewmodel?.saveDataToFirebase()
-        } else
-            setupSnackbar(Snackbar.LENGTH_LONG, context!!.getColor(R.color.colorRed))
-        viewDataBinding.viewmodel?.showNoInternetConnection()
-//        setupSnackbar()
+        viewmodel?.saveDataIfInternetAvailable(activity)
+        viewmodel?.loadDataFromFBIfAvailable(activity)
     }
 
     private fun setupNavigation() {
@@ -189,11 +175,6 @@ class TasksFragment : Fragment() {
         } else {
             Timber.w("ViewModel not initialized when attempting to set up adapter.")
         }
-    }
-
-    private fun isConnectivityAvailable(activity: AppCompatActivity): Boolean {
-        return (activity.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager)
-                .activeNetworkInfo?.isConnected == true
     }
 
     private fun setupRefreshLayout() {
