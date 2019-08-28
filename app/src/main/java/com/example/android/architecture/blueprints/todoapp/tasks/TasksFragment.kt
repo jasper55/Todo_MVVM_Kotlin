@@ -84,7 +84,7 @@ class TasksFragment : Fragment() {
 
         // Set the lifecycle owner to the lifecycle of the view
         viewDataBinding.lifecycleOwner = this.viewLifecycleOwner
-        setupSnackbar()
+        setupSnackbar(Snackbar.LENGTH_SHORT)
         setupListAdapter()
         setupRefreshLayout()
         setupNavigation()
@@ -97,7 +97,9 @@ class TasksFragment : Fragment() {
         if (isConnectivityAvailable(activity as AppCompatActivity)) {
             viewDataBinding.viewmodel?.saveDataToFirebase()
         } else
+            setupSnackbar(Snackbar.LENGTH_LONG, context!!.getColor(R.color.colorRed))
             viewDataBinding.viewmodel?.showNoInternetConnection()
+//        setupSnackbar()
     }
 
     private fun setupNavigation() {
@@ -109,9 +111,19 @@ class TasksFragment : Fragment() {
         })
     }
 
+    private fun setupSnackbar(length: Int, bgColor: Int = context!!.getColor(R.color.colorTextPrimary)) {
+        viewDataBinding.viewmodel?.let {
+            view?.setupSnackbar(this, it.snackbarMessage, length, bgColor)
+        }
+        arguments?.let {
+            val message = TasksFragmentArgs.fromBundle(it).userMessage
+            viewDataBinding.viewmodel?.showEditResultMessage(message)
+        }
+    }
+
     private fun setupSnackbar() {
         viewDataBinding.viewmodel?.let {
-            view?.setupSnackbar(this, it.snackbarMessage, Snackbar.LENGTH_SHORT)
+            view?.setupSnackbar(this, it.snackbarMessage)
         }
         arguments?.let {
             val message = TasksFragmentArgs.fromBundle(it).userMessage
