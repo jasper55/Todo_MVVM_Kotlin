@@ -7,8 +7,9 @@ import com.google.gson.Gson
 import org.json.JSONArray
 import org.json.JSONObject
 import timber.log.Timber
+import java.util.concurrent.Semaphore
 
-class FirebaseDatabaseHelper{
+class FirebaseDatabaseHelper {
 
     private var database: FirebaseDatabase
     private var dbReference: DatabaseReference
@@ -32,7 +33,7 @@ class FirebaseDatabaseHelper{
 
     private fun convertFromJSONStringToClass2(jsonString: String): List<Task> {
         var gson = Gson()
-        val list : List<Task> = gson.fromJson(jsonString, object : TypeToken<List<Task>>(){}.type)
+        val list: List<Task> = gson.fromJson(jsonString, object : TypeToken<List<Task>>() {}.type)
         return list
     }
 
@@ -42,13 +43,13 @@ class FirebaseDatabaseHelper{
 //        return jsonString
 //    }
 
-    private fun convertDataClassToJSONString(task: Task): String{
+    private fun convertDataClassToJSONString(task: Task): String {
         var gson = Gson()
         var jsonString = gson.toJson(Task(task.title, task.description, task.isCompleted, task.isFavorite, task.dueDate, task.time, task.contactIdString))
         return jsonString
     }
 
-    fun saveJSONString(todoList: List<Task>): String{
+    fun saveJSONString(todoList: List<Task>): String {
         """{"id":1,"description":"Test"}"""
 
         """"{
@@ -62,7 +63,7 @@ class FirebaseDatabaseHelper{
         }"""
 
         var jsonString = ""
-        for (task in todoList){
+        for (task in todoList) {
             var string = convertDataClassToJSONString(task)
             jsonString.plus(string)
         }
@@ -71,24 +72,25 @@ class FirebaseDatabaseHelper{
 
     fun storeJSONString(todoList: List<Task>): JSONObject {
 
-    val array = JSONArray()
-        for (task in todoList){
+        val array = JSONArray()
+        for (task in todoList) {
             array.put(convertDataClassToJSONString(task))
         }
-    val jsonObject = JSONObject()
+        val jsonObject = JSONObject()
         jsonObject.put("task", array)
         return jsonObject
     }
 
-    fun readTasks(): List<Task>{
+    suspend fun readTasks(): List<Task> {
 
         val listener = object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 dataSnapshot.value?.let { val td = it as HashMap<String, Task>
-                    todoList.addAll(td.values)}
+                    todoList.addAll(td.values)
+                }
             }
-
             override fun onCancelled(p0: DatabaseError) {
+                Timber.i("some error occurred while loading data from firebase db")
                 TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
             }
         }
@@ -96,10 +98,9 @@ class FirebaseDatabaseHelper{
         return todoList
     }
 
-
-    fun saveToDatabase(todoList: List<Task>) {
+    suspend fun saveToDatabase(todoList: List<Task>) {
         todoList.forEach {
-//            val key = dbReference.child("task").push().key
+            //            val key = dbReference.child("task").push().key
 //            it.id = key!!.toInt()
 //            Timber.i("$key")
             dbReference.child("task ${it.id}").setValue(it)
@@ -107,12 +108,12 @@ class FirebaseDatabaseHelper{
         Timber.i("Firebase database updated")
     }
 
-    fun deleteData(){
+    suspend fun deleteData() {
         dbReference.database.getReference("Tasks").removeValue()
         Timber.i("Firebase data deleted")
     }
 
-    fun deleteTask(taskId: Int){
+    fun deleteTask(taskId: Int) {
         dbReference.child("task $taskId").removeValue()
     }
 

@@ -37,6 +37,9 @@ import com.example.android.architecture.blueprints.todoapp.util.DELETE_RESULT_OK
 import com.example.android.architecture.blueprints.todoapp.util.EDIT_RESULT_OK
 import com.example.android.architecture.blueprints.todoapp.util.EspressoIdlingResource
 import kotlinx.coroutines.launch
+import java.util.concurrent.Semaphore
+import android.util.Log
+import timber.log.Timber
 
 
 /**
@@ -279,6 +282,7 @@ class TasksViewModel(
                 }
                 isDataLoadingError.value = false
                 _items.value = ArrayList(tasksToShow)
+                Timber.i("Tasks loaded from local db")
             } else {
                 isDataLoadingError.value = false
                 _items.value = emptyList()
@@ -303,21 +307,32 @@ class TasksViewModel(
 
     fun saveDataToFirebase() {
         val firebaseHelper = FirebaseDatabaseHelper()
-        firebaseHelper.deleteData()
-        firebaseHelper.saveToDatabase(items?.value!!)
-        _snackbarText.value = Event(R.string.tasks_saved_to_remote_db)
+
+
+
+        viewModelScope.launch {
+            firebaseHelper.deleteData()
+            firebaseHelper.saveToDatabase(items?.value!!)
+            _snackbarText.value = Event(R.string.tasks_saved_to_remote_db)
+            EspressoIdlingResource.decrement() // Set app as idle.
+        }
     }
 
-    private fun getTaskListFromFirebase(activity: AppCompatActivity) = viewModelScope.launch {
+    private fun getTaskListFromFirebase(activity: AppCompatActivity) {
         val connection = (activity.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager)
                 .activeNetworkInfo?.isConnected == true
         if (connection) {
             val firebaseHelper = FirebaseDatabaseHelper()
+
+            EspressoIdlingResource.increment() // Set app as busy.
+            viewModelScope.launch{
             _items.value = firebaseHelper.readTasks()
             items.value?.forEach {
-                //tasksRepository.saveTask(it)
+//                tasksRepository.saveTask(it)
             }
             _snackbarText.value = Event(R.string.tasks_retrieved_from_db)
+                EspressoIdlingResource.decrement() // Set app as idle.
+            }
             //loadTasks(false)
         } else {
             showNoInternetConnection()

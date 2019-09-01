@@ -90,7 +90,7 @@ class TasksFragment : Fragment() {
         setupNavigation()
         setupFab()
         viewmodel?.loadTasks(true)
-        viewmodel?.saveDataIfInternetAvailable(activity)
+//        viewmodel?.saveDataIfInternetAvailable(activity)
         viewmodel?.loadDataFromFBIfAvailable(activity)
     }
 
