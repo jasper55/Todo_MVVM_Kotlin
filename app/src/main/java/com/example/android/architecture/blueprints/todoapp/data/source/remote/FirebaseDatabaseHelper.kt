@@ -14,7 +14,6 @@ class FirebaseDatabaseHelper {
 
     private var database: FirebaseDatabase
     private var dbReference: DatabaseReference
-   // private var todoList = arrayListOf<Task>()
 
     constructor() {
         this.database = FirebaseDatabase.getInstance()
@@ -32,12 +31,6 @@ class FirebaseDatabaseHelper {
         val list: List<Task> = gson.fromJson(jsonString, object : TypeToken<List<Task>>() {}.type)
         return list
     }
-
-//    private fun convertDataClassToJSONString(todoList: List<Task>): String{
-//        var gson = Gson()
-//        var jsonString = gson.toJson(todoList(task.title,task.description,task.isCompleted,task.isFavorite,task.dueDate,task.time, task.contactIdString))
-//        return jsonString
-//    }
 
     private fun convertDataClassToJSONString(task: Task): String {
         var gson = Gson()
