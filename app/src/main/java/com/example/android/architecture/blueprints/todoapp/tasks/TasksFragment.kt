@@ -36,9 +36,7 @@ import com.example.android.architecture.blueprints.todoapp.util.obtainViewModel
 import com.example.android.architecture.blueprints.todoapp.util.setupSnackbar
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.snackbar.Snackbar
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.*
 import timber.log.Timber
 import java.util.ArrayList
 
@@ -98,19 +96,16 @@ class TasksFragment : Fragment() {
         setupNavigation()
         setupFab()
         viewmodel?.checkNetworkConnection(activity)
-        viewmodel?.loadTasks(true)
-//        runBlocking {
-//            launch(coroutineContext) {
-//
-////                Thread.sleep(1000)
-//                delay(1000)
-//            }.join()
-//            run {
-//
-//            }
-//        }
-
-
+        val ioDispatcher: CoroutineDispatcher = Dispatchers.IO
+        runBlocking {
+            withContext(ioDispatcher) {
+                coroutineScope {
+                    launch { viewmodel?.loadTasks(false) }
+                    launch { viewmodel?.saveDataIfInternetAvailable() }
+                    launch { viewmodel?.loadDataFromFBIfAvailable() }
+                }
+            }
+        }
     }
 
     private fun setupNavigation() {
