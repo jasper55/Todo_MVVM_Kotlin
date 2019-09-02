@@ -39,6 +39,7 @@ import com.example.android.architecture.blueprints.todoapp.util.EspressoIdlingRe
 import kotlinx.coroutines.launch
 import java.util.concurrent.Semaphore
 import android.util.Log
+import com.example.android.architecture.blueprints.todoapp.firebase.FirebaseCallback
 import timber.log.Timber
 
 
@@ -326,7 +327,12 @@ class TasksViewModel(
 
             EspressoIdlingResource.increment() // Set app as busy.
             viewModelScope.launch{
-            _items.value = firebaseHelper.readTasks()
+                val firebaseCallback = object: FirebaseCallback {
+                    override fun onCallback(todoList: List<Task>) {
+                        _items.value = todoList
+                    }
+                }
+            firebaseHelper.readTasks(firebaseCallback)
             items.value?.forEach {
 //                tasksRepository.saveTask(it)
             }

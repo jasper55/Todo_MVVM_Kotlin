@@ -7,22 +7,23 @@ import com.google.gson.Gson
 import org.json.JSONArray
 import org.json.JSONObject
 import timber.log.Timber
+import java.util.*
 import java.util.concurrent.Semaphore
+import java.util.stream.Collectors
+import kotlin.collections.HashMap
+import com.google.common.graph.ElementOrder.sorted
+
+
 
 class FirebaseDatabaseHelper {
 
     private var database: FirebaseDatabase
     private var dbReference: DatabaseReference
-    private var todoList = arrayListOf<Task>()
+   // private var todoList = arrayListOf<Task>()
 
     constructor() {
         this.database = FirebaseDatabase.getInstance()
         this.dbReference = this.database.getReference("Tasks")
-    }
-
-    constructor(database: FirebaseDatabase, dbReference: DatabaseReference) {
-        this.database = database
-        this.dbReference = dbReference
     }
 
     private fun convertFromJSONStringToClass(jsonString: String): List<Task> {
@@ -81,13 +82,17 @@ class FirebaseDatabaseHelper {
         return jsonObject
     }
 
-    suspend fun readTasks(): List<Task> {
+    suspend fun readTasks(firebaseCallback: FirebaseCallback) {
 
         val listener = object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
-                dataSnapshot.value?.let { val td = it as HashMap<String, Task>
-                    todoList.addAll(td.values)
+
+                val todoList = ArrayList<Task>()
+                for (task in dataSnapshot.children) {
+                    val it = task.getValue(Task::class.java) as Task
+                    todoList.add(it)
                 }
+                firebaseCallback.onCallback(todoList)
             }
             override fun onCancelled(p0: DatabaseError) {
                 Timber.i("some error occurred while loading data from firebase db")
@@ -95,14 +100,10 @@ class FirebaseDatabaseHelper {
             }
         }
         dbReference.addListenerForSingleValueEvent(listener)
-        return todoList
     }
 
     suspend fun saveToDatabase(todoList: List<Task>) {
         todoList.forEach {
-            //            val key = dbReference.child("task").push().key
-//            it.id = key!!.toInt()
-//            Timber.i("$key")
             dbReference.child("task ${it.id}").setValue(it)
         }
         Timber.i("Firebase database updated")
