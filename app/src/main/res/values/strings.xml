@@ -20,7 +20,7 @@
     <string name="add_task">New Task</string>
     <string name="edit_task">Edit Task</string>
     <string name="no_internet_connection">Remote DB synchronisation failed! Check your internet connection</string>
-    <string name="tasks_retrieved_from_db">Tasklist loaded from firebase db</string>
+    <string name="tasks_retrieved_from_remote_db">Tasklist loaded from firebase db</string>
     <string name="tasks_saved_to_remote_db">Tasklist saved to firebase db</string>
     <string name="task_marked_complete">Task marked complete</string>
     <string name="task_marked_favorite">Task marked as favorite</string>
@@ -77,5 +77,6 @@
     <string name="time_hint">set time here</string>
     <string name="no_contact_hint">no contacts added yet</string>
     <string name="no_contact_permission">You don\'t have access to your contacts</string>
+    <string name="synchronize">synchronize databases</string>
 
 </resources>

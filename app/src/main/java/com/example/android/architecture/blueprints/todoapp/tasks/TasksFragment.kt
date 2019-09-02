@@ -36,6 +36,9 @@ import com.example.android.architecture.blueprints.todoapp.util.obtainViewModel
 import com.example.android.architecture.blueprints.todoapp.util.setupSnackbar
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.snackbar.Snackbar
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import timber.log.Timber
 import java.util.ArrayList
 
@@ -70,6 +73,11 @@ class TasksFragment : Fragment() {
                     viewDataBinding.viewmodel?.loadTasks(true)
                     true
                 }
+                R.id.menu_synchronize -> {
+                    viewDataBinding.viewmodel?.saveDataIfInternetAvailable()
+                    viewDataBinding.viewmodel?.loadDataFromFBIfAvailable()
+                    true
+                }
                 else -> false
             }
 
@@ -89,10 +97,20 @@ class TasksFragment : Fragment() {
         setupRefreshLayout()
         setupNavigation()
         setupFab()
-        viewmodel?.loadTasks(true)
         viewmodel?.checkNetworkConnection(activity)
-        viewmodel?.saveDataIfInternetAvailable()
-        viewmodel?.loadDataFromFBIfAvailable()
+        viewmodel?.loadTasks(true)
+//        runBlocking {
+//            launch(coroutineContext) {
+//
+////                Thread.sleep(1000)
+//                delay(1000)
+//            }.join()
+//            run {
+//
+//            }
+//        }
+
+
     }
 
     private fun setupNavigation() {

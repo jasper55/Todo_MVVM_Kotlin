@@ -38,6 +38,7 @@ import com.example.android.architecture.blueprints.todoapp.util.EDIT_RESULT_OK
 import com.example.android.architecture.blueprints.todoapp.util.EspressoIdlingResource
 import kotlinx.coroutines.launch
 import com.example.android.architecture.blueprints.todoapp.data.source.remote.FirebaseCallback
+import kotlinx.coroutines.runBlocking
 import timber.log.Timber
 
 
@@ -230,68 +231,71 @@ class TasksViewModel(
      */
     fun loadTasks(forceUpdate: Boolean) {
 
+
         _dataLoading.value = true
 
         // Espresso does not work well with coroutines yet. See
         // https://github.com/Kotlin/kotlinx.coroutines/issues/982
         EspressoIdlingResource.increment() // Set app as busy.
+        runBlocking {
+            viewModelScope.launch {
+                //val tasksResult = tasksRepository.getTasks(forceUpdate)
+                val tasksResult = tasksRepository.getTasks()
 
-        viewModelScope.launch {
-            //val tasksResult = tasksRepository.getTasks(forceUpdate)
-            val tasksResult = tasksRepository.getTasks()
+                if (tasksResult is Success) {
+                    val tasks = tasksResult.data
+                    val tasksToShow = ArrayList<Task>()
+                    var sortedList = tasks
 
-            if (tasksResult is Success) {
-                val tasks = tasksResult.data
-                val tasksToShow = ArrayList<Task>()
-                var sortedList = tasks
-
-                // We filter the tasks based on the requestType
-                when (_currentFiltering) {
-                    TasksFilterType.SORT -> {
-                        when (_currentSorting) {
-                            TasksFilterType.SORT_BY.DUE_DATE -> {
-                                _currentSorting = TasksFilterType.SORT_BY.NAME
-                                sortedList = sortByDate(tasks)
-                            }
-                            TasksFilterType.SORT_BY.NAME -> {
-                                _currentSorting = TasksFilterType.SORT_BY.ID
-                                sortedList = sortByName(tasks)
-                            }
-                            TasksFilterType.SORT_BY.ID -> {
-                                _currentSorting = TasksFilterType.SORT_BY.DUE_DATE
-                                sortedList = sortByID(tasks)
-                            }
-                        }
-                        for (task in sortedList) {
-                            tasksToShow.add(task)
-                        }
-                    }
-                }
-                for (task in tasks) {
+                    // We filter the tasks based on the requestType
                     when (_currentFiltering) {
-                        TasksFilterType.ALL_TASKS -> tasksToShow.add(task)
-                        TasksFilterType.ACTIVE_TASKS -> if (task.isActive) {
-                            tasksToShow.add(task)
-                        }
-                        TasksFilterType.COMPLETED_TASKS -> if (task.isCompleted) {
-                            tasksToShow.add(task)
-                        }
-                        TasksFilterType.FAVORITE_TASKS -> if (task.isFavorite) {
-                            tasksToShow.add(task)
+                        TasksFilterType.SORT -> {
+                            when (_currentSorting) {
+                                TasksFilterType.SORT_BY.DUE_DATE -> {
+                                    _currentSorting = TasksFilterType.SORT_BY.NAME
+                                    sortedList = sortByDate(tasks)
+                                }
+                                TasksFilterType.SORT_BY.NAME -> {
+                                    _currentSorting = TasksFilterType.SORT_BY.ID
+                                    sortedList = sortByName(tasks)
+                                }
+                                TasksFilterType.SORT_BY.ID -> {
+                                    _currentSorting = TasksFilterType.SORT_BY.DUE_DATE
+                                    sortedList = sortByID(tasks)
+                                }
+                            }
+                            for (task in sortedList) {
+                                tasksToShow.add(task)
+                            }
                         }
                     }
+                    for (task in tasks) {
+                        when (_currentFiltering) {
+                            TasksFilterType.ALL_TASKS -> tasksToShow.add(task)
+                            TasksFilterType.ACTIVE_TASKS -> if (task.isActive) {
+                                tasksToShow.add(task)
+                            }
+                            TasksFilterType.COMPLETED_TASKS -> if (task.isCompleted) {
+                                tasksToShow.add(task)
+                            }
+                            TasksFilterType.FAVORITE_TASKS -> if (task.isFavorite) {
+                                tasksToShow.add(task)
+                            }
+                        }
+                    }
+                    isDataLoadingError.value = false
+                    _items.value = ArrayList(tasksToShow)
+                    Timber.i("Tasks loaded from local db")
+                } else {
+                    isDataLoadingError.value = false
+                    _items.value = emptyList()
+                    _snackbarText.value = Event(R.string.loading_tasks_error)
                 }
-                isDataLoadingError.value = false
-                _items.value = ArrayList(tasksToShow)
-                Timber.i("Tasks loaded from local db")
-            } else {
-                isDataLoadingError.value = false
-                _items.value = emptyList()
-                _snackbarText.value = Event(R.string.loading_tasks_error)
-            }
 
-            EspressoIdlingResource.decrement() // Set app as idle.
-            _dataLoading.value = false
+                _dataLoading.value = false
+                EspressoIdlingResource.decrement() // Set app as idle.
+
+            }
         }
 
     }
@@ -305,49 +309,50 @@ class TasksViewModel(
     }
 
     fun saveDataToFirebase() = viewModelScope.launch {
-        if (_items.value == emptyList<Task>()) {
-            Timber.i("no local tasks which can be saved to remote DB")
+        if (items.value == emptyList<Task>()) {
             return@launch
         }
         val firebaseHelper = FirebaseDatabaseHelper()
-            //            firebaseHelper.deleteData()
-//            firebaseHelper.saveToDatabase(items?.value!!)
-            _snackbarText.value = Event(R.string.tasks_saved_to_remote_db)
+        firebaseHelper.deleteData()
+        firebaseHelper.saveToDatabase(items?.value!!)
+        _snackbarText.value = Event(R.string.tasks_saved_to_remote_db)
 //            EspressoIdlingResource.decrement() // Set app as idle.
-            Timber.i("no local tasks which can be saved to remote DB but saveToDatabse was still called")
-        }
+    }
 
 
     fun checkNetworkConnection(activity: AppCompatActivity) {
         networkAvaiable.value =
                 (activity.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager)
                         .activeNetworkInfo?.isConnected == true
-        if(!networkAvaiable.value!!){
+        if (!networkAvaiable.value!!) {
             showNoInternetConnection()
         }
     }
 
-    private fun getTaskListFromFirebase(connection: Boolean) {
-        if (connection) {
-            val firebaseHelper = FirebaseDatabaseHelper()
+    private fun getTaskListFromFirebase(connected: Boolean) {
+        viewModelScope.launch {
+            if (connected) {
+                val firebaseHelper = FirebaseDatabaseHelper()
 
-            EspressoIdlingResource.increment() // Set app as busy.
-            viewModelScope.launch {
+                EspressoIdlingResource.increment() // Set app as busy.
                 val firebaseCallback = object : FirebaseCallback {
                     override fun onCallback(todoList: List<Task>) {
                         _items.value = todoList
+                        viewModelScope.launch {
+                            items.value?.forEach {
+                                tasksRepository.saveTask(it)
+                            }
+                        }
                     }
                 }
                 firebaseHelper.readTasks(firebaseCallback)
-                items.value?.forEach {
-                    //                tasksRepository.saveTask(it)
-                }
-                _snackbarText.value = Event(R.string.tasks_retrieved_from_db)
+                _snackbarText.value = Event(R.string.tasks_retrieved_from_remote_db)
                 EspressoIdlingResource.decrement() // Set app as idle.
+
+            } else {
+                showNoInternetConnection()
             }
-            //loadTasks(false)
-        } else {
-            showNoInternetConnection()
+
         }
     }
 
