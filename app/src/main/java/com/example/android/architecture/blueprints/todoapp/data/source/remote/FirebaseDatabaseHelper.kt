@@ -1,4 +1,4 @@
-package com.example.android.architecture.blueprints.todoapp.firebase
+package com.example.android.architecture.blueprints.todoapp.data.source.remote
 
 import com.example.android.architecture.blueprints.todoapp.data.Task
 import com.google.common.reflect.TypeToken
@@ -8,11 +8,6 @@ import org.json.JSONArray
 import org.json.JSONObject
 import timber.log.Timber
 import java.util.*
-import java.util.concurrent.Semaphore
-import java.util.stream.Collectors
-import kotlin.collections.HashMap
-import com.google.common.graph.ElementOrder.sorted
-
 
 
 class FirebaseDatabaseHelper {

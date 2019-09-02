@@ -31,15 +31,13 @@ import com.example.android.architecture.blueprints.todoapp.data.Result.Success
 import com.example.android.architecture.blueprints.todoapp.data.Task
 import com.example.android.architecture.blueprints.todoapp.data.source.TasksDataSource
 import com.example.android.architecture.blueprints.todoapp.data.source.local.TasksLocalDataSource
-import com.example.android.architecture.blueprints.todoapp.firebase.FirebaseDatabaseHelper
+import com.example.android.architecture.blueprints.todoapp.data.source.remote.FirebaseDatabaseHelper
 import com.example.android.architecture.blueprints.todoapp.util.ADD_EDIT_RESULT_OK
 import com.example.android.architecture.blueprints.todoapp.util.DELETE_RESULT_OK
 import com.example.android.architecture.blueprints.todoapp.util.EDIT_RESULT_OK
 import com.example.android.architecture.blueprints.todoapp.util.EspressoIdlingResource
 import kotlinx.coroutines.launch
-import java.util.concurrent.Semaphore
-import android.util.Log
-import com.example.android.architecture.blueprints.todoapp.firebase.FirebaseCallback
+import com.example.android.architecture.blueprints.todoapp.data.source.remote.FirebaseCallback
 import timber.log.Timber
 
 
