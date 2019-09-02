@@ -307,8 +307,10 @@ class TasksViewModel(
     fun saveDataToFirebase() {
         val firebaseHelper = FirebaseDatabaseHelper()
 
-
-
+        if(_items?.value.isNullOrEmpty()){
+            Timber.i("no local tasks which can be saved to remote DB")
+            return
+        }
         viewModelScope.launch {
             firebaseHelper.deleteData()
             firebaseHelper.saveToDatabase(items?.value!!)
