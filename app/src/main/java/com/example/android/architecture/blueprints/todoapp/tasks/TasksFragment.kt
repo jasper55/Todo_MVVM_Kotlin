@@ -90,8 +90,9 @@ class TasksFragment : Fragment() {
         setupNavigation()
         setupFab()
         viewmodel?.loadTasks(true)
-        viewmodel?.saveDataIfInternetAvailable(activity)
-        viewmodel?.loadDataFromFBIfAvailable(activity)
+        viewmodel?.checkNetworkConnection(activity)
+        viewmodel?.saveDataIfInternetAvailable()
+        viewmodel?.loadDataFromFBIfAvailable()
     }
 
     private fun setupNavigation() {

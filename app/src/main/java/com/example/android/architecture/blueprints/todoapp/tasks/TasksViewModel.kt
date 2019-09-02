@@ -84,6 +84,8 @@ class TasksViewModel(
     // Not used at the moment
     private val isDataLoadingError = MutableLiveData<Boolean>()
 
+    private val networkAvaiable = MutableLiveData<Boolean>()
+
     private val _openTaskEvent = MutableLiveData<Event<Int>>()
     val openTaskEvent: LiveData<Event<Int>> = _openTaskEvent
 
@@ -294,49 +296,53 @@ class TasksViewModel(
 
     }
 
-    fun saveDataIfInternetAvailable(activity: AppCompatActivity) {
-        val connection = (activity.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager)
-                .activeNetworkInfo?.isConnected == true
-        if (connection) {
+    fun saveDataIfInternetAvailable() {
+        if (networkAvaiable.value!!) {
             saveDataToFirebase()
         } else {
             showNoInternetConnection()
         }
     }
 
-    fun saveDataToFirebase() {
-        val firebaseHelper = FirebaseDatabaseHelper()
-
-        if(_items?.value.isNullOrEmpty()){
+    fun saveDataToFirebase() = viewModelScope.launch {
+        if (_items.value == emptyList<Task>()) {
             Timber.i("no local tasks which can be saved to remote DB")
-            return
+            return@launch
         }
-        viewModelScope.launch {
-            firebaseHelper.deleteData()
-            firebaseHelper.saveToDatabase(items?.value!!)
+        val firebaseHelper = FirebaseDatabaseHelper()
+            //            firebaseHelper.deleteData()
+//            firebaseHelper.saveToDatabase(items?.value!!)
             _snackbarText.value = Event(R.string.tasks_saved_to_remote_db)
-            EspressoIdlingResource.decrement() // Set app as idle.
+//            EspressoIdlingResource.decrement() // Set app as idle.
+            Timber.i("no local tasks which can be saved to remote DB but saveToDatabse was still called")
+        }
+
+
+    fun checkNetworkConnection(activity: AppCompatActivity) {
+        networkAvaiable.value =
+                (activity.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager)
+                        .activeNetworkInfo?.isConnected == true
+        if(!networkAvaiable.value!!){
+            showNoInternetConnection()
         }
     }
 
-    private fun getTaskListFromFirebase(activity: AppCompatActivity) {
-        val connection = (activity.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager)
-                .activeNetworkInfo?.isConnected == true
+    private fun getTaskListFromFirebase(connection: Boolean) {
         if (connection) {
             val firebaseHelper = FirebaseDatabaseHelper()
 
             EspressoIdlingResource.increment() // Set app as busy.
-            viewModelScope.launch{
-                val firebaseCallback = object: FirebaseCallback {
+            viewModelScope.launch {
+                val firebaseCallback = object : FirebaseCallback {
                     override fun onCallback(todoList: List<Task>) {
                         _items.value = todoList
                     }
                 }
-            firebaseHelper.readTasks(firebaseCallback)
-            items.value?.forEach {
-//                tasksRepository.saveTask(it)
-            }
-            _snackbarText.value = Event(R.string.tasks_retrieved_from_db)
+                firebaseHelper.readTasks(firebaseCallback)
+                items.value?.forEach {
+                    //                tasksRepository.saveTask(it)
+                }
+                _snackbarText.value = Event(R.string.tasks_retrieved_from_db)
                 EspressoIdlingResource.decrement() // Set app as idle.
             }
             //loadTasks(false)
@@ -345,11 +351,9 @@ class TasksViewModel(
         }
     }
 
-    fun loadDataFromFBIfAvailable(activity: AppCompatActivity) {
+    fun loadDataFromFBIfAvailable() {
         if (items?.value == emptyList<Task>()) {
-            getTaskListFromFirebase(activity)
-        } else {
-            saveDataIfInternetAvailable(activity)
+            getTaskListFromFirebase(networkAvaiable.value!!)
         }
     }
 
