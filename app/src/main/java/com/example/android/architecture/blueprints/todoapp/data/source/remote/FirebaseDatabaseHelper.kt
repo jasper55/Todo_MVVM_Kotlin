@@ -97,7 +97,7 @@ class FirebaseDatabaseHelper {
         Timber.i("Firebase database updated")
     }
 
-    suspend fun deleteData() {
+    suspend fun deleteAllTasks() {
         dbReference.database.getReference("Tasks").removeValue()
         Timber.i("Firebase data deleted")
     }

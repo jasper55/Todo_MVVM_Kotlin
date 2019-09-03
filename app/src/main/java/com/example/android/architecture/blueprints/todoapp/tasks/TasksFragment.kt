@@ -47,6 +47,7 @@ class TasksFragment : Fragment() {
 
     private lateinit var viewDataBinding: TasksFragBinding
     private lateinit var listAdapter: TasksAdapter
+    private lateinit var act: AppCompatActivity
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
@@ -72,6 +73,7 @@ class TasksFragment : Fragment() {
                     true
                 }
                 R.id.menu_synchronize -> {
+                    viewDataBinding.viewmodel?.checkNetworkConnection(act)
                     viewDataBinding.viewmodel?.saveDataIfInternetAvailable()
                     viewDataBinding.viewmodel?.loadDataFromFBIfAvailable()
                     true
@@ -86,7 +88,7 @@ class TasksFragment : Fragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
-        val activity = activity as AppCompatActivity
+        val act = activity as AppCompatActivity
         // Set the lifecycle owner to the lifecycle of the view
         val viewmodel = viewDataBinding.viewmodel
         viewDataBinding.lifecycleOwner = this.viewLifecycleOwner
@@ -95,7 +97,7 @@ class TasksFragment : Fragment() {
         setupRefreshLayout()
         setupNavigation()
         setupFab()
-        viewmodel?.checkNetworkConnection(activity)
+        viewmodel?.checkNetworkConnection(act)
         val ioDispatcher: CoroutineDispatcher = Dispatchers.IO
         runBlocking {
             withContext(ioDispatcher) {

@@ -169,6 +169,7 @@ class TasksViewModel(
     }
 
     fun showNoInternetConnection() {
+        this@
         showSnackbarMessage(R.string.no_internet_connection)
     }
 
@@ -313,7 +314,7 @@ class TasksViewModel(
             return@launch
         }
         val firebaseHelper = FirebaseDatabaseHelper()
-        firebaseHelper.deleteData()
+        firebaseHelper.deleteAllTasks()
         firebaseHelper.saveToDatabase(items?.value!!)
         _snackbarText.value = Event(R.string.tasks_saved_to_remote_db)
 //            EspressoIdlingResource.decrement() // Set app as idle.
@@ -362,6 +363,13 @@ class TasksViewModel(
         }
     }
 
+    fun deleteAllTasks() {
+        viewModelScope.launch {
+            tasksRepository.deleteAllTasks()
+            val firebaseHelper = FirebaseDatabaseHelper()
+            firebaseHelper.deleteAllTasks()
+        }
+    }
 
     private fun sortByDate(tasks: List<Task>): List<Task> {
         val sortedList = tasks.sortedBy { it.dueDate }
