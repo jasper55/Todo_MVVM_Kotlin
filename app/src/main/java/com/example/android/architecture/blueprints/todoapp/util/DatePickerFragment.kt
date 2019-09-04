@@ -30,6 +30,6 @@ object DatePickerFragment {
     }
 
     fun getCurrentDate(): Long{
-        return (dYear+ dMonth+ dDay).toLong()
+        return Calendar.getInstance().timeInMillis
     }
 }

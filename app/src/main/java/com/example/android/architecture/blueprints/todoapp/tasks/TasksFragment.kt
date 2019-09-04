@@ -84,6 +84,7 @@ class TasksFragment : Fragment() {
                 }
                 R.id.menu_clear_app_data -> {
                     viewDataBinding.viewmodel?.clearAppData(act)
+                    viewDataBinding.viewmodel?.saveDataIfInternetAvailable()
                     true
                 }
                 else -> false
