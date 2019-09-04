@@ -352,13 +352,16 @@ class TasksViewModel(
                     }
                 }
                 firebaseHelper.readTasks(firebaseCallback)
-                if (items.value != emptyList<Task>())_snackbarText.value = Event(R.string.tasks_retrieved_from_remote_db)
+                if (items.value == emptyList<Task>())
+                else
+                    _snackbarText.value = Event(R.string.tasks_retrieved_from_remote_db)
 
                 EspressoIdlingResource.decrement() // Set app as idle.
 
             } else {
                 showNoInternetConnection()
             }
+
         }
     }
 
@@ -377,6 +380,25 @@ class TasksViewModel(
         }
     }
 
+    fun clearAppData2(activity: AppCompatActivity) {
+
+        val deleteData: Boolean
+        try {
+            // clearing app data
+            if (Build.VERSION_CODES.KITKAT <= Build.VERSION.SDK_INT) {
+                deleteData = (activity.getSystemService(ACTIVITY_SERVICE) as ActivityManager).clearApplicationUserData() // note: it has a return value!
+                if (deleteData) restartApp()
+            } else {
+                val packageName = getApplicationContext<Context>().packageName
+                val runtime = Runtime.getRuntime()
+                runtime.exec("pm clear $packageName")
+            }
+
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+    }
+
     fun clearAppData(activity: AppCompatActivity) {
         val cache = activity.cacheDir
         val appDir = File(cache.getParent())
@@ -390,6 +412,7 @@ class TasksViewModel(
             }
         }
         deleteAllTasks()
+        //restartApp()
     }
 
     private fun deleteDir(dir: File?): Boolean {
@@ -403,6 +426,16 @@ class TasksViewModel(
             }
         }
         return dir!!.delete()
+    }
+
+
+    private fun restartApp() {
+        val intent = Intent(getApplicationContext<Context>(), TasksActivity::class.java)
+        val mPendingIntentId = 1
+        val mPendingIntent = PendingIntent.getActivity(getApplicationContext(), mPendingIntentId, intent, PendingIntent.FLAG_CANCEL_CURRENT)
+        val mgr = getApplicationContext<Context>().getSystemService(Context.ALARM_SERVICE) as AlarmManager
+        mgr.set(AlarmManager.RTC, System.currentTimeMillis() + 100, mPendingIntent)
+        System.exit(0)
     }
 
     private fun sortByDate(tasks: List<Task>): List<Task> {
