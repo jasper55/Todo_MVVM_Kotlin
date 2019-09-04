@@ -42,9 +42,13 @@ import kotlinx.coroutines.runBlocking
 import timber.log.Timber
 import androidx.test.core.app.ApplicationProvider.getApplicationContext
 import android.content.Context.ACTIVITY_SERVICE
-import androidx.core.content.ContextCompat.getSystemService
 import android.app.ActivityManager
 import android.os.Build
+import android.app.AlarmManager
+import android.app.PendingIntent
+import android.content.Intent
+
+
 
 
 /**
@@ -391,7 +395,16 @@ class TasksViewModel(
         } catch (e: Exception) {
             e.printStackTrace()
         }
+        restartApp()
+    }
 
+    private fun restartApp() {
+        val intent = Intent(getApplicationContext<Context>(), TasksActivity::class.java)
+        val mPendingIntentId = 1
+        val mPendingIntent = PendingIntent.getActivity(getApplicationContext(), mPendingIntentId, intent, PendingIntent.FLAG_CANCEL_CURRENT)
+        val mgr = getApplicationContext<Context>().getSystemService(Context.ALARM_SERVICE) as AlarmManager
+        mgr.set(AlarmManager.RTC, System.currentTimeMillis() + 100, mPendingIntent)
+        System.exit(0)
     }
 
     private fun sortByDate(tasks: List<Task>): List<Task> {
