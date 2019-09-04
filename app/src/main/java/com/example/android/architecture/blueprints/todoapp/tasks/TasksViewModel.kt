@@ -169,7 +169,6 @@ class TasksViewModel(
     }
 
     fun showNoInternetConnection() {
-        this@
         showSnackbarMessage(R.string.no_internet_connection)
     }
 
@@ -368,6 +367,8 @@ class TasksViewModel(
             tasksRepository.deleteAllTasks()
             val firebaseHelper = FirebaseDatabaseHelper()
             firebaseHelper.deleteAllTasks()
+            _snackbarText.value = Event(R.string.all_tasks_deleted)
+            loadTasks(false)
         }
     }
 

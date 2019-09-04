@@ -34,4 +34,8 @@
         android:id="@+id/menu_synchronize"
         android:title="@string/synchronize"
         app:showAsAction="never" />
+    <item
+        android:id="@+id/menu_delete"
+        android:title="@string/delete_all_tasks"
+        app:showAsAction="never" />
 </menu>

@@ -78,6 +78,10 @@ class TasksFragment : Fragment() {
                     viewDataBinding.viewmodel?.loadDataFromFBIfAvailable()
                     true
                 }
+                R.id.menu_delete -> {
+                    viewDataBinding.viewmodel?.deleteAllTasks()
+                    true
+                }
                 else -> false
             }
 
@@ -88,7 +92,7 @@ class TasksFragment : Fragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
-        val act = activity as AppCompatActivity
+        act = activity as AppCompatActivity
         // Set the lifecycle owner to the lifecycle of the view
         val viewmodel = viewDataBinding.viewmodel
         viewDataBinding.lifecycleOwner = this.viewLifecycleOwner
@@ -98,7 +102,14 @@ class TasksFragment : Fragment() {
         setupNavigation()
         setupFab()
         viewmodel?.checkNetworkConnection(act)
-        val ioDispatcher: CoroutineDispatcher = Dispatchers.IO
+        //runBlockingScope(viewmodel)
+        viewmodel?.loadTasks(false)
+
+    }
+
+    private fun runBlockingScope(viewmodel: TasksViewModel?) {
+        val ioDispatcher: CoroutineDispatcher = Dispatchers.Main
+
         runBlocking {
             withContext(ioDispatcher) {
                 coroutineScope {

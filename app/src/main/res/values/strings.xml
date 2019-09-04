@@ -28,6 +28,7 @@
     <string name="task_marked_active">Task marked active</string>
     <string name="loading_tasks_error">Error while loading tasks</string>
     <string name="completed_tasks_cleared">Completed tasks cleared</string>
+    <string name="all_tasks_deleted">All tasks have been deleted</string>
     <string name="menu_filter">Filter</string>
     <string name="menu_clear">Clear completed</string>
     <string name="menu_delete_task">Delete task</string>
@@ -78,5 +79,6 @@
     <string name="no_contact_hint">no contacts added yet</string>
     <string name="no_contact_permission">You don\'t have access to your contacts</string>
     <string name="synchronize">synchronize databases</string>
+    <string name="delete_all_tasks">delete all tasks</string>
 
 </resources>
