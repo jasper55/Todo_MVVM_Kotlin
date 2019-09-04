@@ -29,7 +29,7 @@
             app:destination="@id/addEditTaskFragment" />
         <argument
             android:name="TASK_ID"
-            app:argType="string" />
+            app:argType="integer" />
         <action
             android:id="@+id/action_taskDetailFragment_to_tasksFragment"
             app:destination="@id/tasksFragment"/>
@@ -67,8 +67,7 @@
         android:label="{title}" >
         <argument
             android:name="TASK_ID"
-            app:argType="string"
-            app:nullable="true"/>
+            app:argType="integer"/>
         <argument
             android:name="title"
             app:argType="string"

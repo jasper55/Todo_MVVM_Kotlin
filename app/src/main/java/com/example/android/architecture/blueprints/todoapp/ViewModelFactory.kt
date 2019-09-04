@@ -19,11 +19,11 @@ import android.app.Application
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.example.android.architecture.blueprints.todoapp.addedittask.AddEditTaskViewModel
+import com.example.android.architecture.blueprints.todoapp.contacts.ContactsViewModel
 import com.example.android.architecture.blueprints.todoapp.data.source.local.TasksLocalDataSource
 import com.example.android.architecture.blueprints.todoapp.statistics.StatisticsViewModel
 import com.example.android.architecture.blueprints.todoapp.taskdetail.TaskDetailViewModel
 import com.example.android.architecture.blueprints.todoapp.tasks.TasksViewModel
-import com.example.android.architecture.blueprints.todoapp.util.DatePickerFragment
 
 /**
  * A creator is used to inject the product ID into the ViewModel
@@ -37,13 +37,15 @@ class ViewModelFactory constructor(
         private val application: Application
 ) : ViewModelProvider.NewInstanceFactory() {
 
-    override fun <T : ViewModel> create(modelClass: Class<T>) =
+    override fun <T : ViewModel> create(modelClass: Class<T>): T =
             with(modelClass) {
                 when {
                     isAssignableFrom(StatisticsViewModel::class.java) ->
                         StatisticsViewModel(tasksRepository)
                     isAssignableFrom(TaskDetailViewModel::class.java) ->
                         TaskDetailViewModel(tasksRepository, application)
+                    isAssignableFrom(ContactsViewModel::class.java) ->
+                        ContactsViewModel(tasksRepository, application)
                     isAssignableFrom(AddEditTaskViewModel::class.java) ->
                         AddEditTaskViewModel(tasksRepository)
                     isAssignableFrom(TasksViewModel::class.java) ->

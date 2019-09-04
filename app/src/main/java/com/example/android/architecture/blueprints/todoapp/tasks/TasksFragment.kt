@@ -23,6 +23,7 @@ import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.PopupMenu
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
@@ -35,6 +36,7 @@ import com.example.android.architecture.blueprints.todoapp.util.obtainViewModel
 import com.example.android.architecture.blueprints.todoapp.util.setupSnackbar
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.snackbar.Snackbar
+import kotlinx.coroutines.*
 import timber.log.Timber
 import java.util.ArrayList
 
@@ -45,9 +47,10 @@ class TasksFragment : Fragment() {
 
     private lateinit var viewDataBinding: TasksFragBinding
     private lateinit var listAdapter: TasksAdapter
+    private lateinit var act: AppCompatActivity
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
-            savedInstanceState: Bundle?): View? {
+                              savedInstanceState: Bundle?): View? {
         viewDataBinding = TasksFragBinding.inflate(inflater, container, false).apply {
             viewmodel = obtainViewModel(TasksViewModel::class.java)
         }
@@ -56,21 +59,36 @@ class TasksFragment : Fragment() {
     }
 
     override fun onOptionsItemSelected(item: MenuItem) =
-        when (item.itemId) {
-            R.id.menu_clear -> {
-                viewDataBinding.viewmodel?.clearCompletedTasks()
-                true
+            when (item.itemId) {
+                R.id.menu_clear -> {
+                    viewDataBinding.viewmodel?.clearCompletedTasks()
+                    true
+                }
+                R.id.menu_filter -> {
+                    showFilteringPopUpMenu()
+                    true
+                }
+                R.id.menu_refresh -> {
+                    viewDataBinding.viewmodel?.loadTasks(true)
+                    true
+                }
+                R.id.menu_synchronize -> {
+                    viewDataBinding.viewmodel?.checkNetworkConnection(act)
+                    viewDataBinding.viewmodel?.saveDataIfInternetAvailable()
+                    viewDataBinding.viewmodel?.loadDataFromFBIfAvailable()
+                    true
+                }
+                R.id.menu_delete -> {
+                    viewDataBinding.viewmodel?.deleteAllTasks()
+                    true
+                }
+                R.id.menu_clear_app_data -> {
+                    viewDataBinding.viewmodel?.clearAppData(act)
+                    viewDataBinding.viewmodel?.saveDataIfInternetAvailable()
+                    true
+                }
+                else -> false
             }
-            R.id.menu_filter -> {
-                showFilteringPopUpMenu()
-                true
-            }
-            R.id.menu_refresh -> {
-                viewDataBinding.viewmodel?.loadTasks(true)
-                true
-            }
-            else -> false
-        }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         inflater.inflate(R.menu.tasks_fragment_menu, menu)
@@ -79,14 +97,33 @@ class TasksFragment : Fragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
+        act = activity as AppCompatActivity
         // Set the lifecycle owner to the lifecycle of the view
+        val viewmodel = viewDataBinding.viewmodel
         viewDataBinding.lifecycleOwner = this.viewLifecycleOwner
-        setupSnackbar()
+        setupSnackbar(Snackbar.LENGTH_SHORT)
         setupListAdapter()
         setupRefreshLayout()
         setupNavigation()
         setupFab()
-        viewDataBinding.viewmodel?.loadTasks(true)
+        viewmodel?.checkNetworkConnection(act)
+        //runBlockingScope(viewmodel)
+        viewmodel?.loadTasks(false)
+
+    }
+
+    private fun runBlockingScope(viewmodel: TasksViewModel?) {
+        val ioDispatcher: CoroutineDispatcher = Dispatchers.Main
+
+        runBlocking {
+            withContext(ioDispatcher) {
+                coroutineScope {
+                    launch { viewmodel?.loadTasks(false) }
+                    launch { viewmodel?.saveDataIfInternetAvailable() }
+                    launch { viewmodel?.loadDataFromFBIfAvailable() }
+                }
+            }
+        }
     }
 
     private fun setupNavigation() {
@@ -98,9 +135,19 @@ class TasksFragment : Fragment() {
         })
     }
 
+    private fun setupSnackbar(length: Int, bgColor: Int = context!!.getColor(R.color.colorTextPrimary)) {
+        viewDataBinding.viewmodel?.let {
+            view?.setupSnackbar(this, it.snackbarMessage, length, bgColor)
+        }
+        arguments?.let {
+            val message = TasksFragmentArgs.fromBundle(it).userMessage
+            viewDataBinding.viewmodel?.showEditResultMessage(message)
+        }
+    }
+
     private fun setupSnackbar() {
         viewDataBinding.viewmodel?.let {
-            view?.setupSnackbar(this, it.snackbarMessage, Snackbar.LENGTH_SHORT)
+            view?.setupSnackbar(this, it.snackbarMessage)
         }
         arguments?.let {
             val message = TasksFragmentArgs.fromBundle(it).userMessage
@@ -142,12 +189,12 @@ class TasksFragment : Fragment() {
 
     private fun navigateToAddNewTask() {
         val action = TasksFragmentDirections
-            .actionTasksFragmentToAddEditTaskFragment(null,
-                resources.getString(R.string.add_task))
+                .actionTasksFragmentToAddEditTaskFragment(-1,
+                        resources.getString(R.string.add_task))
         findNavController().navigate(action)
     }
 
-    private fun openTaskDetails(taskId: String) {
+    private fun openTaskDetails(taskId: Int) {
         val action = TasksFragmentDirections.actionTasksFragmentToTaskDetailFragment(taskId)
         findNavController().navigate(action)
     }

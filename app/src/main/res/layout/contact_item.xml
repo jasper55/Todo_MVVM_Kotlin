@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+        <import type="android.view.View.OnClickListener" />
+
+        <variable
+            name="contact"
+            type="com.example.android.architecture.blueprints.todoapp.contacts.Contact" />
+
+        <variable
+            name="listener"
+            type="com.example.android.architecture.blueprints.todoapp.contacts.ContactItemUserActionsListener" />
+    </data>
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:orientation="horizontal"
+        android:paddingTop="4dp"
+        android:paddingBottom="4dp"
+        android:weightSum="20">
+
+        <TextView
+            android:id="@+id/contactName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_weight="18"
+            android:text="@{contact.contactName}"
+            android:textAppearance="?android:attr/textAppearanceMedium" />
+
+        <ImageButton
+            android:id="@+id/sendEmailButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:background="@android:color/transparent"
+            android:layout_weight="1"
+            android:gravity="end"
+            android:onClick="@{(view) -> listener.onSendEmailClicked(contact.contactEmail)}"
+            app:srcCompat="@android:drawable/ic_dialog_email" />
+
+        <ImageButton
+            android:id="@+id/deleteContact"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_marginLeft="4dp"
+            android:layout_weight="1"
+            android:gravity="end"
+            android:background="@android:color/transparent"
+            android:onClick="@{(view) -> listener.onContactDeleted(contact)}"
+            app:srcCompat="@android:drawable/ic_menu_delete" />
+
+
+    </LinearLayout>
+</layout>

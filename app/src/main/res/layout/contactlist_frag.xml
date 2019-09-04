@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+        <import type="android.view.View" />
+
+        <variable
+            name="viewmodel"
+            type="com.example.android.architecture.blueprints.todoapp.contacts.ContactsViewModel" />
+
+        <variable
+            name="listener"
+            type="com.example.android.architecture.blueprints.todoapp.contacts.ContactItemUserActionsListener" />
+
+    </data>
+
+
+    <LinearLayout
+        android:id="@+id/tasksLL"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:visibility="@{viewmodel.empty ? View.GONE : View.VISIBLE}">
+
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <ListView
+                android:id="@+id/contact_list_view"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/no_contact_hint"
+                android:paddingTop="40dp"
+                app:items="@{viewmodel.items}" />
+        </FrameLayout>
+
+    </LinearLayout>
+
+</layout>

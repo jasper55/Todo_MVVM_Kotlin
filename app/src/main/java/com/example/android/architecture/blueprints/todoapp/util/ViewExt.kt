@@ -26,6 +26,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.example.android.architecture.blueprints.todoapp.Event
+import com.example.android.architecture.blueprints.todoapp.R
 import com.example.android.architecture.blueprints.todoapp.ScrollChildSwipeRefreshLayout
 import com.example.android.architecture.blueprints.todoapp.tasks.TasksViewModel
 import com.google.android.material.snackbar.Snackbar
@@ -33,7 +34,7 @@ import com.google.android.material.snackbar.Snackbar
 /**
  * Transforms static java function Snackbar.make() to an extension function on View.
  */
-fun View.showSnackbar(snackbarText: String, timeLength: Int) {
+fun View.showSnackbar(snackbarText: String, timeLength: Int, color: Int = context!!.getColor(R.color.colorTextPrimary) ) {
     Snackbar.make(this, snackbarText, timeLength).run {
         addCallback(object: Snackbar.Callback() {
             override fun onShown(sb: Snackbar?) {
@@ -43,7 +44,8 @@ fun View.showSnackbar(snackbarText: String, timeLength: Int) {
             override fun onDismissed(transientBottomBar: Snackbar?, event: Int) {
                 EspressoIdlingResource.decrement()
             }
-        })
+
+        }).view.setBackgroundColor(color)
         show()
     }
 }
@@ -54,7 +56,21 @@ fun View.showSnackbar(snackbarText: String, timeLength: Int) {
 fun View.setupSnackbar(
     lifecycleOwner: LifecycleOwner,
     snackbarEvent: LiveData<Event<Int>>,
-    timeLength: Int
+    timeLength: Int,
+    bgColor: Int
+) {
+
+    snackbarEvent.observe(lifecycleOwner, Observer { event ->
+        event.getContentIfNotHandled()?.let {
+            showSnackbar(context.getString(it), timeLength, bgColor)
+        }
+    })
+}
+
+fun View.setupSnackbar(
+        lifecycleOwner: LifecycleOwner,
+        snackbarEvent: LiveData<Event<Int>>,
+        timeLength: Int = Snackbar.LENGTH_SHORT
 ) {
 
     snackbarEvent.observe(lifecycleOwner, Observer { event ->
@@ -63,7 +79,6 @@ fun View.setupSnackbar(
         }
     })
 }
-
 /**
  * Reloads the data when the pull-to-refresh is triggered.
  *

@@ -41,6 +41,16 @@ class PermissionChecker(private val context: Context) {
     }
 
     companion object {
+        fun checkPermission(requesT_CONTACTS_CODE: Int, context: Context): Boolean? {
+            return context.let {
+                ActivityCompat.checkSelfPermission(
+                        context,
+                        Manifest.permission.READ_CONTACTS
+                )
+            } == PackageManager.PERMISSION_GRANTED
+        }
+
         val REQUEST_CONTACTS_CODE = 8436
+        val REQUEST_ADD_CONTACT = 1
     }
 }

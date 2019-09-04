@@ -25,7 +25,9 @@ import com.example.android.architecture.blueprints.todoapp.R
 import com.example.android.architecture.blueprints.todoapp.data.Result.Success
 import com.example.android.architecture.blueprints.todoapp.data.Task
 import com.example.android.architecture.blueprints.todoapp.data.source.local.TasksLocalDataSource
+import com.example.android.architecture.blueprints.todoapp.util.DatePickerFragment
 import kotlinx.coroutines.launch
+import kotlin.math.absoluteValue
 
 /**
  * ViewModel for the Add/Edit screen.
@@ -56,7 +58,7 @@ class AddEditTaskViewModel(
     private val _taskUpdated = MutableLiveData<Event<Unit>>()
     val taskUpdatedEvent: LiveData<Event<Unit>> = _taskUpdated
 
-    private var taskId: String? = null
+    private var taskId: Int? = null
 
     private var isNewTask: Boolean = false
 
@@ -66,11 +68,13 @@ class AddEditTaskViewModel(
 
     private var taskFavored = false
 
-    private var taskDueDate: Long = 0L
+    private var taskDueDate: Long = DatePickerFragment.getCurrentDate()
 
     private var taskTime: Long = 0L
 
-    fun start(taskId: String?) {
+    private var contactIdString = ""
+
+    fun start(taskId: Int?) {
         _dataLoading.value?.let { isLoading ->
             // Already loading, ignore.
             if (isLoading) return
@@ -106,6 +110,7 @@ class AddEditTaskViewModel(
         taskFavored = task.isFavorite
         taskDueDate = task.dueDate
         taskTime = task.time
+        contactIdString = task.contactIdString
         _dataLoading.value = false
         isDataLoaded = true
     }
@@ -132,7 +137,7 @@ class AddEditTaskViewModel(
         if (isNewTask || currentTaskId == null) {
             createTask(Task(currentTitle, currentDescription))
         } else {
-            val task = Task(currentTitle, currentDescription, taskCompleted, taskFavored, taskDueDate, taskTime, currentTaskId)
+            val task = Task(currentTitle, currentDescription, taskCompleted, taskFavored, taskDueDate, taskTime, contactIdString)
             updateTask(task)
         }
     }

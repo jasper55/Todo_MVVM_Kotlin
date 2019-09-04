@@ -16,6 +16,7 @@
 package com.example.android.architecture.blueprints.todoapp.taskdetail
 
 import android.Manifest
+import android.app.Activity.RESULT_OK
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
@@ -32,28 +33,41 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.example.android.architecture.blueprints.todoapp.EventObserver
 import com.example.android.architecture.blueprints.todoapp.R
+import com.example.android.architecture.blueprints.todoapp.contacts.*
+import com.example.android.architecture.blueprints.todoapp.databinding.ContactlistFragBinding
 import com.example.android.architecture.blueprints.todoapp.databinding.TaskdetailFragBinding
 import com.example.android.architecture.blueprints.todoapp.util.*
 import com.google.android.material.snackbar.Snackbar
+import com.google.firebase.database.DatabaseReference
+import com.google.firebase.database.FirebaseDatabase
 import timber.log.Timber
+
 
 /**
  * Main UI for the task detail screen.
  */
 class TaskDetailFragment : Fragment() {
-    private lateinit var viewDataBinding: TaskdetailFragBinding
+    private lateinit var viewDataBinding: TaskdetailFragBinding // is been generated because taskdetail_frag.xml
+    private lateinit var contactViewDataBinding: ContactlistFragBinding // is been generated because contactlist_frag.xml
+
+    private lateinit var database: FirebaseDatabase
+    private lateinit var dbReference: DatabaseReference
 
     private lateinit var viewModel: TaskDetailViewModel
+    private lateinit var contactsViewModel: ContactsViewModel
 
-    private var contactsPermissionGranted = false
+    private lateinit var listAdapter: ContactsAdapter
+
+    private var taskId: Int = -1
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         setupFab()
+        requestPermission(PermissionChecker.REQUEST_CONTACTS_CODE)
         viewDataBinding.viewmodel?.let {
             view?.setupSnackbar(this, it.snackbarMessage, Snackbar.LENGTH_SHORT)
         }
-
+//        taskId = TaskDetailFragmentArgs.fromBundle(arguments!!).TASKID
         setupNavigation()
     }
 
@@ -80,31 +94,34 @@ class TaskDetailFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
-        val taskId = arguments?.let {
-            TaskDetailFragmentArgs.fromBundle(it).TASKID
+//        val taskId = arguments?.let {
+//            TaskDetailFragmentArgs.fromBundle(it).TASKID
+//        }
+
+        context?.let {
+            viewDataBinding.viewmodel?.start(taskId, it)
         }
-        viewDataBinding.viewmodel?.start(taskId)
     }
+
+
 
     override fun onCreateView(
             inflater: LayoutInflater,
             container: ViewGroup?,
             savedInstanceState: Bundle?
     ): View? {
-        val view = inflater.inflate(R.layout.taskdetail_frag, container, false)
+        val baseView = inflater.inflate(R.layout.taskdetail_frag, container, false)
         viewModel = obtainViewModel(TaskDetailViewModel::class.java)
-        viewDataBinding = TaskdetailFragBinding.bind(view).apply {
+        viewDataBinding = TaskdetailFragBinding.bind(baseView).apply {
             viewmodel = viewModel
             listener = object :
 
                     TaskDetailUserActionsListener {
 
                 override fun onAddContactClicked(v: View) {
-                    if (contactsPermissionGranted) {
+                    if (viewmodel?.contactPermissionGranted?.value!!) {
                         startPickContactIntent()
-                        } else requestPermissions(
-                            arrayOf(Manifest.permission.READ_CONTACTS),
-                            PermissionChecker.REQUEST_CONTACTS_CODE)
+                    } else requestPermission(PermissionChecker.REQUEST_ADD_CONTACT)
                 }
 
                 override fun onTimeChanged(v: View) {
@@ -131,22 +148,58 @@ class TaskDetailFragment : Fragment() {
             }
         }
 
+//        val insertPoint = container!!.findViewById<ListView>(R.id.contact_list)
+//        insertPoint.addView(contactView)
+        taskId = TaskDetailFragmentArgs.fromBundle(arguments!!).TASKID
+
+        addContactsFragmentToView(taskId)
+
         viewDataBinding.setLifecycleOwner(this.viewLifecycleOwner)
+//        contactViewDataBinding.setLifecycleOwner(this.viewLifecycleOwner)
         setHasOptionsMenu(true)
-        return view
+
+        return baseView // only this view is return as the other view is declared inside the xml
+    }
+
+    private fun addContactsFragmentToView(taskId: Int) {
+
+        val fm = fragmentManager
+        val ft = fm!!.beginTransaction()
+
+        fm.beginTransaction()
+        val fragTwo = ContactsFragment()
+        val bundle = Bundle()
+        bundle.putInt("taskId", taskId)
+        fragTwo.setArguments(bundle)
+        ft.add(R.id.contact_list, fragTwo)
+        ft.commit()
+    }
+
+
+    private fun requestPermission(code: Int) {
+        requestPermissions(
+                arrayOf(Manifest.permission.READ_CONTACTS),
+                code)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        when (requestCode) {
-            IntentCallService.CALL_PICK_CONTACT -> {
-                viewDataBinding.viewmodel?.let {
-                    view?.setupSnackbar(this, it.snackbarMessage, Snackbar.LENGTH_SHORT)
+        if (resultCode == RESULT_OK)
+            when (requestCode) {
+                ContactBookService.CALL_PICK_CONTACT -> {
+                    viewDataBinding.viewmodel?.let {
+                        view?.setupSnackbar(this, it.snackbarMessage, Snackbar.LENGTH_SHORT)
+                    }
+                    val contactIdString = viewModel?.getContactIdString()
+                    val newContactId = data?.let { ContactBookService.getContactID(it, context) }
+
+                    val contactString = ContactBookService.addContactToString(contactIdString!!, newContactId)
+                    // initiate List which needs to be displayed by adapter
+                    // ContactBookService.getContactListFromString(contactString)
+                    viewModel?._contactIdString.value = contactString
+
+                    contactString?.let { viewModel?.saveContactId(it) }
                 }
-                viewModel?._contactName.value = data?.let {
-                    IntentCallService.getContactName(it, context)
-                }!!
             }
-        }
     }
 
     override fun onRequestPermissionsResult(
@@ -155,15 +208,19 @@ class TaskDetailFragment : Fragment() {
             grantResults: IntArray
     ) {
         when (requestCode) {
-            PermissionChecker.REQUEST_CONTACTS_CODE -> {
+            PermissionChecker.REQUEST_ADD_CONTACT -> {
                 if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     Timber.i("READ_CONTACTS permission granted")
-                    contactsPermissionGranted = true
+                    viewDataBinding.viewmodel?._contactPermissionGranted?.value = true
                     startPickContactIntent()
                 } else {
                     //else do nothing - will be call back on next launch
                     Timber.w("READ_CONTACTS permission refused")
                 }
+            }
+
+            PermissionChecker.REQUEST_CONTACTS_CODE -> {
+                return
             }
         }
     }
@@ -182,10 +239,10 @@ class TaskDetailFragment : Fragment() {
         inflater.inflate(R.menu.taskdetail_fragment_menu, menu)
     }
 
-    fun startPickContactIntent(){
+    fun startPickContactIntent() {
         Intent(Intent.ACTION_PICK, Uri.parse("content://contacts")).also { pickContactIntent ->
             pickContactIntent.type = ContactsContract.CommonDataKinds.Phone.CONTENT_TYPE // Show user only contacts w/ phone numbers
-            startActivityForResult(pickContactIntent, IntentCallService.CALL_PICK_CONTACT)
+            startActivityForResult(pickContactIntent, ContactBookService.CALL_PICK_CONTACT)
         }
     }
 

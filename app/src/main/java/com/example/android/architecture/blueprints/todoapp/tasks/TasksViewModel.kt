@@ -15,8 +15,11 @@
  */
 package com.example.android.architecture.blueprints.todoapp.tasks
 
+import android.content.Context
+import android.net.ConnectivityManager
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
+import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Transformations
@@ -27,13 +30,24 @@ import com.example.android.architecture.blueprints.todoapp.R
 import com.example.android.architecture.blueprints.todoapp.data.Result.Success
 import com.example.android.architecture.blueprints.todoapp.data.Task
 import com.example.android.architecture.blueprints.todoapp.data.source.TasksDataSource
-import com.example.android.architecture.blueprints.todoapp.data.source.TasksRepository
 import com.example.android.architecture.blueprints.todoapp.data.source.local.TasksLocalDataSource
+import com.example.android.architecture.blueprints.todoapp.data.source.remote.FirebaseDatabaseHelper
 import com.example.android.architecture.blueprints.todoapp.util.ADD_EDIT_RESULT_OK
 import com.example.android.architecture.blueprints.todoapp.util.DELETE_RESULT_OK
 import com.example.android.architecture.blueprints.todoapp.util.EDIT_RESULT_OK
 import com.example.android.architecture.blueprints.todoapp.util.EspressoIdlingResource
-import kotlinx.coroutines.launch
+import com.example.android.architecture.blueprints.todoapp.data.source.remote.FirebaseCallback
+import timber.log.Timber
+import androidx.test.core.app.ApplicationProvider.getApplicationContext
+import android.content.Context.ACTIVITY_SERVICE
+import android.app.ActivityManager
+import android.os.Build
+import android.app.AlarmManager
+import android.app.PendingIntent
+import android.content.Intent
+import android.util.Log
+import kotlinx.coroutines.*
+import java.io.File
 
 
 /**
@@ -48,11 +62,14 @@ class TasksViewModel(
         private val tasksRepository: TasksLocalDataSource
 ) : ViewModel() {
 
-    private val _items = MutableLiveData<List<Task>>().apply { value = emptyList() }
+    val _items = MutableLiveData<List<Task>>().apply { value = emptyList() }
     val items: LiveData<List<Task>> = _items
 
     private val _dataLoading = MutableLiveData<Boolean>()
     val dataLoading: LiveData<Boolean> = _dataLoading
+
+    val _isInternetAvailable = MutableLiveData<Boolean>()
+    val isInternetAvailable: LiveData<Boolean> = _isInternetAvailable
 
     private val _currentFilteringLabel = MutableLiveData<Int>()
     val currentFilteringLabel: LiveData<Int> = _currentFilteringLabel
@@ -76,8 +93,10 @@ class TasksViewModel(
     // Not used at the moment
     private val isDataLoadingError = MutableLiveData<Boolean>()
 
-    private val _openTaskEvent = MutableLiveData<Event<String>>()
-    val openTaskEvent: LiveData<Event<String>> = _openTaskEvent
+    private val networkAvaiable = MutableLiveData<Boolean>()
+
+    private val _openTaskEvent = MutableLiveData<Event<Int>>()
+    val openTaskEvent: LiveData<Event<Int>> = _openTaskEvent
 
     private val _newTaskEvent = MutableLiveData<Event<Unit>>()
     val newTaskEvent: LiveData<Event<Unit>> = _newTaskEvent
@@ -87,9 +106,13 @@ class TasksViewModel(
         it.isEmpty()
     }
 
+    private var firebaseHelper: FirebaseDatabaseHelper
+
+
     init {
         // Set initial state
         setFiltering(TasksFilterType.ALL_TASKS)
+        firebaseHelper = FirebaseDatabaseHelper()
     }
 
     /**
@@ -99,6 +122,7 @@ class TasksViewModel(
      * [TasksFilterType.COMPLETED_TASKS], or
      * [TasksFilterType.ACTIVE_TASKS]
      */
+
     fun setFiltering(requestType: TasksFilterType) {
         _currentFiltering = requestType
         _currentSorting
@@ -156,6 +180,10 @@ class TasksViewModel(
         }
     }
 
+    fun showNoInternetConnection() {
+        showSnackbarMessage(R.string.no_internet_connection)
+    }
+
     fun completeTask(task: Task, completed: Boolean) = viewModelScope.launch {
         if (completed) {
             tasksRepository.completeTask(task)
@@ -186,7 +214,7 @@ class TasksViewModel(
     /**
      * Called by the [TasksAdapter].
      */
-    internal fun openTask(taskId: String) {
+    internal fun openTask(taskId: Int) {
         _openTaskEvent.value = Event(taskId)
     }
 
@@ -222,7 +250,6 @@ class TasksViewModel(
         EspressoIdlingResource.increment() // Set app as busy.
 
         viewModelScope.launch {
-            //val tasksResult = tasksRepository.getTasks(forceUpdate)
             val tasksResult = tasksRepository.getTasks()
 
             if (tasksResult is Success) {
@@ -251,7 +278,6 @@ class TasksViewModel(
                             tasksToShow.add(task)
                         }
                     }
-
                 }
                 for (task in tasks) {
                     when (_currentFiltering) {
@@ -269,15 +295,147 @@ class TasksViewModel(
                 }
                 isDataLoadingError.value = false
                 _items.value = ArrayList(tasksToShow)
+                Timber.i("Tasks loaded from local db")
             } else {
                 isDataLoadingError.value = false
                 _items.value = emptyList()
                 _snackbarText.value = Event(R.string.loading_tasks_error)
             }
 
-            EspressoIdlingResource.decrement() // Set app as idle.
             _dataLoading.value = false
+            EspressoIdlingResource.decrement() // Set app as idle.
         }
+
+    }
+
+    fun saveDataIfInternetAvailable() {
+        if (networkAvaiable.value!!) {
+            saveDataToFirebase()
+        } else {
+            showNoInternetConnection()
+        }
+    }
+
+    fun saveDataToFirebase() = viewModelScope.launch {
+        if (items.value == emptyList<Task>()) {
+            return@launch
+        }
+
+        firebaseHelper.deleteAllTasks()
+        firebaseHelper.saveToDatabase(items?.value!!)
+        _snackbarText.value = Event(R.string.tasks_saved_to_remote_db)
+//            EspressoIdlingResource.decrement() // Set app as idle.
+    }
+
+
+    fun checkNetworkConnection(activity: AppCompatActivity) {
+        networkAvaiable.value =
+                (activity.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager)
+                        .activeNetworkInfo?.isConnected == true
+        if (!networkAvaiable.value!!) {
+            showNoInternetConnection()
+        }
+    }
+
+    private fun getTaskListFromFirebase(connected: Boolean) {
+        viewModelScope.launch {
+            if (connected) {
+                EspressoIdlingResource.increment() // Set app as busy.
+                val firebaseCallback = object : FirebaseCallback {
+                    override fun onCallback(todoList: List<Task>) {
+                        _items.value = todoList
+                        viewModelScope.launch {
+                            items.value?.forEach {
+                                tasksRepository.saveTask(it)
+                            }
+                        }
+                    }
+                }
+                firebaseHelper.readTasks(firebaseCallback)
+                if (items.value == emptyList<Task>())
+                else
+                    _snackbarText.value = Event(R.string.tasks_retrieved_from_remote_db)
+
+                EspressoIdlingResource.decrement() // Set app as idle.
+
+            } else {
+                showNoInternetConnection()
+            }
+
+        }
+    }
+
+    fun loadDataFromFBIfAvailable() {
+        if (items?.value == emptyList<Task>()) {
+            getTaskListFromFirebase(networkAvaiable.value!!)
+        }
+    }
+
+    fun deleteAllTasks() {
+        viewModelScope.launch {
+            tasksRepository.deleteAllTasks()
+            firebaseHelper.deleteAllTasks()
+            _snackbarText.value = Event(R.string.all_tasks_deleted)
+            loadTasks(false)
+        }
+    }
+
+    fun clearAppData2(activity: AppCompatActivity) {
+
+        val deleteData: Boolean
+        try {
+            // clearing app data
+            if (Build.VERSION_CODES.KITKAT <= Build.VERSION.SDK_INT) {
+                deleteData = (activity.getSystemService(ACTIVITY_SERVICE) as ActivityManager).clearApplicationUserData() // note: it has a return value!
+                if (deleteData) restartApp()
+            } else {
+                val packageName = getApplicationContext<Context>().packageName
+                val runtime = Runtime.getRuntime()
+                runtime.exec("pm clear $packageName")
+            }
+
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+    }
+
+    fun clearAppData(activity: AppCompatActivity) {
+        val cache = activity.cacheDir
+        val appDir = File(cache.getParent())
+        if (appDir.exists()) {
+            val children = appDir.list();
+            for (s in children) {
+                if (!s.equals("lib")) {
+                    deleteDir(File(appDir, s))
+                    Log.i("TAG", "File /data/data/APP_PACKAGE/" + s + " DELETED")
+                }
+            }
+        }
+        deleteAllTasks()
+        //restartApp()
+    }
+
+    private fun deleteDir(dir: File?): Boolean {
+        if (dir != null && dir.isDirectory()) {
+            val children = dir.list()
+            for (i in children) {
+                val success = deleteDir(File(dir, i));
+                if (!success) {
+                    return false
+                }
+            }
+        }
+        return dir!!.delete()
+    }
+
+
+    private fun restartApp() {
+        val intent = Intent(getApplicationContext<Context>(), TasksActivity::class.java)
+        val mPendingIntentId = 1
+        val mPendingIntent = PendingIntent.getActivity(getApplicationContext(), mPendingIntentId, intent, PendingIntent.FLAG_CANCEL_CURRENT)
+        val mgr = getApplicationContext<Context>().getSystemService(Context.ALARM_SERVICE) as AlarmManager
+        mgr.set(AlarmManager.RTC, System.currentTimeMillis() + 100, mPendingIntent)
+        System.exit(0)
     }
 
     private fun sortByDate(tasks: List<Task>): List<Task> {
