@@ -24,4 +24,8 @@
         android:id="@id/statisticsFragment"
         android:icon="@drawable/ic_statistics"
         android:title="@string/statistics_title" />
+    <item
+        android:id="@id/clearAppData"
+        android:icon="@drawable/trash_icon"
+        android:title="@string/clear_app_data" />
 </menu>
