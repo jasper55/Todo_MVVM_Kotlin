@@ -82,6 +82,10 @@ class TasksFragment : Fragment() {
                     viewDataBinding.viewmodel?.deleteAllTasks()
                     true
                 }
+                R.id.menu_clear_app_data -> {
+                    viewDataBinding.viewmodel?.clearAppData(act)
+                    true
+                }
                 else -> false
             }
 

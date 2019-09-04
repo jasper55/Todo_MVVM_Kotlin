@@ -40,6 +40,11 @@ import kotlinx.coroutines.launch
 import com.example.android.architecture.blueprints.todoapp.data.source.remote.FirebaseCallback
 import kotlinx.coroutines.runBlocking
 import timber.log.Timber
+import androidx.test.core.app.ApplicationProvider.getApplicationContext
+import android.content.Context.ACTIVITY_SERVICE
+import androidx.core.content.ContextCompat.getSystemService
+import android.app.ActivityManager
+import android.os.Build
 
 
 /**
@@ -370,6 +375,23 @@ class TasksViewModel(
             _snackbarText.value = Event(R.string.all_tasks_deleted)
             loadTasks(false)
         }
+    }
+
+    fun clearAppData(activity: AppCompatActivity) {
+        try {
+            // clearing app data
+            if (Build.VERSION_CODES.KITKAT <= Build.VERSION.SDK_INT) {
+                (activity.getSystemService(ACTIVITY_SERVICE) as ActivityManager).clearApplicationUserData() // note: it has a return value!
+            } else {
+                val packageName = getApplicationContext<Context>().packageName
+                val runtime = Runtime.getRuntime()
+                runtime.exec("pm clear $packageName")
+            }
+
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+
     }
 
     private fun sortByDate(tasks: List<Task>): List<Task> {

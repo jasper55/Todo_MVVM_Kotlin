@@ -80,5 +80,6 @@
     <string name="no_contact_permission">You don\'t have access to your contacts</string>
     <string name="synchronize">synchronize databases</string>
     <string name="delete_all_tasks">delete all tasks</string>
+    <string name="clear_app_data">clear app data</string>
 
 </resources>
