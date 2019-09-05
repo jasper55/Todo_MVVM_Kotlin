@@ -170,7 +170,7 @@ class TaskDetailFragment : Fragment() {
         val fragTwo = ContactsFragment()
         val bundle = Bundle()
         bundle.putInt("taskId", taskId)
-        fragTwo.setArguments(bundle)
+        fragTwo.arguments = bundle
         ft.add(R.id.contact_list, fragTwo)
         ft.commit()
     }

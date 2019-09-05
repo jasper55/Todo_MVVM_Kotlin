@@ -82,4 +82,14 @@
     <string name="delete_all_tasks">delete all tasks</string>
     <string name="clear_app_data">clear app data</string>
 
+
+    <!-- register Login -->
+    <string name="logo">Login Logo</string>
+    <string name="email">Enter your email here</string>
+    <string name="password">Your password</string>
+    <string name="remember_me">remember me for next sign in</string>
+    <string name="stay_logged_in">keep me logged in</string>
+    <string name="forgot_password">Forgot your password?</string>
+    <string name="register_link_text">Don\'t have an account yet, register here</string>
+
 </resources>

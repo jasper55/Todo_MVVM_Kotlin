@@ -13,12 +13,44 @@
   ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
   ~ See the License for the specific language governing permissions and
   ~ limitations under the License.
+
   -->
 
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/nav_graph"
-    app:startDestination="@id/tasksFragment">
+    app:startDestination="@id/loginFragment">
+
+
+    <fragment
+        android:id="@+id/loginFragment"
+        android:name="com.example.android.architecture.blueprints.todoapp.login.LoginFragment"
+        android:label="Login Screen">
+        <action
+            android:id="@+id/action_loginFragment_to_registerFragment"
+            app:destination="@id/registerFragment" />
+        <argument
+            android:name="USER_ID"
+            app:argType="integer" />
+        <action
+            android:id="@+id/action_LoginFragment_to_tasksFragment"
+            app:destination="@id/tasksFragment"/>
+    </fragment>
+
+    <fragment
+        android:id="@+id/registerFragment"
+        android:name="com.example.android.architecture.blueprints.todoapp.login.LoginFragment"
+        android:label="Login Screen">
+        <action
+            android:id="@+id/action_registerFragment_to_loginFragment"
+            app:destination="@id/loginFragment" />
+        <argument
+            android:name="USER_ID"
+            app:argType="integer" />
+        <action
+            android:id="@+id/action_registerFragment_to_tasksFragment"
+            app:destination="@id/tasksFragment"/>
+    </fragment>
 
     <fragment
         android:id="@+id/taskDetailFragment"
