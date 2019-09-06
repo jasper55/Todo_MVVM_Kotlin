@@ -7,24 +7,17 @@ import com.example.android.architecture.blueprints.todoapp.Event
 
 class LoginViewModel : ViewModel() {
 
-    private val _goToRegisterEvent = MutableLiveData<Event<Int>>()
-    val goToRegisterEvent: LiveData<Event<Int>> = _goToRegisterEvent
+    private val _openRegisterEvent = MutableLiveData<Event<Int>>()
+    val openRegisterEvent: LiveData<Event<Int>> = _openRegisterEvent
 
-    private val _goToTasksActivity = MutableLiveData<Event<Int>>()
-    val goToTasksActivity: LiveData<Event<Int>> = _goToTasksActivity
+    private val _openTaskListEvent = MutableLiveData<Event<Int>>()
+    val openTaskListEvent: LiveData<Event<Int>> = _openTaskListEvent
 
-    internal fun goToRegisterFrag(userId: Int) {
-        _goToRegisterEvent.value = Event(userId)
+    internal fun openRegisterFrag(userId: Int) {
+        _openRegisterEvent.value = Event(userId)
     }
 
-    internal fun goToTasksActivity(userId: Int) {
-        _goToTasksActivity.value = Event(userId)
+    internal fun loginUser(userId: Int) {
+        _openTaskListEvent.value = Event(userId)
     }
-
-    fun login(userId: Int){
-        goToTasksActivity(userId)
-    }
-
-
-
 }

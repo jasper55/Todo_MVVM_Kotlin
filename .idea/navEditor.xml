@@ -40,12 +40,12 @@
                         </option>
                         <option name="myPositions">
                           <map>
-                            <entry key="action_LoginFragment_to_tasksFragment">
+                            <entry key="action_loginFragment_to_registerFragment">
                               <value>
                                 <LayoutPositions />
                               </value>
                             </entry>
-                            <entry key="action_loginFragment_to_registerFragment">
+                            <entry key="action_loginFragment_to_tasksFragment">
                               <value>
                                 <LayoutPositions />
                               </value>

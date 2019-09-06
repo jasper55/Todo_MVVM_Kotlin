@@ -33,14 +33,14 @@
             android:name="USER_ID"
             app:argType="integer" />
         <action
-            android:id="@+id/action_LoginFragment_to_tasksFragment"
+            android:id="@+id/action_loginFragment_to_tasksFragment"
             app:destination="@id/tasksFragment"/>
     </fragment>
 
     <fragment
         android:id="@+id/registerFragment"
         android:name="com.example.android.architecture.blueprints.todoapp.login.LoginFragment"
-        android:label="Login Screen">
+        android:label="Register Screen">
         <action
             android:id="@+id/action_registerFragment_to_loginFragment"
             app:destination="@id/loginFragment" />
