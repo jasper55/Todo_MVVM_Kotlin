@@ -74,10 +74,10 @@ class LoginFragment : Fragment() {
 
     private fun navigateToTaskActivity(userId: Int) {
         val action = LoginFragmentDirections.actionLoginFragmentToTasksFragment()
-        findNavController().navigate(action)
         val intent = Intent(context,TasksActivity::class.java)
         intent.putExtra("USER_ID",userId)
         startActivity(intent)
+        findNavController().navigate(action)
     }
 
     private fun navigateToAddNewTask() {
