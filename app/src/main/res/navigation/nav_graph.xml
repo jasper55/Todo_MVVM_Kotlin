@@ -23,6 +23,18 @@
 
 
     <fragment
+        android:id="@+id/registerFragment"
+        android:name="com.example.android.architecture.blueprints.todoapp.register.RegisterFragment"
+        android:label="Register Screen">
+        <action
+            android:id="@+id/action_registerFragment_to_loginFragment"
+            app:destination="@id/loginFragment" />
+        <argument
+            android:name="USER_ID"
+            app:argType="integer" />
+    </fragment>
+
+    <fragment
         android:id="@+id/loginFragment"
         android:name="com.example.android.architecture.blueprints.todoapp.login.LoginFragment"
         android:label="Login Screen">
@@ -38,33 +50,18 @@
     </fragment>
 
     <fragment
-        android:id="@+id/registerFragment"
-        android:name="com.example.android.architecture.blueprints.todoapp.login.LoginFragment"
-        android:label="Register Screen">
-        <action
-            android:id="@+id/action_registerFragment_to_loginFragment"
-            app:destination="@id/loginFragment" />
-        <argument
-            android:name="USER_ID"
-            app:argType="integer" />
-        <action
-            android:id="@+id/action_registerFragment_to_tasksFragment"
-            app:destination="@id/tasksFragment"/>
-    </fragment>
-
-    <fragment
         android:id="@+id/taskDetailFragment"
         android:name="com.example.android.architecture.blueprints.todoapp.taskdetail.TaskDetailFragment"
         android:label="Task Details">
         <action
             android:id="@+id/action_taskDetailFragment_to_addEditTaskFragment"
             app:destination="@id/addEditTaskFragment" />
-        <argument
-            android:name="TASK_ID"
-            app:argType="integer" />
         <action
             android:id="@+id/action_taskDetailFragment_to_tasksFragment"
             app:destination="@id/tasksFragment"/>
+        <argument
+            android:name="TASK_ID"
+            app:argType="integer" />
     </fragment>
     <fragment
         android:id="@+id/statisticsFragment"
