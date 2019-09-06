@@ -19,35 +19,10 @@
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/nav_graph"
-    app:startDestination="@id/loginFragment">
+    app:startDestination="@id/tasksFragment">
 
 
-    <fragment
-        android:id="@+id/registerFragment"
-        android:name="com.example.android.architecture.blueprints.todoapp.register.RegisterFragment"
-        android:label="Register Screen">
-        <action
-            android:id="@+id/action_registerFragment_to_loginFragment"
-            app:destination="@id/loginFragment" />
-        <argument
-            android:name="USER_ID"
-            app:argType="integer" />
-    </fragment>
 
-    <fragment
-        android:id="@+id/loginFragment"
-        android:name="com.example.android.architecture.blueprints.todoapp.login.LoginFragment"
-        android:label="Login Screen">
-        <action
-            android:id="@+id/action_loginFragment_to_registerFragment"
-            app:destination="@id/registerFragment" />
-        <argument
-            android:name="USER_ID"
-            app:argType="integer" />
-        <action
-            android:id="@+id/action_loginFragment_to_tasksFragment"
-            app:destination="@id/tasksFragment"/>
-    </fragment>
 
     <fragment
         android:id="@+id/taskDetailFragment"

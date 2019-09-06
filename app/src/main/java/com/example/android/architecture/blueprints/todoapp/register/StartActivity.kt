@@ -2,13 +2,10 @@ package com.example.android.architecture.blueprints.todoapp.register
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import androidx.fragment.app.FragmentActivity
-import androidx.fragment.app.Fragment
 import androidx.navigation.NavController
 import androidx.navigation.findNavController
 import com.example.android.architecture.blueprints.todoapp.R
 import com.example.android.architecture.blueprints.todoapp.login.LoginFragment
-import com.google.android.material.navigation.NavigationView
 
 // register User - 15:22
 
@@ -38,7 +35,7 @@ class StartActivity : AppCompatActivity() {
             return
         }
 
-        val navController : NavController = findNavController(R.id.nav_host_fragment_new)
+        val navController : NavController = findNavController(R.id.start_nav_host_fragment)
 
 
         val loginFragment = LoginFragment()

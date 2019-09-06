@@ -1,6 +1,7 @@
 package com.example.android.architecture.blueprints.todoapp.login
 
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.view.ViewGroup
 import android.view.LayoutInflater
@@ -10,6 +11,8 @@ import androidx.navigation.fragment.findNavController
 import com.example.android.architecture.blueprints.todoapp.EventObserver
 import com.example.android.architecture.blueprints.todoapp.R
 import com.example.android.architecture.blueprints.todoapp.databinding.LoginFragmentBinding
+import com.example.android.architecture.blueprints.todoapp.register.StartActivity
+import com.example.android.architecture.blueprints.todoapp.tasks.TasksActivity
 import com.example.android.architecture.blueprints.todoapp.tasks.TasksFragmentDirections
 import com.example.android.architecture.blueprints.todoapp.userrepository.User
 import com.example.android.architecture.blueprints.todoapp.util.obtainViewModel
@@ -53,31 +56,12 @@ class LoginFragment : Fragment() {
         setupNavigation()
     }
 
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-    }
-
     private fun getUserId(): Int? {
         // return arguments?.let {
         //   LoginFragmentArgs.fromBundle(it).USER_ID
         //}
         return null
     }
-
-    private fun registerLoginFragment() {
-
-        val fm = fragmentManager
-        val ft = fm!!.beginTransaction()
-
-        fm.beginTransaction()
-        val fragTwo = LoginFragment()
-        val bundle = Bundle()
-        //bundle.putInt("taskId", taskId)
-        fragTwo.arguments = bundle
-        ft.add(R.id.fragment_login, fragTwo)
-        ft.commit()
-    }
-
 
     private fun setupNavigation() {
         viewDataBinding.viewmodel?.openRegisterEvent?.observe(this, EventObserver {
@@ -89,8 +73,11 @@ class LoginFragment : Fragment() {
     }
 
     private fun navigateToTaskActivity(userId: Int) {
-        val action = LoginFragmentDirections.actionLoginFragmentToTasksFragment(userId)
+        val action = LoginFragmentDirections.actionLoginFragmentToTasksFragment()
         findNavController().navigate(action)
+        val intent = Intent(context,TasksActivity::class.java)
+        intent.putExtra("USER_ID",userId)
+        startActivity(intent)
     }
 
     private fun navigateToAddNewTask() {
