@@ -65,7 +65,7 @@ class LoginFragment : Fragment() {
 
     private fun setupNavigation() {
         viewDataBinding.viewmodel?.openRegisterEvent?.observe(this, EventObserver {
-            //navigateToRegister(it)
+            navigateToRegister(it)
         })
         viewDataBinding.viewmodel?.openTaskListEvent?.observe(this, EventObserver {
             navigateToTaskActivity(it)
@@ -80,10 +80,8 @@ class LoginFragment : Fragment() {
         findNavController().navigate(action)
     }
 
-    private fun navigateToAddNewTask() {
-        val action = TasksFragmentDirections
-                .actionTasksFragmentToAddEditTaskFragment(-1,
-                        resources.getString(R.string.add_task))
+    private fun navigateToRegister(userId: Int) {
+        val action = LoginFragmentDirections.actionLoginFragmentToRegisterFragment(userId)
         findNavController().navigate(action)
     }
 }

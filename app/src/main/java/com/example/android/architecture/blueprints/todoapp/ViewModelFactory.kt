@@ -22,6 +22,7 @@ import com.example.android.architecture.blueprints.todoapp.addedittask.AddEditTa
 import com.example.android.architecture.blueprints.todoapp.contacts.ContactsViewModel
 import com.example.android.architecture.blueprints.todoapp.data.source.local.TasksLocalDataSource
 import com.example.android.architecture.blueprints.todoapp.login.LoginViewModel
+import com.example.android.architecture.blueprints.todoapp.register.RegisterViewModel
 import com.example.android.architecture.blueprints.todoapp.statistics.StatisticsViewModel
 import com.example.android.architecture.blueprints.todoapp.taskdetail.TaskDetailViewModel
 import com.example.android.architecture.blueprints.todoapp.tasks.TasksViewModel
@@ -53,6 +54,8 @@ class ViewModelFactory constructor(
                         TasksViewModel(tasksRepository)
                     isAssignableFrom(LoginViewModel::class.java) ->
                         LoginViewModel()
+                    isAssignableFrom(RegisterViewModel::class.java) ->
+                        RegisterViewModel()
                     else ->
                         throw IllegalArgumentException("Unknown ViewModel class: ${modelClass.name}")
                 }
