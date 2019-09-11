@@ -3,6 +3,7 @@ package com.example.android.architecture.blueprints.todoapp.login
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModel
 import com.example.android.architecture.blueprints.todoapp.Event
 import com.example.android.architecture.blueprints.todoapp.R
@@ -18,7 +19,13 @@ class LoginViewModel : ViewModel() {
     val openTaskListEvent: LiveData<Event<String>> = _openTaskListEvent
 
     private val _snackbarText = MutableLiveData<Event<Int>>()
-    val snackbarMessage: LiveData<Event<Int>> = _snackbarText
+    val snackbarText: LiveData<Event<Int>> = _snackbarText
+
+    private val _snackbarMessage = MutableLiveData<Event<String>>()
+    val snackbarMessage: LiveData<Event<String>> = _snackbarMessage
+
+    private val _errorMessageEvent = MutableLiveData<Event<String>>()
+    val errorMessageEvent: LiveData<Event<String>> = _errorMessageEvent
 
     val user: MutableLiveData<User> = MutableLiveData()
 
@@ -34,8 +41,8 @@ class LoginViewModel : ViewModel() {
         val email: String? = user.value?.email
         val password: String? = user.value?.password
 
-        if(email == null || password == null) return
-        FirebaseAuth.getInstance().signInWithEmailAndPassword(email,password)
+        if (email == null || password == null) return
+        FirebaseAuth.getInstance().signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener {
                     if (!it.isSuccessful) return@addOnCompleteListener
 
@@ -43,35 +50,41 @@ class LoginViewModel : ViewModel() {
                     //showSnackbarMessage(R.string.user_created)
                     val userUid = it.result?.user?.uid!!
                 }
-
-
         _openTaskListEvent.value = Event(userUid)
-        showSnackbarMessage(R.string.user_created)
     }
 
     internal fun loginUser() {
         val email: String? = user.value?.email
         val password: String? = user.value?.password
 
-        if(email == null || password == null) return
-        FirebaseAuth.getInstance().signInWithEmailAndPassword(email,password)
+        if (email == null || password == null) return
+        FirebaseAuth.getInstance().signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener {
                     if (!it.isSuccessful) return@addOnCompleteListener
 
                     // else if
-                    //showSnackbarMessage(R.string.user_created)
                     val userUid = it.result?.user?.uid!!
-                    showSnackbarMessage(R.string.user_logged_in)
+                    showSnackbarText(R.string.user_logged_in)
                     _openTaskListEvent.value = Event(userUid)
                     Log.i("Login:", "Login succesful")
                 }
                 .addOnFailureListener {
-                    showSnackbarMessage(R.string.login_failed)
+                    showErrorMessage("Failed to login: ${it.message}")
                     Log.i("Login:", "Failed to login: ${it.message}")
                 }
     }
 
-    private fun showSnackbarMessage(message: Int) {
+    private fun showSnackbarText(message: Int) {
         _snackbarText.value = Event(message)
     }
+
+    private fun showSnackbarMessage(message: String) {
+        _snackbarMessage.value = Event(message)
+    }
+
+    private fun showErrorMessage(message: String) {
+        _errorMessageEvent.value = Event(message)
+    }
+
+
 }

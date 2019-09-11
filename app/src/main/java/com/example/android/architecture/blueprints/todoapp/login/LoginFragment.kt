@@ -6,15 +6,16 @@ import android.view.ViewGroup
 import android.view.LayoutInflater
 import android.view.View
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.MutableLiveData
 import androidx.navigation.fragment.findNavController
 import com.example.android.architecture.blueprints.todoapp.EventObserver
 import com.example.android.architecture.blueprints.todoapp.R
 import com.example.android.architecture.blueprints.todoapp.databinding.LoginFragmentBinding
-import com.example.android.architecture.blueprints.todoapp.register.RegisterFragmentArgs
 import com.example.android.architecture.blueprints.todoapp.tasks.TasksActivity
-import com.example.android.architecture.blueprints.todoapp.userrepository.User
 import com.example.android.architecture.blueprints.todoapp.util.obtainViewModel
+import com.example.android.architecture.blueprints.todoapp.util.setupDismissableSnackbar
+import com.example.android.architecture.blueprints.todoapp.util.setupSnackbar
+import com.example.android.architecture.blueprints.todoapp.util.setupSnackbarMessage
+import com.google.android.material.snackbar.Snackbar
 
 
 class LoginFragment : Fragment() {
@@ -50,12 +51,34 @@ class LoginFragment : Fragment() {
 
         viewDataBinding.lifecycleOwner = this.viewLifecycleOwner
         setupNavigation()
+        setupSnackbar(Snackbar.LENGTH_SHORT)
+        //setupSnackbarMessage()
+        setupDismissableSnackbar()
     }
 
     private fun getUserId(): String {
         return arguments?.let {
             LoginFragmentArgs.fromBundle(it).USERID
         }!!
+    }
+
+    private fun setupSnackbar(length: Int, bgColor: Int = context!!.getColor(R.color.colorTextPrimary)) {
+        viewDataBinding.viewmodel?.let {
+
+            view?.setupSnackbar(this, it.snackbarText, length, bgColor)
+        }
+    }
+
+    private fun setupSnackbarMessage(length: Int = Snackbar.LENGTH_LONG, bgColor: Int = context!!.getColor(R.color.colorRed)) {
+        viewDataBinding.viewmodel?.let {
+            view?.setupSnackbarMessage(this, it.snackbarMessage, length, bgColor)
+        }
+    }
+
+    private fun setupDismissableSnackbar(length: Int = Snackbar.LENGTH_LONG) {
+        viewDataBinding.viewmodel?.let {
+            view?.setupDismissableSnackbar(this,it.errorMessageEvent, length)
+        }
     }
 
     private fun setupNavigation() {
