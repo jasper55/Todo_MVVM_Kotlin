@@ -98,27 +98,27 @@
 //        val activityScenario = ActivityScenario.launch(TasksActivity::class.java)
 //        dataBindingIdlingResource.monitorActivity(activityScenario)
 //
-//        onView(withId(R.id.drawer_layout))
+//        onView(withId(R.uid.drawer_layout))
 //            .check(matches(isClosed(Gravity.START))) // Left Drawer should be closed.
 //            .perform(open()) // Open Drawer
 //
 //        // Start statistics screen.
-//        onView(withId(R.id.nav_view))
-//            .perform(navigateTo(R.id.statisticsFragment))
+//        onView(withId(R.uid.nav_view))
+//            .perform(navigateTo(R.uid.statisticsFragment))
 //
 //        // Check that statistics screen was opened.
-//        onView(withId(R.id.statistics)).check(matches(isDisplayed()))
+//        onView(withId(R.uid.statistics)).check(matches(isDisplayed()))
 //
-//        onView(withId(R.id.drawer_layout))
+//        onView(withId(R.uid.drawer_layout))
 //            .check(matches(isClosed(Gravity.START))) // Left Drawer should be closed.
 //            .perform(open()) // Open Drawer
 //
 //        // Start tasks screen.
-//        onView(withId(R.id.nav_view))
-//            .perform(navigateTo(R.id.tasksFragment))
+//        onView(withId(R.uid.nav_view))
+//            .perform(navigateTo(R.uid.tasksFragment))
 //
 //        // Check that tasks screen was opened.
-//        onView(withId(R.id.tasksContainer)).check(matches(isDisplayed()))
+//        onView(withId(R.uid.tasksContainer)).check(matches(isDisplayed()))
 //    }
 //
 //    @Test
@@ -128,7 +128,7 @@
 //        dataBindingIdlingResource.monitorActivity(activityScenario)
 //
 //        // Check that left drawer is closed at startup
-//        onView(withId(R.id.drawer_layout))
+//        onView(withId(R.uid.drawer_layout))
 //            .check(matches(isClosed(Gravity.START))) // Left Drawer should be closed.
 //
 //        // Open Drawer
@@ -140,7 +140,7 @@
 //        ).perform(click())
 //
 //        // Check if drawer is open
-//        onView(withId(R.id.drawer_layout))
+//        onView(withId(R.uid.drawer_layout))
 //            .check(matches(isOpen(Gravity.START))) // Left drawer is open open.
 //    }
 //
@@ -152,11 +152,11 @@
 //
 //        // When the user navigates to the stats screen
 //        activityScenario.onActivity {
-//            it.findNavController(R.id.nav_host_fragment).navigate(R.id.statisticsFragment)
+//            it.findNavController(R.uid.nav_host_fragment).navigate(R.uid.statisticsFragment)
 //        }
 //
 //        // Then check that left drawer is closed at startup
-//        onView(withId(R.id.drawer_layout))
+//        onView(withId(R.uid.drawer_layout))
 //            .check(matches(isClosed(Gravity.START))) // Left Drawer should be closed.
 //
 //        // When the drawer is opened
@@ -168,7 +168,7 @@
 //        ).perform(click())
 //
 //        // Then check that the drawer is open
-//        onView(withId(R.id.drawer_layout))
+//        onView(withId(R.uid.drawer_layout))
 //            .check(matches(isOpen(Gravity.START))) // Left drawer is open open.
 //    }
 //
@@ -184,7 +184,7 @@
 //        // Click on the task on the list
 //        onView(withText("UI <- button")).perform(click())
 //        // Click on the edit task button
-//        onView(withId(R.id.fab_edit_task)).perform(click())
+//        onView(withId(R.uid.fab_edit_task)).perform(click())
 //
 //        // Confirm that if we click "<-" once, we end up back at the task details page
 //        onView(
@@ -193,7 +193,7 @@
 //              .getToolbarNavigationContentDescription()
 //          )
 //        ).perform(click())
-//        onView(withId(R.id.task_detail_title)).check(matches(isDisplayed()))
+//        onView(withId(R.uid.task_detail_title)).check(matches(isDisplayed()))
 //
 //        // Confirm that if we click "<-" a second time, we end up back at the home screen
 //        onView(
@@ -202,7 +202,7 @@
 //              .getToolbarNavigationContentDescription()
 //          )
 //        ).perform(click())
-//        onView(withId(R.id.tasksContainer)).check(matches(isDisplayed()))
+//        onView(withId(R.uid.tasksContainer)).check(matches(isDisplayed()))
 //    }
 //
 //    @Test
@@ -217,15 +217,15 @@
 //        // Click on the task on the list
 //        onView(withText("Back button")).perform(click())
 //        // Click on the edit task button
-//        onView(withId(R.id.fab_edit_task)).perform(click())
+//        onView(withId(R.uid.fab_edit_task)).perform(click())
 //
 //        // Confirm that if we click back once, we end up back at the task details page
 //        pressBack()
-//        onView(withId(R.id.task_detail_title)).check(matches(isDisplayed()))
+//        onView(withId(R.uid.task_detail_title)).check(matches(isDisplayed()))
 //
 //        // Confirm that if we click back a second time, we end up back at the home screen
 //        pressBack()
-//        onView(withId(R.id.tasksContainer)).check(matches(isDisplayed()))
+//        onView(withId(R.uid.tasksContainer)).check(matches(isDisplayed()))
 //    }
 //
 //    private fun <T : Activity> ActivityScenario<T>.getToolbarNavigationContentDescription()
@@ -233,7 +233,7 @@
 //        var description = ""
 //        onActivity {
 //            description =
-//                it.findViewById<Toolbar>(R.id.toolbar).navigationContentDescription as String
+//                it.findViewById<Toolbar>(R.uid.toolbar).navigationContentDescription as String
 //        }
 //        return description
 //    }

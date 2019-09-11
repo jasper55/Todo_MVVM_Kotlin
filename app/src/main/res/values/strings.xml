@@ -83,6 +83,10 @@
     <string name="clear_app_data">clear app data</string>
 
 
+    <!-- Firebase actions -->
+    <string name="user_created">Your registration has been successful</string>
+    <string name="create_user_failed">Registration failed</string>
+
     <!-- register Login -->
     <string name="logo">Login Logo</string>
     <string name="email">Enter your email here</string>

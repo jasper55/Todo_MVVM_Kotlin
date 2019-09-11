@@ -48,53 +48,38 @@
                 android:text="Already a member? Login"
                 android:textSize="16dip" />
 
-            <!-- Email Label -->
-            <com.google.android.material.textfield.TextInputLayout
+            <!-- Email Label
+            <android.support.design.widget.TextInputLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:layout_marginBottom="8dp">
+                android:layout_height="wrap_content"-->
 
                 <EditText
                     android:id="@+id/input_email"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginBottom="8dp"
                     android:hint="Email"
+                    android:text="@={viewmodel.user.email}"
                     android:inputType="textEmailAddress" />
-            </com.google.android.material.textfield.TextInputLayout>
+            <!--/android.support.design.widget.TextInputLayout-->
 
-            <!-- Password Label -->
-            <com.google.android.material.textfield.TextInputLayout
+            <!-- Password Label >
+            <android.support.design.widget.TextInputLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:layout_marginBottom="8dp">
-
+                android:layout_height="wrap_content"-->
                 <EditText
                     android:id="@+id/input_password"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginBottom="8dp"
                     android:hint="Password"
-                    android:text="@={viewmodel.password}"
+                    android:text="@={viewmodel.user.password}"
                     android:inputType="textPassword" />
-            </com.google.android.material.textfield.TextInputLayout>
+            <!--/android.support.design.widget.TextInputLayout-->
 
             <!-- Signup Button -->
-            <com.google.android.material.textfield.TextInputLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:layout_marginBottom="8dp">
-
-                <EditText
-                    android:id="@+id/input_name"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:hint="Name"
-                    android:text="@={viewmodel.name}"
-                    android:inputType="textCapWords" />
-            </com.google.android.material.textfield.TextInputLayout>
-
             <Button
                 android:id="@+id/btn_signup"
                 android:layout_width="match_parent"
@@ -102,7 +87,7 @@
                 android:layout_marginTop="24dp"
                 android:layout_marginBottom="24dp"
                 android:padding="12dp"
-                android:onClick="@{()-> listener.onNavigateToLoginClicked()}"
+                android:onClick="@{()-> listener.onRegisterUserClicked()}"
                 android:text="Create Account" />
 
         </LinearLayout>

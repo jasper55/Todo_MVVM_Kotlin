@@ -28,7 +28,7 @@ import com.example.android.architecture.blueprints.todoapp.util.DateUtil
  * @param title       title of the task
  * @param description description of the task
  * @param isCompleted whether or not this task is completed
- * @param id          id of the task
+ * @param uid          uid of the task
  */
 @Entity(tableName = "tasks")
 data class Task @JvmOverloads constructor(

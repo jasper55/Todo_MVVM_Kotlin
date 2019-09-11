@@ -16,22 +16,22 @@
             app:destination="@id/loginFragment" />
         <argument
             android:name="USER_ID"
-            app:argType="integer" />
+            app:argType="string" />
     </fragment>
 
     <fragment
         android:id="@+id/loginFragment"
         android:name="com.example.android.architecture.blueprints.todoapp.login.LoginFragment"
         android:label="Login Screen">
-        <action
-            android:id="@+id/action_loginFragment_to_registerFragment"
-            app:destination="@id/registerFragment" />
+        <argument
+            android:name="USER_ID"
+            app:argType="string" />
         <action
             android:id="@+id/action_loginFragment_to_tasksFragment"
             app:destination="@id/nav_graph"/>
-        <argument
-            android:name="USER_ID"
-            app:argType="integer" />
+        <action
+            android:id="@+id/action_loginFragment_to_registerFragment"
+            app:destination="@id/registerFragment" />
     </fragment>
 
 

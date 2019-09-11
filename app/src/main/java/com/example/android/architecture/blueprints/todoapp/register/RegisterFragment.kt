@@ -2,6 +2,7 @@ package com.example.android.architecture.blueprints.todoapp.register
 
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,7 +11,10 @@ import androidx.navigation.fragment.findNavController
 import com.example.android.architecture.blueprints.todoapp.EventObserver
 import com.example.android.architecture.blueprints.todoapp.R
 import com.example.android.architecture.blueprints.todoapp.databinding.RegisterFragmentBinding
+import com.example.android.architecture.blueprints.todoapp.tasks.TasksFragmentArgs
 import com.example.android.architecture.blueprints.todoapp.util.obtainViewModel
+import com.example.android.architecture.blueprints.todoapp.util.setupSnackbar
+import com.google.android.material.snackbar.Snackbar
 
 class RegisterFragment : Fragment() {
 
@@ -26,16 +30,14 @@ class RegisterFragment : Fragment() {
             viewmodel = viewModel
             listener = object : RegisterUserActionListener {
                 override fun onRegisterUserClicked() {
-                    viewDataBinding.viewmodel?.createUser()
-                    val userId = getUserId()
-                    userId?.let { navigateToLogin(it) }
+                    viewDataBinding.viewmodel?.registerUser()
+                    //if (viewDataBinding.viewmodel?.user?.value?.uid == null) return
+                    viewDataBinding.viewmodel?.user?.value?.uid?.let { navigateToLogin(it) }
                 }
 
                 override fun onNavigateToLoginClicked() {
-                    val userId = getUserId()
-                    userId?.let { navigateToLogin(it) }
+                    viewDataBinding.viewmodel?.user?.value?.uid?.let { navigateToLogin(it) }
                 }
-
             }
         }
         return root
@@ -45,13 +47,13 @@ class RegisterFragment : Fragment() {
         super.onActivityCreated(savedInstanceState)
         viewDataBinding.lifecycleOwner = this.viewLifecycleOwner
         setupNavigation()
+        setupSnackbar(Snackbar.LENGTH_SHORT)
     }
 
-    private fun getUserId(): Int? {
+    private fun getUserId(): String? {
         return arguments?.let {
             RegisterFragmentArgs.fromBundle(it).USERID
         }
-
     }
 
     private fun setupNavigation() {
@@ -61,14 +63,21 @@ class RegisterFragment : Fragment() {
     }
 
 
-    private fun navigateToLogin(userId: Int) {
-        val action = RegisterFragmentDirections.actionRegisterFragmentToLoginFragment(userId)
+    private fun navigateToLogin(userUid: String) {
+        val action = RegisterFragmentDirections.actionRegisterFragmentToLoginFragment(userUid)
         findNavController().navigate(action)
         //putUserIdToBundle()
     }
 
+    private fun setupSnackbar(length: Int, bgColor: Int = context!!.getColor(R.color.colorTextPrimary)) {
+        viewDataBinding.viewmodel?.let {
+            view?.setupSnackbar(this, it.snackbarMessage, length, bgColor)
+        }
+    }
     private fun putUserIdToBundle() {
 
     }
+
+
 }
 

@@ -32,7 +32,7 @@
 //    }
 //
 //    override suspend fun getTask(taskId: String): Result<Task> {
-//        tasks?.firstOrNull { it.id == taskId }?.let { return Success(it) }
+//        tasks?.firstOrNull { it.uid == taskId }?.let { return Success(it) }
 //        return Error(
 //            Exception("Task not found")
 //        )
@@ -43,19 +43,19 @@
 //    }
 //
 //    override suspend fun completeTask(task: Task) {
-//        tasks?.firstOrNull { it.id == task.id }?.let { it.isCompleted = true }
+//        tasks?.firstOrNull { it.uid == task.uid }?.let { it.isCompleted = true }
 //    }
 //
 //    override suspend fun completeTask(taskId: String) {
-//        tasks?.firstOrNull { it.id == taskId }?.let { it.isCompleted = true }
+//        tasks?.firstOrNull { it.uid == taskId }?.let { it.isCompleted = true }
 //    }
 //
 //    override suspend fun activateTask(task: Task) {
-//        tasks?.firstOrNull { it.id == task.id }?.let { it.isCompleted = false }
+//        tasks?.firstOrNull { it.uid == task.uid }?.let { it.isCompleted = false }
 //    }
 //
 //    override suspend fun activateTask(taskId: String) {
-//        tasks?.firstOrNull { it.id == taskId }?.let { it.isCompleted = false }
+//        tasks?.firstOrNull { it.uid == taskId }?.let { it.isCompleted = false }
 //    }
 //
 //    override suspend fun clearCompletedTasks() {
@@ -67,6 +67,6 @@
 //    }
 //
 //    override suspend fun deleteTask(taskId: String) {
-//        tasks?.removeIf { it.id == taskId }
+//        tasks?.removeIf { it.uid == taskId }
 //    }
 //}

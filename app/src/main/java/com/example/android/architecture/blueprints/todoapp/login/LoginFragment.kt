@@ -1,6 +1,5 @@
 package com.example.android.architecture.blueprints.todoapp.login
 
-import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.view.ViewGroup
@@ -11,9 +10,7 @@ import androidx.navigation.fragment.findNavController
 import com.example.android.architecture.blueprints.todoapp.EventObserver
 import com.example.android.architecture.blueprints.todoapp.R
 import com.example.android.architecture.blueprints.todoapp.databinding.LoginFragmentBinding
-import com.example.android.architecture.blueprints.todoapp.register.StartActivity
 import com.example.android.architecture.blueprints.todoapp.tasks.TasksActivity
-import com.example.android.architecture.blueprints.todoapp.tasks.TasksFragmentDirections
 import com.example.android.architecture.blueprints.todoapp.userrepository.User
 import com.example.android.architecture.blueprints.todoapp.util.obtainViewModel
 
@@ -35,13 +32,11 @@ class LoginFragment : Fragment() {
             listener = object : UserActionsNavigationListener{
 
                 override fun onLoginClicked() {
-                    user.id?.let { viewDataBinding.viewmodel?.loginUser(it) }
+                    //user.uid?.let { viewDataBinding.viewmodel?.loginUser(it) }
                 }
 
                 override fun onRegisterClicked() {
-                    user.id?.let {
-                        viewDataBinding.viewmodel?.openRegisterFrag(it)
-                    }
+                        viewDataBinding.viewmodel?.openRegisterFrag()
                 }
             }
         }
@@ -51,7 +46,6 @@ class LoginFragment : Fragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
-        user = User()
         viewDataBinding.lifecycleOwner = this.viewLifecycleOwner
         setupNavigation()
     }
@@ -65,23 +59,23 @@ class LoginFragment : Fragment() {
 
     private fun setupNavigation() {
         viewDataBinding.viewmodel?.openRegisterEvent?.observe(this, EventObserver {
-            navigateToRegister(it)
+            navigateToRegisterFrag()
         })
         viewDataBinding.viewmodel?.openTaskListEvent?.observe(this, EventObserver {
             navigateToTaskActivity(it)
         })
     }
 
-    private fun navigateToTaskActivity(userId: Int) {
+    private fun navigateToTaskActivity(userUid: String) {
         val action = LoginFragmentDirections.actionLoginFragmentToTasksFragment()
         val intent = Intent(context,TasksActivity::class.java)
-        intent.putExtra("USER_ID",userId)
+        intent.putExtra("USER_ID",userUid)
         startActivity(intent)
         findNavController().navigate(action)
     }
 
-    private fun navigateToRegister(userId: Int) {
-        val action = LoginFragmentDirections.actionLoginFragmentToRegisterFragment(userId)
+    private fun navigateToRegisterFrag() {
+        val action = LoginFragmentDirections.actionLoginFragmentToRegisterFragment(null.toString())
         findNavController().navigate(action)
     }
 }

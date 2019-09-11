@@ -1,32 +1,66 @@
 package com.example.android.architecture.blueprints.todoapp.register
 
+import android.util.Log
+import android.widget.Toast
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.android.architecture.blueprints.todoapp.Event
-import com.example.android.architecture.blueprints.todoapp.contacts.Contact
+import com.example.android.architecture.blueprints.todoapp.R
 import com.example.android.architecture.blueprints.todoapp.userrepository.User
+import com.google.firebase.auth.FirebaseAuth
 
 class RegisterViewModel : ViewModel() {
 
-    val name = MutableLiveData<String>()
-    val password = MutableLiveData<String>()
+    val user: MutableLiveData<User> = MutableLiveData()
 
-    private val _openLoginEvent = MutableLiveData<Event<Int>>()
-    val openLoginEvent: LiveData<Event<Int>> = _openLoginEvent
-
-    private val _user = MutableLiveData<User>().apply { value = User() }
-    val user: LiveData<User> = _user
-
-    internal fun openLoginFrag(userId: Int) {
-        _openLoginEvent.value = Event(userId)
+    init {
+        user.value = User()
     }
 
-    fun createUser() {
-        saveUserToBundle()
+    private val _openLoginEvent = MutableLiveData<Event<String>>()
+    val openLoginEvent: LiveData<Event<String>> = _openLoginEvent
+
+    private val _snackbarText = MutableLiveData<Event<Int>>()
+    val snackbarMessage: LiveData<Event<Int>> = _snackbarText
+
+
+
+    internal fun openLoginFrag(userUid: String) {
+        _openLoginEvent.value = Event(userUid)
     }
 
-    private fun saveUserToBundle() {
+    fun registerUser() {
+        val email: String? = user.value?.email
+        val password: String? = user.value?.password
+
+        Log.i("Register:", "User with ${email} created")
+
+        if(email == null || password == null) return
+
+        FirebaseAuth.getInstance().createUserWithEmailAndPassword(email, password)
+                .addOnCompleteListener {
+                    if (!it.isSuccessful) return@addOnCompleteListener
+
+                    // else if
+                    showSnackbarMessage(R.string.user_created)
+                    val userUid = it.result?.user?.uid!!
+                    user.value?.uid = userUid
+                    openLoginFrag(userUid)
+                    Log.i("Register:", "User with ${it.result?.user?.uid} created")
+                }
+                .addOnFailureListener {
+                    showSnackbarMessage(R.string.create_user_failed)
+                    Log.i("Register:", "Failed to register: ${it.message}")
+
+                }
+        //saveUserToPrefs()
+    }
+    private fun showSnackbarMessage(message: Int) {
+        _snackbarText.value = Event(message)
+    }
+
+    private fun saveUserToPrefs() {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 }

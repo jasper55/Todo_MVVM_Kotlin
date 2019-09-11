@@ -95,11 +95,11 @@
 //
 //        onView(withText("TITLE1")).check(matches(isDisplayed()))
 //
-//        onView(withId(R.id.menu_filter)).perform(click())
+//        onView(withId(R.uid.menu_filter)).perform(click())
 //        onView(withText(R.string.nav_active)).perform(click())
 //        onView(withText("TITLE1")).check(matches(isDisplayed()))
 //
-//        onView(withId(R.id.menu_filter)).perform(click())
+//        onView(withId(R.uid.menu_filter)).perform(click())
 //        onView(withText(R.string.nav_completed)).perform(click())
 //        onView(withText("TITLE1")).check(matches(not(isDisplayed())))
 //    }
@@ -112,11 +112,11 @@
 //
 //        onView(withText("TITLE1")).check(matches(isDisplayed()))
 //
-//        onView(withId(R.id.menu_filter)).perform(click())
+//        onView(withId(R.uid.menu_filter)).perform(click())
 //        onView(withText(R.string.nav_active)).perform(click())
 //        onView(withText("TITLE1")).check(matches(not(isDisplayed())))
 //
-//        onView(withId(R.id.menu_filter)).perform(click())
+//        onView(withId(R.uid.menu_filter)).perform(click())
 //        onView(withText(R.string.nav_completed)).perform(click())
 //        onView(withText("TITLE1")).check(matches(isDisplayed()))
 //    }
@@ -131,10 +131,10 @@
 //        onView(withText("TITLE1")).perform(click())
 //
 //        // Click delete task in menu
-//        onView(withId(R.id.menu_delete)).perform(click())
+//        onView(withId(R.uid.menu_delete)).perform(click())
 //
 //        // Verify it was deleted
-//        onView(withId(R.id.menu_filter)).perform(click())
+//        onView(withId(R.uid.menu_filter)).perform(click())
 //        onView(withText(R.string.nav_all)).perform(click())
 //        onView(withText("TITLE1")).check(doesNotExist())
 //    }
@@ -150,10 +150,10 @@
 //        onView(withText("TITLE1")).perform(click())
 //
 //        // Click delete task in menu
-//        onView(withId(R.id.menu_delete)).perform(click())
+//        onView(withId(R.uid.menu_delete)).perform(click())
 //
 //        // Verify it was deleted
-//        onView(withId(R.id.menu_filter)).perform(click())
+//        onView(withId(R.uid.menu_filter)).perform(click())
 //        onView(withText(R.string.nav_all)).perform(click())
 //        onView(withText("TITLE1")).check(doesNotExist())
 //        // but not the other one
@@ -170,13 +170,13 @@
 //        onView(checkboxWithText("TITLE1")).perform(click())
 //
 //        // Verify task is shown as complete
-//        onView(withId(R.id.menu_filter)).perform(click())
+//        onView(withId(R.uid.menu_filter)).perform(click())
 //        onView(withText(R.string.nav_all)).perform(click())
 //        onView(withText("TITLE1")).check(matches(isDisplayed()))
-//        onView(withId(R.id.menu_filter)).perform(click())
+//        onView(withId(R.uid.menu_filter)).perform(click())
 //        onView(withText(R.string.nav_active)).perform(click())
 //        onView(withText("TITLE1")).check(matches(not(isDisplayed())))
-//        onView(withId(R.id.menu_filter)).perform(click())
+//        onView(withId(R.uid.menu_filter)).perform(click())
 //        onView(withText(R.string.nav_completed)).perform(click())
 //        onView(withText("TITLE1")).check(matches(isDisplayed()))
 //    }
@@ -191,13 +191,13 @@
 //        onView(checkboxWithText("TITLE1")).perform(click())
 //
 //        // Verify task is shown as active
-//        onView(withId(R.id.menu_filter)).perform(click())
+//        onView(withId(R.uid.menu_filter)).perform(click())
 //        onView(withText(R.string.nav_all)).perform(click())
 //        onView(withText("TITLE1")).check(matches(isDisplayed()))
-//        onView(withId(R.id.menu_filter)).perform(click())
+//        onView(withId(R.uid.menu_filter)).perform(click())
 //        onView(withText(R.string.nav_active)).perform(click())
 //        onView(withText("TITLE1")).check(matches(isDisplayed()))
-//        onView(withId(R.id.menu_filter)).perform(click())
+//        onView(withId(R.uid.menu_filter)).perform(click())
 //        onView(withText(R.string.nav_completed)).perform(click())
 //        onView(withText("TITLE1")).check(matches(not(isDisplayed())))
 //    }
@@ -211,7 +211,7 @@
 //        launch(TasksActivity::class.java)
 //
 //        // Verify that both of our tasks are shown
-//        onView(withId(R.id.menu_filter)).perform(click())
+//        onView(withId(R.uid.menu_filter)).perform(click())
 //        onView(withText(R.string.nav_all)).perform(click())
 //        onView(withText("TITLE1")).check(matches(isDisplayed()))
 //        onView(withText("TITLE2")).check(matches(isDisplayed()))
@@ -227,7 +227,7 @@
 //        launch(TasksActivity::class.java)
 //
 //        // Verify that the active tasks (but not the completed task) are shown
-//        onView(withId(R.id.menu_filter)).perform(click())
+//        onView(withId(R.uid.menu_filter)).perform(click())
 //        onView(withText(R.string.nav_active)).perform(click())
 //        onView(withText("TITLE1")).check(matches(isDisplayed()))
 //        onView(withText("TITLE2")).check(matches(isDisplayed()))
@@ -244,7 +244,7 @@
 //        launch(TasksActivity::class.java)
 //
 //        // Verify that the completed tasks (but not the active task) are shown
-//        onView(withId(R.id.menu_filter)).perform(click())
+//        onView(withId(R.uid.menu_filter)).perform(click())
 //        onView(withText(R.string.nav_completed)).perform(click())
 //        onView(withText("TITLE1")).check(doesNotExist())
 //        onView(withText("TITLE2")).check(matches(isDisplayed()))
@@ -263,7 +263,7 @@
 //        openActionBarOverflowOrOptionsMenu(getApplicationContext())
 //        onView(withText(R.string.menu_clear)).perform(click())
 //
-//        onView(withId(R.id.menu_filter)).perform(click())
+//        onView(withId(R.uid.menu_filter)).perform(click())
 //        onView(withText(R.string.nav_all)).perform(click())
 //        // Verify that only the active task is shown
 //        onView(withText("TITLE1")).check(matches(isDisplayed()))
@@ -274,7 +274,7 @@
 //    fun noTasks_AllTasksFilter_AddTaskViewVisible() {
 //        launch(TasksActivity::class.java)
 //
-//        onView(withId(R.id.menu_filter)).perform(click())
+//        onView(withId(R.uid.menu_filter)).perform(click())
 //        onView(withText(R.string.nav_all)).perform(click())
 //
 //        // Verify the "You have no tasks!" text is shown
@@ -285,7 +285,7 @@
 //    fun noTasks_CompletedTasksFilter_AddTaskViewNotVisible() {
 //        launch(TasksActivity::class.java)
 //
-//        onView(withId(R.id.menu_filter)).perform(click())
+//        onView(withId(R.uid.menu_filter)).perform(click())
 //        onView(withText(R.string.nav_completed)).perform(click())
 //
 //        // Verify the "You have no completed tasks!" text is shown
@@ -296,7 +296,7 @@
 //    fun noTasks_ActiveTasksFilter_AddTaskViewNotVisible() {
 //        launch(TasksActivity::class.java)
 //
-//        onView(withId(R.id.menu_filter)).perform(click())
+//        onView(withId(R.uid.menu_filter)).perform(click())
 //        onView(withText(R.string.nav_active)).perform(click())
 //
 //        // Verify the "You have no active tasks!" text is shown
@@ -313,7 +313,7 @@
 //        }
 //
 //        // WHEN - Click on the "+" button
-//        onView(withId(R.id.fab_add_task)).perform(click())
+//        onView(withId(R.uid.fab_add_task)).perform(click())
 //
 //        // THEN - Verify that we navigate to the add screen
 //        verify(navController).navigate(
@@ -322,6 +322,6 @@
 //    }
 //
 //    private fun checkboxWithText(text: String) : Matcher<View> {
-//        return allOf(withId(R.id.complete), hasSibling(withText(text)))
+//        return allOf(withId(R.uid.complete), hasSibling(withText(text)))
 //    }
 //}

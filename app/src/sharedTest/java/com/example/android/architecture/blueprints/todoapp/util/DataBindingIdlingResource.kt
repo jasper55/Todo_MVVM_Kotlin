@@ -37,7 +37,7 @@ import java.util.UUID
 class DataBindingIdlingResource : IdlingResource {
     // list of registered callbacks
     private val idlingCallbacks = mutableListOf<IdlingResource.ResourceCallback>()
-    // give it a unique id to workaround an espresso bug where you cannot register/unregister
+    // give it a unique uid to workaround an espresso bug where you cannot register/unregister
     // an idling resource w/ the same name.
     private val id = 0
     // holds whether isIdle is called and the result was false. We track this to avoid calling

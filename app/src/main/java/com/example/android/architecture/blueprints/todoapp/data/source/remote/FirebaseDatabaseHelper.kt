@@ -39,7 +39,7 @@ class FirebaseDatabaseHelper {
     }
 
     fun saveJSONString(todoList: List<Task>): String {
-        """{"id":1,"description":"Test"}"""
+        """{"uid":1,"description":"Test"}"""
 
         """"{
             "foos" : [{

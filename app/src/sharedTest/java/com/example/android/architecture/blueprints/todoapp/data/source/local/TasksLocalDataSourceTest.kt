@@ -81,7 +81,7 @@
 //        localDataSource.saveTask(newTask)
 //
 //        // WHEN  - Task retrieved by ID
-//        val result = localDataSource.getTask(newTask.id)
+//        val result = localDataSource.getTask(newTask.uid)
 //
 //        // THEN - Same task is returned
 //        assertThat(result.succeeded, `is`(true))
@@ -99,7 +99,7 @@
 //
 //        // When completed in the persistent repository
 //        localDataSource.completeTask(newTask)
-//        val result = localDataSource.getTask(newTask.id)
+//        val result = localDataSource.getTask(newTask.uid)
 //
 //        // Then the task can be retrieved from the persistent repository and is complete
 //        assertThat(result.succeeded, `is`(true))
@@ -117,7 +117,7 @@
 //        localDataSource.activateTask(newTask)
 //
 //        // Then the task can be retrieved from the persistent repository and is active
-//        val result = localDataSource.getTask(newTask.id)
+//        val result = localDataSource.getTask(newTask.uid)
 //
 //        assertThat(result.succeeded, `is`(true))
 //        result as Result.Success
@@ -141,10 +141,10 @@
 //        localDataSource.clearCompletedTasks()
 //
 //        // Then the completed tasks cannot be retrieved and the active one can
-//        assertThat(localDataSource.getTask(newTask1.id).succeeded, `is`(false))
-//        assertThat(localDataSource.getTask(newTask2.id).succeeded, `is`(false))
+//        assertThat(localDataSource.getTask(newTask1.uid).succeeded, `is`(false))
+//        assertThat(localDataSource.getTask(newTask2.uid).succeeded, `is`(false))
 //
-//        val result3 = localDataSource.getTask(newTask3.id)
+//        val result3 = localDataSource.getTask(newTask3.uid)
 //
 //        assertThat(result3.succeeded, `is`(true))
 //        result3 as Result.Success

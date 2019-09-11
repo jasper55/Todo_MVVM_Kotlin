@@ -38,9 +38,9 @@ interface TasksDao {
     suspend fun getTasks(): List<Task>
 
     /**
-     * Select a task by id.
+     * Select a task by uid.
      *
-     * @param taskId the task id.
+     * @param taskId the task uid.
      * @return the task with taskId.
      */
     @Query("SELECT * FROM Tasks WHERE entryid = :taskId")
@@ -66,7 +66,7 @@ interface TasksDao {
     /**
      * Update the complete status of a task
      *
-     * @param taskId    id of the task
+     * @param taskId    uid of the task
      * @param completed status to be updated
      */
     @Query("UPDATE tasks SET completed = :completed WHERE entryid = :taskId")
@@ -84,7 +84,7 @@ interface TasksDao {
     @Query("UPDATE tasks SET contactIdString = :contactIdString WHERE entryid = :taskId")
     suspend fun saveContactId(taskId: Int, contactIdString: String)
     /**
-     * Delete a task by id.
+     * Delete a task by uid.
      *
      * @return the number of tasks deleted. This should always be 1.
      */

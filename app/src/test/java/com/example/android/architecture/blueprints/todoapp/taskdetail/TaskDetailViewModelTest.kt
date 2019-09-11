@@ -60,7 +60,7 @@
 //
 //    @Test
 //    fun getActiveTaskFromRepositoryAndLoadIntoView() {
-//        taskDetailViewModel.start(task.id)
+//        taskDetailViewModel.start(task.uid)
 //
 //        // Then verify that the view was notified
 //        assertThat(getValue(taskDetailViewModel.task).title).isEqualTo(task.title)
@@ -70,16 +70,16 @@
 //
 //    @Test
 //    fun completeTask() {
-//        taskDetailViewModel.start(task.id)
+//        taskDetailViewModel.start(task.uid)
 //
 //        // Verify that the task was active initially
-//        assertThat(tasksRepository.tasksServiceData[task.id]?.isCompleted).isFalse()
+//        assertThat(tasksRepository.tasksServiceData[task.uid]?.isCompleted).isFalse()
 //
 //        // When the ViewModel is asked to complete the task
 //        taskDetailViewModel.setCompleted(true)
 //
 //        // Then the task is completed and the snackbar shows the correct message
-//        assertThat(tasksRepository.tasksServiceData[task.id]?.isCompleted).isTrue()
+//        assertThat(tasksRepository.tasksServiceData[task.uid]?.isCompleted).isTrue()
 //        assertSnackbarMessage(taskDetailViewModel.snackbarMessage, R.string.task_marked_complete)
 //    }
 //
@@ -87,16 +87,16 @@
 //    fun activateTask() {
 //        task.isCompleted = true
 //
-//        taskDetailViewModel.start(task.id)
+//        taskDetailViewModel.start(task.uid)
 //
 //        // Verify that the task was completed initially
-//        assertThat(tasksRepository.tasksServiceData[task.id]?.isCompleted).isTrue()
+//        assertThat(tasksRepository.tasksServiceData[task.uid]?.isCompleted).isTrue()
 //
 //        // When the ViewModel is asked to complete the task
 //        taskDetailViewModel.setCompleted(false)
 //
 //        // Then the task is not completed and the snackbar shows the correct message
-//        assertThat(tasksRepository.tasksServiceData[task.id]?.isCompleted).isFalse()
+//        assertThat(tasksRepository.tasksServiceData[task.uid]?.isCompleted).isFalse()
 //        assertSnackbarMessage(taskDetailViewModel.snackbarMessage, R.string.task_marked_active)
 //
 //    }
@@ -107,7 +107,7 @@
 //        tasksRepository.setReturnError(true)
 //
 //        // Given an initialized ViewModel with an active task
-//        taskDetailViewModel.start(task.id)
+//        taskDetailViewModel.start(task.uid)
 //
 //        // Then verify that data is not available
 //        assertThat(getValue(taskDetailViewModel.isDataAvailable)).isFalse()
@@ -140,7 +140,7 @@
 //    @Test
 //    fun deleteTask() {
 //        assertThat(tasksRepository.tasksServiceData.containsValue(task)).isTrue()
-//        taskDetailViewModel.start(task.id)
+//        taskDetailViewModel.start(task.uid)
 //
 //        // When the deletion of a task is requested
 //        taskDetailViewModel.deleteTask()
@@ -154,7 +154,7 @@
 //        mainCoroutineRule.pauseDispatcher()
 //
 //        // Load the task in the viewmodel
-//        taskDetailViewModel.start(task.id)
+//        taskDetailViewModel.start(task.uid)
 //
 //        // Then progress indicator is shown
 //        assertThat(getValue(taskDetailViewModel.dataLoading)).isTrue()
