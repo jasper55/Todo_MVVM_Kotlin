@@ -6,10 +6,12 @@ import android.view.ViewGroup
 import android.view.LayoutInflater
 import android.view.View
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.MutableLiveData
 import androidx.navigation.fragment.findNavController
 import com.example.android.architecture.blueprints.todoapp.EventObserver
 import com.example.android.architecture.blueprints.todoapp.R
 import com.example.android.architecture.blueprints.todoapp.databinding.LoginFragmentBinding
+import com.example.android.architecture.blueprints.todoapp.register.RegisterFragmentArgs
 import com.example.android.architecture.blueprints.todoapp.tasks.TasksActivity
 import com.example.android.architecture.blueprints.todoapp.userrepository.User
 import com.example.android.architecture.blueprints.todoapp.util.obtainViewModel
@@ -21,8 +23,6 @@ class LoginFragment : Fragment() {
 
     private lateinit var viewModel: LoginViewModel
 
-    private lateinit var user: User
-
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         val root = inflater.inflate(R.layout.login_fragment, container, false)
@@ -32,7 +32,9 @@ class LoginFragment : Fragment() {
             listener = object : UserActionsNavigationListener{
 
                 override fun onLoginClicked() {
+                    viewDataBinding.viewmodel?.loginUser()
                     //user.uid?.let { viewDataBinding.viewmodel?.loginUser(it) }
+
                 }
 
                 override fun onRegisterClicked() {
@@ -50,11 +52,10 @@ class LoginFragment : Fragment() {
         setupNavigation()
     }
 
-    private fun getUserId(): Int? {
-        // return arguments?.let {
-        //   LoginFragmentArgs.fromBundle(it).USER_ID
-        //}
-        return null
+    private fun getUserId(): String {
+        return arguments?.let {
+            LoginFragmentArgs.fromBundle(it).USERID
+        }!!
     }
 
     private fun setupNavigation() {

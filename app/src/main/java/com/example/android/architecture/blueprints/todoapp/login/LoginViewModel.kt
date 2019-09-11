@@ -1,9 +1,13 @@
 package com.example.android.architecture.blueprints.todoapp.login
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.android.architecture.blueprints.todoapp.Event
+import com.example.android.architecture.blueprints.todoapp.R
+import com.example.android.architecture.blueprints.todoapp.userrepository.User
+import com.google.firebase.auth.FirebaseAuth
 
 class LoginViewModel : ViewModel() {
 
@@ -13,11 +17,61 @@ class LoginViewModel : ViewModel() {
     private val _openTaskListEvent = MutableLiveData<Event<String>>()
     val openTaskListEvent: LiveData<Event<String>> = _openTaskListEvent
 
+    private val _snackbarText = MutableLiveData<Event<Int>>()
+    val snackbarMessage: LiveData<Event<Int>> = _snackbarText
+
+    val user: MutableLiveData<User> = MutableLiveData()
+
+    init {
+        user.value = User()
+    }
+
     internal fun openRegisterFrag() {
         _openRegisterEvent.value = Event(true)
     }
 
     internal fun loginUser(userUid: String) {
+        val email: String? = user.value?.email
+        val password: String? = user.value?.password
+
+        if(email == null || password == null) return
+        FirebaseAuth.getInstance().signInWithEmailAndPassword(email,password)
+                .addOnCompleteListener {
+                    if (!it.isSuccessful) return@addOnCompleteListener
+
+                    // else if
+                    //showSnackbarMessage(R.string.user_created)
+                    val userUid = it.result?.user?.uid!!
+                }
+
+
         _openTaskListEvent.value = Event(userUid)
+        showSnackbarMessage(R.string.user_created)
+    }
+
+    internal fun loginUser() {
+        val email: String? = user.value?.email
+        val password: String? = user.value?.password
+
+        if(email == null || password == null) return
+        FirebaseAuth.getInstance().signInWithEmailAndPassword(email,password)
+                .addOnCompleteListener {
+                    if (!it.isSuccessful) return@addOnCompleteListener
+
+                    // else if
+                    //showSnackbarMessage(R.string.user_created)
+                    val userUid = it.result?.user?.uid!!
+                    showSnackbarMessage(R.string.user_logged_in)
+                    _openTaskListEvent.value = Event(userUid)
+                    Log.i("Login:", "Login succesful")
+                }
+                .addOnFailureListener {
+                    showSnackbarMessage(R.string.login_failed)
+                    Log.i("Login:", "Failed to login: ${it.message}")
+                }
+    }
+
+    private fun showSnackbarMessage(message: Int) {
+        _snackbarText.value = Event(message)
     }
 }

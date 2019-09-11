@@ -86,6 +86,8 @@
     <!-- Firebase actions -->
     <string name="user_created">Your registration has been successful</string>
     <string name="create_user_failed">Registration failed</string>
+    <string name="user_logged_in">Login succesful</string>
+    <string name="login_failed">Login failed</string>
 
     <!-- register Login -->
     <string name="logo">Login Logo</string>

@@ -79,6 +79,7 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@id/loginEmail"
                 android:hint="@string/password"
+                android:text="@={viewmodel.user.password}"
                 android:inputType="textPassword"
                 android:textColor="@color/colorPrimaryDark"
                 android:textColorHint="@color/colorGrey" />
@@ -89,6 +90,7 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentTop="true"
                 android:hint="@string/email"
+                android:text="@={viewmodel.user.email}"
                 android:inputType="textEmailAddress"
                 android:textColor="@color/colorPrimaryDark"
                 android:textColorHint="@color/colorGrey" />
