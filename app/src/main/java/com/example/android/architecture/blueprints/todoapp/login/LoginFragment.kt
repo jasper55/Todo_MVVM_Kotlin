@@ -16,6 +16,7 @@ import com.example.android.architecture.blueprints.todoapp.util.setupDismissable
 import com.example.android.architecture.blueprints.todoapp.util.setupSnackbar
 import com.example.android.architecture.blueprints.todoapp.util.setupSnackbarMessage
 import com.google.android.material.snackbar.Snackbar
+import com.google.firebase.auth.FirebaseAuth
 
 
 class LoginFragment : Fragment() {
@@ -30,7 +31,7 @@ class LoginFragment : Fragment() {
         viewModel = obtainViewModel(LoginViewModel::class.java)
         viewDataBinding = LoginFragmentBinding.bind(root).apply {
             viewmodel = viewModel
-            listener = object : UserActionsNavigationListener{
+            listener = object : UserActionsNavigationListener {
 
                 override fun onLoginClicked() {
                     viewDataBinding.viewmodel?.loginUser()
@@ -39,7 +40,7 @@ class LoginFragment : Fragment() {
                 }
 
                 override fun onRegisterClicked() {
-                        viewDataBinding.viewmodel?.openRegisterFrag()
+                    viewDataBinding.viewmodel?.openRegisterFrag()
                 }
             }
         }
@@ -54,6 +55,7 @@ class LoginFragment : Fragment() {
         setupSnackbar(Snackbar.LENGTH_SHORT)
         //setupSnackbarMessage()
         setupDismissableSnackbar()
+        checkIfUserIsAlreadyLoggedIn()
     }
 
     private fun getUserId(): String {
@@ -77,7 +79,7 @@ class LoginFragment : Fragment() {
 
     private fun setupDismissableSnackbar(length: Int = Snackbar.LENGTH_LONG) {
         viewDataBinding.viewmodel?.let {
-            view?.setupDismissableSnackbar(this,it.errorMessageEvent, length)
+            view?.setupDismissableSnackbar(this, it.errorMessageEvent, length)
         }
     }
 
@@ -92,8 +94,8 @@ class LoginFragment : Fragment() {
 
     private fun navigateToTaskActivity(userUid: String) {
         val action = LoginFragmentDirections.actionLoginFragmentToTasksFragment()
-        val intent = Intent(context,TasksActivity::class.java)
-        intent.putExtra("USER_ID",userUid)
+        val intent = Intent(context, TasksActivity::class.java)
+        intent.putExtra("USER_ID", userUid)
         startActivity(intent)
         findNavController().navigate(action)
     }
@@ -101,5 +103,28 @@ class LoginFragment : Fragment() {
     private fun navigateToRegisterFrag() {
         val action = LoginFragmentDirections.actionLoginFragmentToRegisterFragment(null.toString())
         findNavController().navigate(action)
+    }
+
+    private fun checkIfUserIsAlreadyLoggedIn(userUid: String) {
+        val auth = FirebaseAuth.getInstance()
+
+        if (auth.currentUser != null) {
+            navigateToTaskActivity(userUid)
+        } else {
+            return
+        }
+    }
+
+    private fun checkIfUserIsAlreadyLoggedIn() {
+        val auth = FirebaseAuth.getInstance()
+
+        if (auth.currentUser != null) {
+            val action = LoginFragmentDirections.actionLoginFragmentToTasksFragment()
+            val intent = Intent(context, TasksActivity::class.java)
+            startActivity(intent)
+            findNavController().navigate(action)
+        } else {
+            return
+        }
     }
 }
