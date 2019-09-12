@@ -24,6 +24,8 @@ class RegisterViewModel : ViewModel() {
     private val _snackbarText = MutableLiveData<Event<Int>>()
     val snackbarMessage: LiveData<Event<Int>> = _snackbarText
 
+    private val _errorMessageEvent = MutableLiveData<Event<String>>()
+    val errorMessageEvent: LiveData<Event<String>> = _errorMessageEvent
 
 
     internal fun openLoginFrag(userUid: String) {
@@ -40,7 +42,8 @@ class RegisterViewModel : ViewModel() {
 
         FirebaseAuth.getInstance().createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener {
-                    if (!it.isSuccessful) return@addOnCompleteListener
+                    if (!it.isSuccessful)
+                        return@addOnCompleteListener
 
                     // else if
                     showSnackbarMessage(R.string.user_created)
@@ -50,7 +53,7 @@ class RegisterViewModel : ViewModel() {
                     Log.i("Register:", "User with ${it.result?.user?.uid} created")
                 }
                 .addOnFailureListener {
-                    showSnackbarMessage(R.string.create_user_failed)
+                    showErrorMessage("Failed to register: ${it.message}")
                     Log.i("Register:", "Failed to register: ${it.message}")
 
                 }
@@ -58,6 +61,10 @@ class RegisterViewModel : ViewModel() {
     }
     private fun showSnackbarMessage(message: Int) {
         _snackbarText.value = Event(message)
+    }
+
+    private fun showErrorMessage(message: String) {
+        _errorMessageEvent.value = Event(message)
     }
 
     private fun saveUserToPrefs() {

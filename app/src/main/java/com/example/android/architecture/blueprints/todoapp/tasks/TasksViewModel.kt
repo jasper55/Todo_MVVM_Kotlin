@@ -43,6 +43,7 @@ import android.content.Context.ACTIVITY_SERVICE
 import android.app.ActivityManager
 import android.os.Build
 import android.app.AlarmManager
+import android.app.Application
 import android.app.PendingIntent
 import android.content.Intent
 import android.util.Log
@@ -59,7 +60,8 @@ import java.io.File
  * getter method.
  */
 class TasksViewModel(
-        private val tasksRepository: TasksLocalDataSource
+        private val tasksRepository: TasksLocalDataSource,
+        private val application: Application
 ) : ViewModel() {
 
     val _items = MutableLiveData<List<Task>>().apply { value = emptyList() }
@@ -85,6 +87,9 @@ class TasksViewModel(
 
     private val _snackbarText = MutableLiveData<Event<Int>>()
     val snackbarMessage: LiveData<Event<Int>> = _snackbarText
+
+    private val _errorMessageEvent = MutableLiveData<Event<String>>()
+    val errorMessageEvent: LiveData<Event<String>> = _errorMessageEvent
 
     private var _currentFiltering = TasksFilterType.ALL_TASKS
 
@@ -181,7 +186,7 @@ class TasksViewModel(
     }
 
     fun showNoInternetConnection() {
-        showSnackbarMessage(R.string.no_internet_connection)
+        showErrorMessage(application.getString(R.string.no_internet_connection))
     }
 
     fun completeTask(task: Task, completed: Boolean) = viewModelScope.launch {
@@ -235,6 +240,10 @@ class TasksViewModel(
 
     private fun showSnackbarMessage(message: Int) {
         _snackbarText.value = Event(message)
+    }
+
+    private fun showErrorMessage(message: String) {
+        _errorMessageEvent.value = Event(message)
     }
 
     /**

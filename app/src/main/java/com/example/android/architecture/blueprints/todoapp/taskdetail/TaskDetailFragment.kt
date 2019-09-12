@@ -58,6 +58,9 @@ class TaskDetailFragment : Fragment() {
 
     private lateinit var listAdapter: ContactsAdapter
 
+    private lateinit var timePicker: TimePickerFragment
+    private lateinit var datePicker: DatePickerFragment
+
     private var taskId: Int = -1
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
@@ -69,6 +72,12 @@ class TaskDetailFragment : Fragment() {
         }
 //        taskId = TaskDetailFragmentArgs.fromBundle(arguments!!).TASKID
         setupNavigation()
+        setupDataPickers()
+    }
+
+    private fun setupDataPickers() {
+        timePicker = TimePickerFragment()
+        datePicker = DatePickerFragment()
     }
 
     private fun setupNavigation() {
@@ -125,15 +134,15 @@ class TaskDetailFragment : Fragment() {
                 }
 
                 override fun onTimeChanged(v: View) {
-                    TimePickerFragment.showDialog(context)
-                    val time = TimePickerFragment.getTime()
+                    timePicker.showDialog(context)
+                    val time = timePicker.getTime()
                     val long = DateUtil.parseTimeToLong(time)
                     viewModel?.saveTime(long, time)
                 }
 
                 override fun onDueDateChanged(v: View) {
-                    DatePickerFragment.showDialog(context)
-                    val date = DatePickerFragment.getDate()
+                    datePicker.showDialog(context)
+                    val date = datePicker.getDate()
                     val long = DateUtil.parseToLong(date)
                     viewModel?.saveDueDate(long, date)
                 }

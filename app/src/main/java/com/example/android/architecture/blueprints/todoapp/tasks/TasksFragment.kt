@@ -33,6 +33,7 @@ import com.example.android.architecture.blueprints.todoapp.R
 import com.example.android.architecture.blueprints.todoapp.data.Task
 import com.example.android.architecture.blueprints.todoapp.databinding.TasksFragBinding
 import com.example.android.architecture.blueprints.todoapp.util.obtainViewModel
+import com.example.android.architecture.blueprints.todoapp.util.setupDismissableSnackbar
 import com.example.android.architecture.blueprints.todoapp.util.setupSnackbar
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.snackbar.Snackbar
@@ -102,6 +103,7 @@ class TasksFragment : Fragment() {
         val viewmodel = viewDataBinding.viewmodel
         viewDataBinding.lifecycleOwner = this.viewLifecycleOwner
         setupSnackbar(Snackbar.LENGTH_SHORT)
+        setupDismissableSnackbar()
         setupListAdapter()
         setupRefreshLayout()
         setupNavigation()
@@ -152,6 +154,12 @@ class TasksFragment : Fragment() {
         arguments?.let {
             val message = TasksFragmentArgs.fromBundle(it).userMessage
             viewDataBinding.viewmodel?.showEditResultMessage(message)
+        }
+    }
+
+    private fun setupDismissableSnackbar(length: Int = Snackbar.LENGTH_LONG) {
+        viewDataBinding.viewmodel?.let {
+            view?.setupDismissableSnackbar(this,it.errorMessageEvent, length)
         }
     }
 

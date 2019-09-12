@@ -15,6 +15,7 @@ import com.example.android.architecture.blueprints.todoapp.login.LoginFragment
 import com.example.android.architecture.blueprints.todoapp.login.LoginFragmentArgs
 import com.example.android.architecture.blueprints.todoapp.tasks.TasksFragmentArgs
 import com.example.android.architecture.blueprints.todoapp.util.obtainViewModel
+import com.example.android.architecture.blueprints.todoapp.util.setupDismissableSnackbar
 import com.example.android.architecture.blueprints.todoapp.util.setupSnackbar
 import com.google.android.material.snackbar.Snackbar
 
@@ -53,6 +54,7 @@ class RegisterFragment : Fragment() {
         viewDataBinding.lifecycleOwner = this.viewLifecycleOwner
         setupNavigation()
         setupSnackbar(Snackbar.LENGTH_SHORT)
+        setupDismissableSnackbar()
     }
 
     private fun getUserId(): String? {
@@ -84,6 +86,12 @@ class RegisterFragment : Fragment() {
     private fun setupSnackbar(length: Int, bgColor: Int = context!!.getColor(R.color.colorTextPrimary)) {
         viewDataBinding.viewmodel?.let {
             view?.setupSnackbar(this, it.snackbarMessage, length, bgColor)
+        }
+    }
+
+    private fun setupDismissableSnackbar(length: Int = Snackbar.LENGTH_LONG) {
+        viewDataBinding.viewmodel?.let {
+            view?.setupDismissableSnackbar(this,it.errorMessageEvent, length)
         }
     }
 }

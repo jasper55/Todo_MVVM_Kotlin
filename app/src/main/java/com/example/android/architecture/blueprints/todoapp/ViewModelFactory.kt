@@ -51,7 +51,7 @@ class ViewModelFactory constructor(
                     isAssignableFrom(AddEditTaskViewModel::class.java) ->
                         AddEditTaskViewModel(tasksRepository)
                     isAssignableFrom(TasksViewModel::class.java) ->
-                        TasksViewModel(tasksRepository)
+                        TasksViewModel(tasksRepository,application)
                     isAssignableFrom(LoginViewModel::class.java) ->
                         LoginViewModel()
                     isAssignableFrom(RegisterViewModel::class.java) ->

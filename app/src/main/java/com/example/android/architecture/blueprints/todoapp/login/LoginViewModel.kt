@@ -78,10 +78,6 @@ class LoginViewModel : ViewModel() {
         _snackbarText.value = Event(message)
     }
 
-    private fun showSnackbarMessage(message: String) {
-        _snackbarMessage.value = Event(message)
-    }
-
     private fun showErrorMessage(message: String) {
         _errorMessageEvent.value = Event(message)
     }
