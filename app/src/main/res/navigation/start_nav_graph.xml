@@ -34,5 +34,69 @@
             app:destination="@id/registerFragment" />
     </fragment>
 
+    <fragment
+        android:id="@+id/taskDetailFragment"
+        android:name="com.example.android.architecture.blueprints.todoapp.taskdetail.TaskDetailFragment"
+        android:label="Task Details">
+        <action
+            android:id="@+id/action_taskDetailFragment_to_addEditTaskFragment"
+            app:destination="@id/addEditTaskFragment" />
+        <action
+            android:id="@+id/action_taskDetailFragment_to_tasksFragment"
+            app:destination="@id/tasksFragment"/>
+        <argument
+            android:name="TASK_ID"
+            app:argType="integer" />
+    </fragment>
+    <fragment
+        android:id="@+id/statisticsFragment"
+        android:name="com.example.android.architecture.blueprints.todoapp.statistics.StatisticsFragment"
+        android:label="@string/app_name">
+        <action
+            android:id="@+id/action_statisticsFragment_to_tasksFragment"
+            app:destination="@id/tasksFragment"
+            app:popUpTo="@+id/tasksFragment"/>
+    </fragment>
+    <fragment
+        android:id="@+id/tasksFragment"
+        android:name="com.example.android.architecture.blueprints.todoapp.tasks.TasksFragment"
+        android:label="@string/app_name">
+        <action
+            android:id="@+id/action_tasksFragment_to_statisticsFragment"
+            app:destination="@id/statisticsFragment" />
+        <action
+            android:id="@+id/action_tasksFragment_to_LoginFragment"
+            app:destination="@id/start_nav_graph"/>
+        <action
+            android:id="@+id/action_tasksFragment_to_taskDetailFragment"
+            app:destination="@id/taskDetailFragment" />
+        <action
+            android:id="@+id/action_tasksFragment_to_addEditTaskFragment"
+            app:destination="@id/addEditTaskFragment"/>
+        <argument
+            android:name="userMessage"
+            app:argType="integer"
+            android:defaultValue="0"/>
+    </fragment>
+    <fragment
+        android:id="@+id/addEditTaskFragment"
+        android:name="com.example.android.architecture.blueprints.todoapp.addedittask.AddEditTaskFragment"
+        android:label="{title}" >
+        <argument
+            android:name="TASK_ID"
+            app:argType="integer"/>
+        <argument
+            android:name="title"
+            app:argType="string"
+            app:nullable="false"/>
+        <action
+            android:id="@+id/action_addEditTaskFragment_to_tasksFragment"
+            app:destination="@id/tasksFragment"
+            app:popUpTo="@+id/tasksFragment"/>
+    </fragment>
+    <argument
+        android:name="userMessage"
+        android:defaultValue="0"/>
+
 
 </navigation>

@@ -81,6 +81,8 @@
     <string name="synchronize">synchronize databases</string>
     <string name="delete_all_tasks">delete all tasks</string>
     <string name="clear_app_data">clear app data</string>
+    <string name="log_out">log out</string>
+    <string name="log_in">log in</string>
 
 
     <!-- Firebase actions -->

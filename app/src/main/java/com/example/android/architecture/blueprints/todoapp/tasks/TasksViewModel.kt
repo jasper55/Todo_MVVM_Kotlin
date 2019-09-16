@@ -47,6 +47,7 @@ import android.app.Application
 import android.app.PendingIntent
 import android.content.Intent
 import android.util.Log
+import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.*
 import java.io.File
 
@@ -105,6 +106,9 @@ class TasksViewModel(
 
     private val _newTaskEvent = MutableLiveData<Event<Unit>>()
     val newTaskEvent: LiveData<Event<Unit>> = _newTaskEvent
+
+    private val _LoginEvent = MutableLiveData<Event<Boolean>>()
+    val LoginEvent: LiveData<Event<Boolean>> = _LoginEvent
 
     // This LiveData depends on another so we can use a transformation.
     val empty: LiveData<Boolean> = Transformations.map(_items) {
@@ -317,16 +321,12 @@ class TasksViewModel(
 
     }
 
-    fun saveDataIfInternetAvailable() {
-        if (networkAvaiable.value!!) {
-            saveDataToFirebase()
-        } else {
-            showNoInternetConnection()
-        }
-    }
-
-    fun saveDataToFirebase() = viewModelScope.launch {
+    fun saveDataToFirebase(isConnected: Boolean) = viewModelScope.launch {
         if (items.value == emptyList<Task>()) {
+            return@launch
+        }
+        if (!isConnected) {
+            showNoInternetConnection()
             return@launch
         }
 
@@ -435,6 +435,14 @@ class TasksViewModel(
             }
         }
         return dir!!.delete()
+    }
+
+    fun login() {
+        _LoginEvent.value = Event(true)
+    }
+
+    fun logout() {
+        FirebaseAuth.getInstance().signOut()
     }
 
 

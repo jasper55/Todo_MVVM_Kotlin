@@ -32,6 +32,7 @@ import com.example.android.architecture.blueprints.todoapp.EventObserver
 import com.example.android.architecture.blueprints.todoapp.R
 import com.example.android.architecture.blueprints.todoapp.data.Task
 import com.example.android.architecture.blueprints.todoapp.databinding.TasksFragBinding
+import com.example.android.architecture.blueprints.todoapp.login.LoginFragment
 import com.example.android.architecture.blueprints.todoapp.util.obtainViewModel
 import com.example.android.architecture.blueprints.todoapp.util.setupDismissableSnackbar
 import com.example.android.architecture.blueprints.todoapp.util.setupSnackbar
@@ -75,7 +76,9 @@ class TasksFragment : Fragment() {
                 }
                 R.id.menu_synchronize -> {
                     viewDataBinding.viewmodel?.checkNetworkConnection(act)
-                    viewDataBinding.viewmodel?.saveDataIfInternetAvailable()
+                    if (viewDataBinding.viewmodel?.isInternetAvailable?.value!!) {
+                        viewDataBinding.viewmodel?.saveDataToFirebase(true)
+                    }
                     viewDataBinding.viewmodel?.loadDataFromFBIfAvailable()
                     true
                 }
@@ -85,9 +88,18 @@ class TasksFragment : Fragment() {
                 }
                 R.id.menu_clear_app_data -> {
                     viewDataBinding.viewmodel?.clearAppData(act)
-                    viewDataBinding.viewmodel?.saveDataIfInternetAvailable()
+                    viewDataBinding.viewmodel?.saveDataToFirebase(viewDataBinding.viewmodel?.isInternetAvailable?.value!!)
                     true
                 }
+                R.id.menu_log_in -> {
+                    viewDataBinding.viewmodel?.login()
+                    true
+                }
+                R.id.menu_log_out -> {
+                    viewDataBinding.viewmodel?.logout()
+                    true
+                }
+
                 else -> false
             }
 
@@ -121,7 +133,7 @@ class TasksFragment : Fragment() {
             withContext(ioDispatcher) {
                 coroutineScope {
                     launch { viewmodel?.loadTasks(false) }
-                    launch { viewmodel?.saveDataIfInternetAvailable() }
+                    launch { viewmodel?.saveDataToFirebase(true) }
                     launch { viewmodel?.loadDataFromFBIfAvailable() }
                 }
             }
@@ -134,6 +146,9 @@ class TasksFragment : Fragment() {
         })
         viewDataBinding.viewmodel?.newTaskEvent?.observe(this, EventObserver {
             navigateToAddNewTask()
+        })
+        viewDataBinding.viewmodel?.LoginEvent?.observe(this, EventObserver {
+            navigateToLoginFrag()
         })
     }
 
@@ -201,6 +216,16 @@ class TasksFragment : Fragment() {
                         resources.getString(R.string.add_task))
         findNavController().navigate(action)
     }
+
+    private fun navigateToLoginFrag() {
+        //val loginFragment = LoginFragment()
+
+        //act.supportFragmentManager.beginTransaction().add(R.id.tasks_activity, loginFragment)
+        val action = TasksFragmentDirections
+                .actionTasksFragmentToLoginFragment()
+        findNavController().navigate(action)
+    }
+
 
     private fun openTaskDetails(taskId: Int) {
         val action = TasksFragmentDirections.actionTasksFragmentToTaskDetailFragment(taskId)

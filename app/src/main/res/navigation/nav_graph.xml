@@ -22,8 +22,6 @@
     app:startDestination="@id/tasksFragment">
 
 
-
-
     <fragment
         android:id="@+id/taskDetailFragment"
         android:name="com.example.android.architecture.blueprints.todoapp.taskdetail.TaskDetailFragment"
@@ -54,6 +52,9 @@
         <action
             android:id="@+id/action_tasksFragment_to_statisticsFragment"
             app:destination="@id/statisticsFragment" />
+        <action
+            android:id="@+id/action_tasksFragment_to_LoginFragment"
+            app:destination="@id/start_nav_graph"/>
         <action
             android:id="@+id/action_tasksFragment_to_taskDetailFragment"
             app:destination="@id/taskDetailFragment" />

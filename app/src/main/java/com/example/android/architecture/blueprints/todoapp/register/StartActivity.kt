@@ -41,6 +41,7 @@ class StartActivity : AppCompatActivity() {
         val loginFragment = LoginFragment()
         loginFragment.arguments = intent.extras
 
+
        supportFragmentManager.beginTransaction().add(R.id.start_activity, loginFragment)
     }
 
