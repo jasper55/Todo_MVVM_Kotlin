@@ -33,7 +33,6 @@ import com.example.android.architecture.blueprints.todoapp.EventObserver
 import com.example.android.architecture.blueprints.todoapp.R
 import com.example.android.architecture.blueprints.todoapp.data.Task
 import com.example.android.architecture.blueprints.todoapp.databinding.TasksFragBinding
-import com.example.android.architecture.blueprints.todoapp.login.LoginFragment
 import com.example.android.architecture.blueprints.todoapp.register.StartActivity
 import com.example.android.architecture.blueprints.todoapp.util.obtainViewModel
 import com.example.android.architecture.blueprints.todoapp.util.setupDismissableSnackbar
@@ -78,10 +77,11 @@ class TasksFragment : Fragment() {
                 }
                 R.id.menu_synchronize -> {
                     viewDataBinding.viewmodel?.checkNetworkConnection(act)
-                    if (viewDataBinding.viewmodel?.isInternetAvailable?.value!!) {
+                    viewDataBinding.viewmodel?.checkUserStatus()
+                    if (viewDataBinding.viewmodel?.isInternetAvailable?.value!! && viewDataBinding.viewmodel?.userLoggedIn?.value!!) {
                         viewDataBinding.viewmodel?.saveDataToFirebase(true)
+                        viewDataBinding.viewmodel?.loadDataFromFBIfAvailable()
                     }
-                    viewDataBinding.viewmodel?.loadDataFromFBIfAvailable()
                     true
                 }
                 R.id.menu_delete -> {
@@ -94,7 +94,7 @@ class TasksFragment : Fragment() {
                     true
                 }
                 R.id.menu_log_in -> {
-                    viewDataBinding.viewmodel?.login()
+                    viewDataBinding.viewmodel?.navigateToLoginFrag()
                     true
                 }
                 R.id.menu_log_out -> {
@@ -125,7 +125,7 @@ class TasksFragment : Fragment() {
         viewmodel?.checkNetworkConnection(act)
         //runBlockingScope(viewmodel)
         viewmodel?.loadTasks(false)
-
+        viewmodel?.setLoginStatus()
     }
 
     private fun runBlockingScope(viewmodel: TasksViewModel?) {

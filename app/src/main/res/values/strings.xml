@@ -90,6 +90,7 @@
     <string name="create_user_failed">Registration failed</string>
     <string name="user_logged_in">Login succesful</string>
     <string name="login_failed">Login failed</string>
+    <string name="logout_successful">You have been logged out!</string>
 
     <!-- register Login -->
     <string name="logo">Login Logo</string>
@@ -99,5 +100,6 @@
     <string name="stay_logged_in">keep me logged in</string>
     <string name="forgot_password">Forgot your password?</string>
     <string name="register_link_text">Don\'t have an account yet, register here</string>
+    <string name="synchronization_failed">Synchronization failed: You are not logged in!</string>
 
 </resources>
