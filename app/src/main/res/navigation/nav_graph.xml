@@ -53,9 +53,6 @@
             android:id="@+id/action_tasksFragment_to_statisticsFragment"
             app:destination="@id/statisticsFragment" />
         <action
-            android:id="@+id/action_tasksFragment_to_LoginFragment"
-            app:destination="@id/start_nav_graph"/>
-        <action
             android:id="@+id/action_tasksFragment_to_taskDetailFragment"
             app:destination="@id/taskDetailFragment" />
         <action
@@ -65,6 +62,9 @@
             android:name="userMessage"
             app:argType="integer"
             android:defaultValue="0"/>
+        <action
+            android:id="@+id/action_tasksFragment_to_LoginFragment"
+            app:destination="@id/loginFragment"/>
     </fragment>
     <fragment
         android:id="@+id/addEditTaskFragment"
