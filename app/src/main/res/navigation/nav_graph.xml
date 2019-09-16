@@ -62,9 +62,6 @@
             android:name="userMessage"
             app:argType="integer"
             android:defaultValue="0"/>
-        <action
-            android:id="@+id/action_tasksFragment_to_LoginFragment"
-            app:destination="@id/loginFragment"/>
     </fragment>
     <fragment
         android:id="@+id/addEditTaskFragment"

@@ -87,6 +87,11 @@
                         </option>
                         <option name="myPositions">
                           <map>
+                            <entry key="action_tasksFragment_to_LoginFragment">
+                              <value>
+                                <LayoutPositions />
+                              </value>
+                            </entry>
                             <entry key="action_tasksFragment_to_addEditTaskFragment">
                               <value>
                                 <LayoutPositions />

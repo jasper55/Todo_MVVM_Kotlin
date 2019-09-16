@@ -16,6 +16,7 @@
 
 package com.example.android.architecture.blueprints.todoapp.tasks
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.Menu
@@ -33,6 +34,7 @@ import com.example.android.architecture.blueprints.todoapp.R
 import com.example.android.architecture.blueprints.todoapp.data.Task
 import com.example.android.architecture.blueprints.todoapp.databinding.TasksFragBinding
 import com.example.android.architecture.blueprints.todoapp.login.LoginFragment
+import com.example.android.architecture.blueprints.todoapp.register.StartActivity
 import com.example.android.architecture.blueprints.todoapp.util.obtainViewModel
 import com.example.android.architecture.blueprints.todoapp.util.setupDismissableSnackbar
 import com.example.android.architecture.blueprints.todoapp.util.setupSnackbar
@@ -174,7 +176,7 @@ class TasksFragment : Fragment() {
 
     private fun setupDismissableSnackbar(length: Int = Snackbar.LENGTH_LONG) {
         viewDataBinding.viewmodel?.let {
-            view?.setupDismissableSnackbar(this,it.errorMessageEvent, length)
+            view?.setupDismissableSnackbar(this, it.errorMessageEvent, length)
         }
     }
 
@@ -218,12 +220,8 @@ class TasksFragment : Fragment() {
     }
 
     private fun navigateToLoginFrag() {
-        //val loginFragment = LoginFragment()
-
-        //act.supportFragmentManager.beginTransaction().add(R.id.tasks_activity, loginFragment)
-        val action = TasksFragmentDirections
-                .actionTasksFragmentToLoginFragment()
-        findNavController().navigate(action)
+        val intent = Intent(context, StartActivity::class.java)
+        startActivity(intent)
     }
 
 
