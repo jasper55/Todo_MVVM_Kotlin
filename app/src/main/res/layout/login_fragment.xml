@@ -21,24 +21,10 @@
         android:id="@+id/fragment_login"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical">
-
-        <RelativeLayout
-            android:id="@+id/loginCenterView"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="5"
-            android:background="@color/colorAccent">
-
-            <ImageView
-                android:id="@+id/loginLogo"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerInParent="true"
-                android:contentDescription="@string/logo"
-                android:src="@drawable/common_google_signin_btn_icon_light" />
-
-        </RelativeLayout>
+        android:orientation="vertical"
+        android:paddingLeft="24dp"
+        android:paddingTop="124dp"
+        android:paddingRight="24dp">
 
         <RelativeLayout
             android:id="@+id/loginBottomView"
@@ -77,32 +63,24 @@
                 android:id="@+id/loginPassword"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="8dp"
                 android:layout_below="@id/loginEmail"
                 android:hint="@string/password"
                 android:text="@={viewmodel.user.password}"
-                android:inputType="textPassword"
-                android:textColor="@color/colorPrimaryDark"
-                android:textColorHint="@color/colorGrey" />
+                android:inputType="textPassword"/>
 
             <EditText
                 android:id="@+id/loginEmail"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_alignParentTop="true"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="8dp"
                 android:hint="@string/email"
                 android:text="@={viewmodel.user.email}"
-                android:inputType="textEmailAddress"
-                android:textColor="@color/colorPrimaryDark"
-                android:textColorHint="@color/colorGrey" />
+                android:inputType="textEmailAddress"/>
 
-            <TextView
-                android:id="@+id/loginForgotPassword"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/loginButton"
-                android:layout_centerHorizontal="true"
-                android:text="@string/forgot_password"
-                android:textColor="@color/colorAccent" />
 
             <TextView
                 android:id="@+id/loginRegisterLink"

@@ -17,10 +17,6 @@
 
     </data>
 
-    <ScrollView
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:fitsSystemWindows="true">
 
 
         <LinearLayout
@@ -28,25 +24,8 @@
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:paddingLeft="24dp"
-            android:paddingTop="56dp"
+            android:paddingTop="124dp"
             android:paddingRight="24dp">
-
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="72dp"
-                android:layout_gravity="center_horizontal"
-                android:layout_marginBottom="24dp"
-                android:src="@drawable/common_google_signin_btn_icon_dark_normal_background" />
-
-            <!--  Name Label -->
-            <TextView
-                android:id="@+id/link_login"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="24dp"
-                android:gravity="center"
-                android:text="Already a member? Login"
-                android:textSize="16dip" />
 
             <!-- Email Label
             <android.support.design.widget.TextInputLayout
@@ -90,7 +69,19 @@
                 android:onClick="@{()-> listener.onRegisterUserClicked()}"
                 android:text="Create Account" />
 
+
+            <TextView
+                android:id="@+id/link_login"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="200dp"
+                android:layout_marginBottom="24dp"
+                android:layout_gravity="bottom"
+                android:textAlignment="center"
+                android:text="Already a member, login here"
+                android:textColor="@color/colorAccent"/>
+
         </LinearLayout>
-    </ScrollView>
+
 
 </layout>
