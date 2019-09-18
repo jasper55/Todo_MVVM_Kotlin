@@ -27,7 +27,6 @@ import com.example.android.architecture.blueprints.todoapp.data.Task
 import com.example.android.architecture.blueprints.todoapp.data.source.local.TasksLocalDataSource
 import com.example.android.architecture.blueprints.todoapp.util.DatePickerFragment
 import kotlinx.coroutines.launch
-import kotlin.math.absoluteValue
 
 /**
  * ViewModel for the Add/Edit screen.
@@ -138,6 +137,7 @@ class AddEditTaskViewModel(
             createTask(Task(currentTitle, currentDescription))
         } else {
             val task = Task(currentTitle, currentDescription, taskCompleted, taskFavored, taskDueDate, taskTime, contactIdString)
+            task.id = currentTaskId
             updateTask(task)
         }
     }

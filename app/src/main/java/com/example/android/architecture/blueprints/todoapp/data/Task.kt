@@ -41,7 +41,6 @@ data class Task @JvmOverloads constructor(
         @ColumnInfo(name = "contactIdString") var contactIdString: String = ""
 ) {
 
-
     @PrimaryKey(autoGenerate = true) @ColumnInfo(name = "entryid") var id: Int = 0
 
     // is being accessed by the OverViewFragment

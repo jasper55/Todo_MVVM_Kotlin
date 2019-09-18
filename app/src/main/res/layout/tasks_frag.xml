@@ -23,10 +23,10 @@
         <import type="androidx.core.content.ContextCompat"/>
 
         <variable
-            name="viewmodel"
-            type="com.example.android.architecture.blueprints.todoapp.tasks.TasksViewModel"/>
+    name="viewmodel"
+    type="com.example.android.architecture.blueprints.todoapp.tasks.TasksViewModel"/>
 
-    </data>
+</data>
 
 
     <androidx.coordinatorlayout.widget.CoordinatorLayout
