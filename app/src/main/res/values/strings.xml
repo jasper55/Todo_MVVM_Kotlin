@@ -101,5 +101,6 @@
     <string name="forgot_password">Forgot your password?</string>
     <string name="register_link_text">Don\'t have an account yet, register here</string>
     <string name="synchronization_failed">Synchronization failed: You are not logged in!</string>
+    <string name="taskId_missing">Error: task id couldnt be generated</string>
 
 </resources>

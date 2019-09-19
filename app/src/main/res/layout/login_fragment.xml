@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    android:background="@drawable/gradient_darkblue_45">
 
     <data>
 
@@ -24,40 +24,17 @@
         android:orientation="vertical"
         android:paddingLeft="24dp"
         android:paddingTop="124dp"
-        android:paddingRight="24dp">
+        android:paddingRight="24dp"
+        >
 
         <RelativeLayout
             android:id="@+id/loginBottomView"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="10"
-            android:background="@color/colorPrimary"
+            android:background="@android:color/transparent"
             android:padding="15dp">
 
-            <Button
-                android:id="@+id/loginButton"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/loginStayLoggedIn"
-                android:onClick="@{()-> listener.onLoginClicked()}"
-                android:text="Login"
-                android:textAllCaps="false" />
-
-            <CheckBox
-                android:id="@+id/loginStayLoggedIn"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/loginRememberMe"
-                android:text="@string/stay_logged_in"
-                android:textColor="@color/colorGrey" />
-
-            <CheckBox
-                android:id="@+id/loginRememberMe"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/loginPassword"
-                android:text="@string/remember_me"
-                android:textColor="@color/colorGrey" />
 
             <EditText
                 android:id="@+id/loginPassword"
@@ -65,8 +42,13 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
                 android:layout_marginBottom="8dp"
+                android:padding="16dp"
                 android:layout_below="@id/loginEmail"
+                android:background="@drawable/rounded_corners_edittext"
                 android:hint="@string/password"
+                android:textColorHint="@color/colorAccent"
+                android:textCursorDrawable="@null"
+                android:textColor="@color/colorAccent"
                 android:text="@={viewmodel.user.password}"
                 android:inputType="textPassword"/>
 
@@ -77,9 +59,49 @@
                 android:layout_alignParentTop="true"
                 android:layout_marginTop="8dp"
                 android:layout_marginBottom="8dp"
+                android:padding="16dp"
+                android:background="@drawable/rounded_corners_edittext"
                 android:hint="@string/email"
+                android:textColorHint="@color/colorAccent"
+                android:textCursorDrawable="@null"
+                android:textColor="@color/colorAccent"
                 android:text="@={viewmodel.user.email}"
                 android:inputType="textEmailAddress"/>
+
+            <CheckBox
+                android:id="@+id/loginStayLoggedIn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/loginRememberMe"
+                android:text="@string/stay_logged_in"
+                android:textSize="10dp"
+                android:textStyle="italic"
+                android:theme="@style/CheckboxStyle"
+                android:textColor="@color/white"/>
+
+            <CheckBox
+                android:id="@+id/loginRememberMe"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/loginPassword"
+                android:text="@string/remember_me"
+                android:textSize="10dp"
+                android:textStyle="italic"
+                android:theme="@style/CheckboxStyle"
+                android:textColor="@color/white" />
+
+            <Button
+                android:id="@+id/loginButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/loginStayLoggedIn"
+                android:layout_marginTop="24dp"
+                android:background="@drawable/rounded_corners_transparent_button"
+                android:onClick="@{()-> listener.onLoginClicked()}"
+                android:text="Login"
+                android:textColor="@color/white"
+                android:textStyle="bold"
+                android:textAllCaps="false" />
 
 
             <TextView
@@ -90,20 +112,10 @@
                 android:layout_centerHorizontal="true"
                 android:onClick="@{()-> listener.onRegisterClicked()}"
                 android:text="@string/register_link_text"
-                android:textColor="@color/colorAccent" />
+                android:textColor="@color/white" />
 
         </RelativeLayout>
 
-        <View
-            android:id="@+id/loginTopView"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            android:background="@color/colorPrimary" />
-
     </LinearLayout>
-
-
-
 
 </layout>

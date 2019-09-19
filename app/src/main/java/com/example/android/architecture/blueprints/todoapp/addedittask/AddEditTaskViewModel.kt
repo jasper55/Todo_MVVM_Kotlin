@@ -79,7 +79,7 @@ class AddEditTaskViewModel(
             if (isLoading) return
         }
         this.taskId = taskId
-        if (taskId == null) {
+        if (taskId == -1) {
             // No need to populate, it's a new task
             isNewTask = true
             return
@@ -92,7 +92,7 @@ class AddEditTaskViewModel(
         _dataLoading.value = true
 
         viewModelScope.launch {
-            tasksRepository.getTask(taskId).let { result ->
+            tasksRepository.getTask(taskId!!).let { result ->
                 if (result is Success) {
                     onTaskLoaded(result.data)
                 } else {
@@ -133,16 +133,20 @@ class AddEditTaskViewModel(
         }
 
         val currentTaskId = taskId
-        if (isNewTask || currentTaskId == null) {
+        if (isNewTask || currentTaskId == -1) {
             createTask(Task(currentTitle, currentDescription))
         } else {
             val task = Task(currentTitle, currentDescription, taskCompleted, taskFavored, taskDueDate, taskTime, contactIdString)
-            task.id = currentTaskId
-            updateTask(task)
+            if (currentTaskId != null) {
+                task.id = currentTaskId
+                updateTask(task)
+            }
+            _snackbarText.value =  Event(R.string.taskId_missing)
         }
     }
 
     private fun createTask(newTask: Task) = viewModelScope.launch {
+        newTask.dueDate = taskDueDate
         tasksRepository.saveTask(newTask)
         _taskUpdated.value = Event(Unit)
     }

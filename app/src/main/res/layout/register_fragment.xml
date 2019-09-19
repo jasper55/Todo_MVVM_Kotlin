@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    android:background="@drawable/gradient_blue_45">
 
     <data>
 
@@ -18,70 +18,80 @@
     </data>
 
 
+    <LinearLayout
+        android:id="@+id/fragment_login"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:paddingLeft="24dp"
+        android:paddingTop="124dp"
+        android:paddingRight="24dp">
 
-        <LinearLayout
+        <RelativeLayout
+            android:id="@+id/loginBottomView"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:paddingLeft="24dp"
-            android:paddingTop="124dp"
-            android:paddingRight="24dp">
+            android:layout_height="0dp"
+            android:layout_weight="10"
+            android:background="@android:color/transparent"
+            android:padding="15dp">
 
-            <!-- Email Label
-            <android.support.design.widget.TextInputLayout
+            <EditText
+                android:id="@+id/input_email"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"-->
+                android:layout_height="wrap_content"
+                android:layout_alignParentTop="true"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="8dp"
+                android:padding="16dp"
+                android:hint="@string/email"
+                android:textColorHint="@color/white"
+                android:background="@drawable/half_solid_rounded_corners_edittex"
+                android:text="@={viewmodel.user.email}"
+                android:textColor="@color/white"
+                android:inputType="textEmailAddress" />
 
-                <EditText
-                    android:id="@+id/input_email"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
-                    android:layout_marginBottom="8dp"
-                    android:hint="Email"
-                    android:text="@={viewmodel.user.email}"
-                    android:inputType="textEmailAddress" />
-            <!--/android.support.design.widget.TextInputLayout-->
 
-            <!-- Password Label >
-            <android.support.design.widget.TextInputLayout
+            <EditText
+                android:id="@+id/input_password"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"-->
-                <EditText
-                    android:id="@+id/input_password"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
-                    android:layout_marginBottom="8dp"
-                    android:hint="Password"
-                    android:text="@={viewmodel.user.password}"
-                    android:inputType="textPassword" />
-            <!--/android.support.design.widget.TextInputLayout-->
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="8dp"
+                android:layout_below="@id/input_email"
+                android:padding="16dp"
+                android:hint="@string/password"
+                android:textColorHint="@color/white"
+                android:background="@drawable/half_solid_rounded_corners_edittex"
+                android:text="@={viewmodel.user.password}"
+                android:textColor="@color/white"
+                android:inputType="textPassword" />
 
-            <!-- Signup Button -->
             <Button
                 android:id="@+id/btn_signup"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="24dp"
-                android:layout_marginBottom="24dp"
-                android:padding="12dp"
+                android:layout_below="@id/input_password"
+                android:background="@drawable/rounded_corners_transparent_button"
                 android:onClick="@{()-> listener.onRegisterUserClicked()}"
-                android:text="Create Account" />
-
+                android:text="Create Account"
+                android:textColor="@color/white"
+                android:textStyle="bold"
+                android:textAllCaps="false" />
 
             <TextView
                 android:id="@+id/link_login"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="200dp"
-                android:layout_marginBottom="24dp"
-                android:layout_gravity="bottom"
-                android:textAlignment="center"
-                android:text="Already a member, login here"
-                android:textColor="@color/colorAccent"/>
+                android:layout_alignParentBottom="true"
+                android:layout_centerHorizontal="true"
+                android:onClick="@{()-> listener.onNavigateToLoginClicked()}"
+                android:text="Already a member, login in here!"
+                android:textColor="@color/white" />
 
-        </LinearLayout>
+        </RelativeLayout>
+
+    </LinearLayout>
 
 
 </layout>
