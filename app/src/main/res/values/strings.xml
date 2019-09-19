@@ -60,7 +60,7 @@
     <string name="label_active">Active Tasks</string>
     <string name="label_completed">Completed Tasks</string>
     <string name="label_favorite">Important Tasks</string>
-    <string name="label_sorted_date">Tasks sorted by date</string>
+    <string name="label_sorted_date">Tasks sorted by expiry</string>
     <string name="label_sorted_name">Tasks sorted by name</string>
     <string name="label_sorted_id">Tasks sorted by id</string>
     <string name="no_tasks_all">You have no tasks!</string>

@@ -17,14 +17,19 @@
 <resources>
     <color name="colorPrimary">#FFFFFF</color>
     <color name="white">#FFFFFF</color>
+    <color name="white_80">#80FFFFFF</color>
+    <color name="white_60">#60FFFFFF</color>
+    <color name="white_40">#40FFFFFF</color>
+    <color name="white_20">#20FFFFFF</color>
     <color name="colorPrimaryDark">#5C6BC0</color>
     <color name="colorAccent">#42A5F5</color>
-    <color name="colorTextPrimary">#000000</color>
+    <color name="colorSnackbar">#5C6BC0</color>
+    <color name="colorTextPrimary">#E4E4E4</color>
     <color name="colorGrey">#757575</color>
-    <color name="colorRed">#F06292</color>
-    <color name="error">#BCF11919</color>
+    <color name="colorRed">#EE687E</color>
+    <color name="error">#F84060</color>
 
-    <drawable name="completedTaskBackground">#EFFAFF</drawable>
+    <drawable name="completedTaskBackground">#20EFFAFF</drawable>
 
     <drawable name="touchFeedback">#CFD8DC</drawable>
 
