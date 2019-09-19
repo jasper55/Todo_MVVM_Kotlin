@@ -25,7 +25,6 @@
 
     <style name="Toolbar" parent="ThemeOverlay.AppCompat.Light" />
 
-
     <style name="white_checkbox_style" parent="@style/Widget.AppCompat.CompoundButton.CheckBox">
         <item name="android:colorControlNormal">@color/white</item>
         <item name="android:colorControlActivated">@color/colorAccent</item>
@@ -33,4 +32,5 @@
         <item name="android:strokeWidth">1</item>
         <item name="android:textAppearance">@style/TextAppearance.AppCompat</item>
     </style>
+
 </resources>

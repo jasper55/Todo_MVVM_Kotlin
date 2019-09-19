@@ -15,6 +15,7 @@
   -->
 
 <resources>
+    <color name="transparent">#00FFFFFF</color>
     <color name="colorPrimary">#FFFFFF</color>
     <color name="white">#FFFFFF</color>
     <color name="white_80">#80FFFFFF</color>
