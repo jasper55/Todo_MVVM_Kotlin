@@ -42,7 +42,7 @@ enum class TasksFilterType {
     SORT;
 
     /**
-     * sorts the tasks (id, name, expiry).
+     * sorts the tasks (uid, name, expiry).
      */
     enum class SORT_BY{
         DUE_DATE, NAME, ID

@@ -21,6 +21,8 @@ import androidx.lifecycle.ViewModelProvider
 import com.example.android.architecture.blueprints.todoapp.addedittask.AddEditTaskViewModel
 import com.example.android.architecture.blueprints.todoapp.contacts.ContactsViewModel
 import com.example.android.architecture.blueprints.todoapp.data.source.local.TasksLocalDataSource
+import com.example.android.architecture.blueprints.todoapp.login.LoginViewModel
+import com.example.android.architecture.blueprints.todoapp.register.RegisterViewModel
 import com.example.android.architecture.blueprints.todoapp.statistics.StatisticsViewModel
 import com.example.android.architecture.blueprints.todoapp.taskdetail.TaskDetailViewModel
 import com.example.android.architecture.blueprints.todoapp.tasks.TasksViewModel
@@ -49,9 +51,11 @@ class ViewModelFactory constructor(
                     isAssignableFrom(AddEditTaskViewModel::class.java) ->
                         AddEditTaskViewModel(tasksRepository)
                     isAssignableFrom(TasksViewModel::class.java) ->
-                        TasksViewModel(tasksRepository)
-                    //isAssignableFrom(TimePickerFragment::class.java) ->
-                      //  TimePickerFragment(tasksRepository)
+                        TasksViewModel(tasksRepository,application)
+                    isAssignableFrom(LoginViewModel::class.java) ->
+                        LoginViewModel()
+                    isAssignableFrom(RegisterViewModel::class.java) ->
+                        RegisterViewModel()
                     else ->
                         throw IllegalArgumentException("Unknown ViewModel class: ${modelClass.name}")
                 }

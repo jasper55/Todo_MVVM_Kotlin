@@ -66,18 +66,18 @@
 //        repository.saveTaskBlocking(activeTask)
 //
 //        // WHEN - Details fragment launched to display task
-//        val bundle = TaskDetailFragmentArgs(activeTask.id).toBundle()
+//        val bundle = TaskDetailFragmentArgs(activeTask.uid).toBundle()
 //        launchFragmentInContainer<TaskDetailFragment>(bundle, R.style.AppTheme)
 //
 //        // THEN - Task details are displayed on the screen
 //        // make sure that the title/description are both shown and correct
-//        onView(withId(R.id.task_detail_title)).check(matches(isDisplayed()))
-//        onView(withId(R.id.task_detail_title)).check(matches(withText("Active Task")))
-//        onView(withId(R.id.task_detail_description)).check(matches(isDisplayed()))
-//        onView(withId(R.id.task_detail_description)).check(matches(withText("AndroidX Rocks")))
+//        onView(withId(R.uid.task_detail_title)).check(matches(isDisplayed()))
+//        onView(withId(R.uid.task_detail_title)).check(matches(withText("Active Task")))
+//        onView(withId(R.uid.task_detail_description)).check(matches(isDisplayed()))
+//        onView(withId(R.uid.task_detail_description)).check(matches(withText("AndroidX Rocks")))
 //        // and make sure the "active" checkbox is shown unchecked
-//        onView(withId(R.id.task_detail_complete)).check(matches(isDisplayed()))
-//        onView(withId(R.id.task_detail_complete)).check(matches(not(isChecked())))
+//        onView(withId(R.uid.task_detail_complete)).check(matches(isDisplayed()))
+//        onView(withId(R.uid.task_detail_complete)).check(matches(not(isChecked())))
 //    }
 //
 //    @Test
@@ -87,17 +87,17 @@
 //        repository.saveTaskBlocking(completedTask)
 //
 //        // WHEN - Details fragment launched to display task
-//        val bundle = TaskDetailFragmentArgs(completedTask.id).toBundle()
+//        val bundle = TaskDetailFragmentArgs(completedTask.uid).toBundle()
 //        launchFragmentInContainer<TaskDetailFragment>(bundle, R.style.AppTheme)
 //
 //        // THEN - Task details are displayed on the screen
 //        // make sure that the title/description are both shown and correct
-//        onView(withId(R.id.task_detail_title)).check(matches(isDisplayed()))
-//        onView(withId(R.id.task_detail_title)).check(matches(withText("Completed Task")))
-//        onView(withId(R.id.task_detail_description)).check(matches(isDisplayed()))
-//        onView(withId(R.id.task_detail_description)).check(matches(withText("AndroidX Rocks")))
+//        onView(withId(R.uid.task_detail_title)).check(matches(isDisplayed()))
+//        onView(withId(R.uid.task_detail_title)).check(matches(withText("Completed Task")))
+//        onView(withId(R.uid.task_detail_description)).check(matches(isDisplayed()))
+//        onView(withId(R.uid.task_detail_description)).check(matches(withText("AndroidX Rocks")))
 //        // and make sure the "active" checkbox is shown unchecked
-//        onView(withId(R.id.task_detail_complete)).check(matches(isDisplayed()))
-//        onView(withId(R.id.task_detail_complete)).check(matches(isChecked()))
+//        onView(withId(R.uid.task_detail_complete)).check(matches(isDisplayed()))
+//        onView(withId(R.uid.task_detail_complete)).check(matches(isChecked()))
 //    }
 //}

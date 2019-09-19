@@ -70,6 +70,9 @@ class TaskDetailViewModel(
     private val _snackbarText = MutableLiveData<Event<Int>>()
     val snackbarMessage: LiveData<Event<Int>> = _snackbarText
 
+    private val _errorMessageEvent = MutableLiveData<Event<String>>()
+    val errorMessageEvent: LiveData<Event<String>> = _errorMessageEvent
+
     // This LiveData depends on another so we can use a transformation.
     val completed: LiveData<Boolean> = Transformations.map(_task) { input: Task? ->
         input?.isCompleted ?: false
@@ -117,6 +120,7 @@ class TaskDetailViewModel(
 
     fun saveDueDate(dateLong: Long, date: String) {
         // needed otherwise view not updated
+
         _dueDate.value = date
         viewModelScope.launch {
             val task = _task.value ?: return@launch
@@ -171,7 +175,7 @@ class TaskDetailViewModel(
             //_contactName.value = _task.value?.contactId?.let { ContactBookService.getContactNameFromDB(it, context) }
             //_contactName.value = _task.value?.contactId?.let { ContactBookService.stringToList("abud harald sebastian").toString() }
             _contactIdString.value = getContactIdString()
-        } else { showSnackbarMessage(R.string.no_contact_permission) }
+        } else { showErrorMessage(getApplication<Application>().getString(R.string.no_contact_permission)) }
 
         if (_contactIdString.value != null) {
             contactIdString = _contactIdString
@@ -204,6 +208,10 @@ class TaskDetailViewModel(
 
     private fun showSnackbarMessage(@StringRes message: Int) {
         _snackbarText.value = Event(message)
+    }
+
+    private fun showErrorMessage(message: String) {
+        _errorMessageEvent.value = Event(message)
     }
 
 }

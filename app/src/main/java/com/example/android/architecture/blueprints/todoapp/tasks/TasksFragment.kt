@@ -16,6 +16,7 @@
 
 package com.example.android.architecture.blueprints.todoapp.tasks
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.Menu
@@ -32,7 +33,9 @@ import com.example.android.architecture.blueprints.todoapp.EventObserver
 import com.example.android.architecture.blueprints.todoapp.R
 import com.example.android.architecture.blueprints.todoapp.data.Task
 import com.example.android.architecture.blueprints.todoapp.databinding.TasksFragBinding
+import com.example.android.architecture.blueprints.todoapp.register.StartActivity
 import com.example.android.architecture.blueprints.todoapp.util.obtainViewModel
+import com.example.android.architecture.blueprints.todoapp.util.setupDismissableSnackbar
 import com.example.android.architecture.blueprints.todoapp.util.setupSnackbar
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.snackbar.Snackbar
@@ -74,8 +77,11 @@ class TasksFragment : Fragment() {
                 }
                 R.id.menu_synchronize -> {
                     viewDataBinding.viewmodel?.checkNetworkConnection(act)
-                    viewDataBinding.viewmodel?.saveDataIfInternetAvailable()
-                    viewDataBinding.viewmodel?.loadDataFromFBIfAvailable()
+                    viewDataBinding.viewmodel?.checkUserStatus()
+                    if (viewDataBinding.viewmodel?.isInternetAvailable?.value!! && viewDataBinding.viewmodel?.userLoggedIn?.value!!) {
+                        viewDataBinding.viewmodel?.saveDataToFirebase(true)
+                        viewDataBinding.viewmodel?.loadDataFromFBIfAvailable()
+                    }
                     true
                 }
                 R.id.menu_delete -> {
@@ -84,9 +90,18 @@ class TasksFragment : Fragment() {
                 }
                 R.id.menu_clear_app_data -> {
                     viewDataBinding.viewmodel?.clearAppData(act)
-                    viewDataBinding.viewmodel?.saveDataIfInternetAvailable()
+                    viewDataBinding.viewmodel?.saveDataToFirebase(viewDataBinding.viewmodel?.isInternetAvailable?.value!!)
                     true
                 }
+                R.id.menu_log_in -> {
+                    viewDataBinding.viewmodel?.navigateToLoginFrag()
+                    true
+                }
+                R.id.menu_log_out -> {
+                    viewDataBinding.viewmodel?.logout()
+                    true
+                }
+
                 else -> false
             }
 
@@ -102,6 +117,7 @@ class TasksFragment : Fragment() {
         val viewmodel = viewDataBinding.viewmodel
         viewDataBinding.lifecycleOwner = this.viewLifecycleOwner
         setupSnackbar(Snackbar.LENGTH_SHORT)
+        setupDismissableSnackbar()
         setupListAdapter()
         setupRefreshLayout()
         setupNavigation()
@@ -109,7 +125,7 @@ class TasksFragment : Fragment() {
         viewmodel?.checkNetworkConnection(act)
         //runBlockingScope(viewmodel)
         viewmodel?.loadTasks(false)
-
+        viewmodel?.setLoginStatus()
     }
 
     private fun runBlockingScope(viewmodel: TasksViewModel?) {
@@ -119,7 +135,7 @@ class TasksFragment : Fragment() {
             withContext(ioDispatcher) {
                 coroutineScope {
                     launch { viewmodel?.loadTasks(false) }
-                    launch { viewmodel?.saveDataIfInternetAvailable() }
+                    launch { viewmodel?.saveDataToFirebase(true) }
                     launch { viewmodel?.loadDataFromFBIfAvailable() }
                 }
             }
@@ -132,6 +148,9 @@ class TasksFragment : Fragment() {
         })
         viewDataBinding.viewmodel?.newTaskEvent?.observe(this, EventObserver {
             navigateToAddNewTask()
+        })
+        viewDataBinding.viewmodel?.LoginEvent?.observe(this, EventObserver {
+            navigateToLoginFrag()
         })
     }
 
@@ -152,6 +171,12 @@ class TasksFragment : Fragment() {
         arguments?.let {
             val message = TasksFragmentArgs.fromBundle(it).userMessage
             viewDataBinding.viewmodel?.showEditResultMessage(message)
+        }
+    }
+
+    private fun setupDismissableSnackbar(length: Int = Snackbar.LENGTH_LONG) {
+        viewDataBinding.viewmodel?.let {
+            view?.setupDismissableSnackbar(this, it.errorMessageEvent, length)
         }
     }
 
@@ -193,6 +218,12 @@ class TasksFragment : Fragment() {
                         resources.getString(R.string.add_task))
         findNavController().navigate(action)
     }
+
+    private fun navigateToLoginFrag() {
+        val intent = Intent(context, StartActivity::class.java)
+        startActivity(intent)
+    }
+
 
     private fun openTaskDetails(taskId: Int) {
         val action = TasksFragmentDirections.actionTasksFragmentToTaskDetailFragment(taskId)

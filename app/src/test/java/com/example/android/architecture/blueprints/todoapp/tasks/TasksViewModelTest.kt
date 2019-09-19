@@ -224,7 +224,7 @@
 //        tasksViewModel.completeTask(task, true)
 //
 //        // Verify the task is completed
-//        assertThat(tasksRepository.tasksServiceData[task.id]?.isCompleted).isTrue()
+//        assertThat(tasksRepository.tasksServiceData[task.uid]?.isCompleted).isTrue()
 //
 //        // The snackbar is updated
 //        assertSnackbarMessage(
@@ -241,7 +241,7 @@
 //        tasksViewModel.completeTask(task, false)
 //
 //        // Verify the task is active
-//        assertThat(tasksRepository.tasksServiceData[task.id]?.isActive).isTrue()
+//        assertThat(tasksRepository.tasksServiceData[task.uid]?.isActive).isTrue()
 //
 //        // The snackbar is updated
 //        assertSnackbarMessage(

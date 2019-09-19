@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:background="@drawable/gradient_blue_45">
+
+    <data>
+
+        <import type="android.view.View" />
+
+        <variable
+            name="viewmodel"
+            type="com.example.android.architecture.blueprints.todoapp.register.RegisterViewModel" />
+
+        <variable
+            name="listener"
+            type="com.example.android.architecture.blueprints.todoapp.register.RegisterUserActionListener" />
+
+    </data>
+
+
+    <LinearLayout
+        android:id="@+id/fragment_login"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:paddingLeft="24dp"
+        android:paddingTop="124dp"
+        android:paddingRight="24dp">
+
+        <RelativeLayout
+            android:id="@+id/loginBottomView"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="10"
+            android:background="@android:color/transparent"
+            android:padding="15dp">
+
+            <EditText
+                android:id="@+id/input_email"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentTop="true"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="8dp"
+                android:padding="16dp"
+                android:hint="@string/email"
+                android:textColorHint="@color/white"
+                android:background="@drawable/half_solid_rounded_corners_edittex"
+                android:text="@={viewmodel.user.email}"
+                android:textColor="@color/white"
+                android:inputType="textEmailAddress" />
+
+
+            <EditText
+                android:id="@+id/input_password"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="8dp"
+                android:layout_below="@id/input_email"
+                android:padding="16dp"
+                android:hint="@string/password"
+                android:textColorHint="@color/white"
+                android:background="@drawable/half_solid_rounded_corners_edittex"
+                android:text="@={viewmodel.user.password}"
+                android:textColor="@color/white"
+                android:inputType="textPassword" />
+
+            <Button
+                android:id="@+id/btn_signup"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:layout_below="@id/input_password"
+                android:background="@drawable/rounded_corners_transparent_button"
+                android:onClick="@{()-> listener.onRegisterUserClicked()}"
+                android:text="Create Account"
+                android:textColor="@color/white"
+                android:textStyle="bold"
+                android:textAllCaps="false" />
+
+            <TextView
+                android:id="@+id/link_login"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_centerHorizontal="true"
+                android:onClick="@{()-> listener.onNavigateToLoginClicked()}"
+                android:text="Already a member, login in here!"
+                android:textColor="@color/white" />
+
+        </RelativeLayout>
+
+    </LinearLayout>
+
+
+</layout>

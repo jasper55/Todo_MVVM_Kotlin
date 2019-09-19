@@ -8,7 +8,7 @@ import androidx.fragment.app.DialogFragment
 import java.util.*
 
 
-object TimePickerFragment : DialogFragment() {
+class TimePickerFragment : DialogFragment() {
 
     val c = Calendar.getInstance()
     var hour = c.get(Calendar.HOUR_OF_DAY)

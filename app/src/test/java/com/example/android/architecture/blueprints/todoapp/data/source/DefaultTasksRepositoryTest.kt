@@ -34,9 +34,9 @@
 //    private val task2 = Task("Title2", "Description2")
 //    private val task3 = Task("Title3", "Description3")
 //    private val newTask = Task("Title new", "Description new")
-//    private val remoteTasks = listOf(task1, task2).sortedBy { it.id }
-//    private val localTasks = listOf(task3).sortedBy { it.id }
-//    private val newTasks = listOf(task3).sortedBy { it.id }
+//    private val remoteTasks = listOf(task1, task2).sortedBy { it.uid }
+//    private val localTasks = listOf(task3).sortedBy { it.uid }
+//    private val newTasks = listOf(task3).sortedBy { it.uid }
 //    private lateinit var tasksRemoteDataSource: FakeDataSource
 //    private lateinit var tasksLocalDataSource: FakeDataSource
 //
@@ -189,29 +189,29 @@
 //        tasksRepository.saveTask(newTask)
 //
 //        // Make sure it's active
-//        assertThat((tasksRepository.getTask(newTask.id) as Success).data.isCompleted).isFalse()
+//        assertThat((tasksRepository.getTask(newTask.uid) as Success).data.isCompleted).isFalse()
 //
 //        // Mark is as complete
-//        tasksRepository.completeTask(newTask.id)
+//        tasksRepository.completeTask(newTask.uid)
 //
 //        // Verify it's now completed
-//        assertThat((tasksRepository.getTask(newTask.id) as Success).data.isCompleted).isTrue()
+//        assertThat((tasksRepository.getTask(newTask.uid) as Success).data.isCompleted).isTrue()
 //    }
 //
 //    @Test
 //    fun completeTask_activeTaskToServiceAPIUpdatesCache() = runBlockingTest {
 //        // Save a task
 //        tasksRepository.saveTask(newTask)
-//        tasksRepository.completeTask(newTask.id)
+//        tasksRepository.completeTask(newTask.uid)
 //
 //        // Make sure it's completed
-//        assertThat((tasksRepository.getTask(newTask.id) as Success).data.isActive).isFalse()
+//        assertThat((tasksRepository.getTask(newTask.uid) as Success).data.isActive).isFalse()
 //
 //        // Mark is as active
-//        tasksRepository.activateTask(newTask.id)
+//        tasksRepository.activateTask(newTask.uid)
 //
 //        // Verify it's now activated
-//        val result = tasksRepository.getTask(newTask.id) as Success
+//        val result = tasksRepository.getTask(newTask.uid) as Success
 //        assertThat(result.data.isActive).isTrue()
 //    }
 //
@@ -219,35 +219,35 @@
 //    fun getTask_repositoryCachesAfterFirstApiCall() = runBlockingTest {
 //        // Trigger the repository to load data, which loads from remote
 //        tasksRemoteDataSource.tasks = mutableListOf(task1)
-//        val initial = tasksRepository.getTask(task1.id)
+//        val initial = tasksRepository.getTask(task1.uid)
 //
 //        // Configure the remote data source to store a different task
 //        tasksRemoteDataSource.tasks = mutableListOf(task2)
 //
-//        val task1SecondTime = tasksRepository.getTask(task1.id) as Success
-//        val task2SecondTime = tasksRepository.getTask(task2.id) as Success
+//        val task1SecondTime = tasksRepository.getTask(task1.uid) as Success
+//        val task2SecondTime = tasksRepository.getTask(task2.uid) as Success
 //
 //        // Both work because one is in remote and the other in cache
-//        assertThat(task1SecondTime.data.id).isEqualTo(task1.id)
-//        assertThat(task2SecondTime.data.id).isEqualTo(task2.id)
+//        assertThat(task1SecondTime.data.uid).isEqualTo(task1.uid)
+//        assertThat(task2SecondTime.data.uid).isEqualTo(task2.uid)
 //    }
 //
 //    @Test
 //    fun getTask_forceRefresh() = runBlockingTest {
 //        // Trigger the repository to load data, which loads from remote and caches
 //        tasksRemoteDataSource.tasks = mutableListOf(task1)
-//        val initial = tasksRepository.getTask(task1.id)
+//        val initial = tasksRepository.getTask(task1.uid)
 //
 //        // Configure the remote data source to return a different task
 //        tasksRemoteDataSource.tasks = mutableListOf(task2)
 //
 //        // Force refresh
-//        val task1SecondTime = tasksRepository.getTask(task1.id, true)
-//        val task2SecondTime = tasksRepository.getTask(task2.id, true)
+//        val task1SecondTime = tasksRepository.getTask(task1.uid, true)
+//        val task2SecondTime = tasksRepository.getTask(task2.uid, true)
 //
 //        // Only task2 works because the cache and local were invalidated
-//        assertThat((task1SecondTime as? Success)?.data?.id).isNull()
-//        assertThat((task2SecondTime as? Success)?.data?.id).isEqualTo(task2.id)
+//        assertThat((task1SecondTime as? Success)?.data?.uid).isNull()
+//        assertThat((task2SecondTime as? Success)?.data?.uid).isEqualTo(task2.uid)
 //    }
 //
 //    @Test
@@ -283,7 +283,7 @@
 //        val initialTasks = (tasksRepository.getTasks() as? Success)?.data
 //
 //        // Delete first task
-//        tasksRepository.deleteTask(task1.id)
+//        tasksRepository.deleteTask(task1.uid)
 //
 //        // Fetch data again
 //        val afterDeleteTasks = (tasksRepository.getTasks() as? Success)?.data

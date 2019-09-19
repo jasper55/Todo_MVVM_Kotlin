@@ -7,7 +7,7 @@ import android.content.Context
 import java.util.*
 
 
-object DatePickerFragment {
+class DatePickerFragment {
 
     val c: Calendar = Calendar.getInstance()
     var dYear: Int = c.get(Calendar.YEAR)
@@ -29,7 +29,9 @@ object DatePickerFragment {
         return "$dDay.${dMonth + 1}.$dYear"
     }
 
-    fun getCurrentDate(): Long{
-        return Calendar.getInstance().timeInMillis
+    companion object {
+        fun getCurrentDate(): Long {
+            return Calendar.getInstance().timeInMillis
+        }
     }
 }

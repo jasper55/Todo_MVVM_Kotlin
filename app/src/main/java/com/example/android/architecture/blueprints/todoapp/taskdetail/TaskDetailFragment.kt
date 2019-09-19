@@ -48,17 +48,13 @@ import timber.log.Timber
  */
 class TaskDetailFragment : Fragment() {
     private lateinit var viewDataBinding: TaskdetailFragBinding // is been generated because taskdetail_frag.xml
-    private lateinit var contactViewDataBinding: ContactlistFragBinding // is been generated because contactlist_frag.xml
-
-    private lateinit var database: FirebaseDatabase
-    private lateinit var dbReference: DatabaseReference
 
     private lateinit var viewModel: TaskDetailViewModel
-    private lateinit var contactsViewModel: ContactsViewModel
 
-    private lateinit var listAdapter: ContactsAdapter
+    private lateinit var timePicker: TimePickerFragment
+    private lateinit var datePicker: DatePickerFragment
 
-    private var taskId: Int = -1
+    private var taskId: Int? = null
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
@@ -67,8 +63,14 @@ class TaskDetailFragment : Fragment() {
         viewDataBinding.viewmodel?.let {
             view?.setupSnackbar(this, it.snackbarMessage, Snackbar.LENGTH_SHORT)
         }
-//        taskId = TaskDetailFragmentArgs.fromBundle(arguments!!).TASKID
+        taskId = TaskDetailFragmentArgs.fromBundle(arguments!!).TASKID
         setupNavigation()
+        setupDataPickers()
+    }
+
+    private fun setupDataPickers() {
+        timePicker = TimePickerFragment()
+        datePicker = DatePickerFragment()
     }
 
     private fun setupNavigation() {
@@ -94,16 +96,13 @@ class TaskDetailFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
-//        val taskId = arguments?.let {
-//            TaskDetailFragmentArgs.fromBundle(it).TASKID
-//        }
-
+        val taskId = arguments?.let {
+            TaskDetailFragmentArgs.fromBundle(it).TASKID
+        }
         context?.let {
             viewDataBinding.viewmodel?.start(taskId, it)
         }
     }
-
-
 
     override fun onCreateView(
             inflater: LayoutInflater,
@@ -125,15 +124,15 @@ class TaskDetailFragment : Fragment() {
                 }
 
                 override fun onTimeChanged(v: View) {
-                    TimePickerFragment.showDialog(context)
-                    val time = TimePickerFragment.getTime()
+                    timePicker.showDialog(context)
+                    val time = timePicker.getTime()
                     val long = DateUtil.parseTimeToLong(time)
                     viewModel?.saveTime(long, time)
                 }
 
                 override fun onDueDateChanged(v: View) {
-                    DatePickerFragment.showDialog(context)
-                    val date = DatePickerFragment.getDate()
+                    datePicker.showDialog(context)
+                    val date = datePicker.getDate()
                     val long = DateUtil.parseToLong(date)
                     viewModel?.saveDueDate(long, date)
                 }
@@ -148,16 +147,12 @@ class TaskDetailFragment : Fragment() {
             }
         }
 
-//        val insertPoint = container!!.findViewById<ListView>(R.id.contact_list)
-//        insertPoint.addView(contactView)
         taskId = TaskDetailFragmentArgs.fromBundle(arguments!!).TASKID
 
-        addContactsFragmentToView(taskId)
+        addContactsFragmentToView(taskId!!)
 
         viewDataBinding.setLifecycleOwner(this.viewLifecycleOwner)
-//        contactViewDataBinding.setLifecycleOwner(this.viewLifecycleOwner)
         setHasOptionsMenu(true)
-
         return baseView // only this view is return as the other view is declared inside the xml
     }
 
@@ -170,7 +165,7 @@ class TaskDetailFragment : Fragment() {
         val fragTwo = ContactsFragment()
         val bundle = Bundle()
         bundle.putInt("taskId", taskId)
-        fragTwo.setArguments(bundle)
+        fragTwo.arguments = bundle
         ft.add(R.id.contact_list, fragTwo)
         ft.commit()
     }
@@ -218,7 +213,6 @@ class TaskDetailFragment : Fragment() {
                     Timber.w("READ_CONTACTS permission refused")
                 }
             }
-
             PermissionChecker.REQUEST_CONTACTS_CODE -> {
                 return
             }
@@ -245,5 +239,4 @@ class TaskDetailFragment : Fragment() {
             startActivityForResult(pickContactIntent, ContactBookService.CALL_PICK_CONTACT)
         }
     }
-
 }

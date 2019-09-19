@@ -82,7 +82,7 @@
 //        mainCoroutineRule.pauseDispatcher()
 //
 //        // Load the task in the viewmodel
-//        addEditTaskViewModel.start(task.id)
+//        addEditTaskViewModel.start(task.uid)
 //
 //        // Then progress indicator is shown
 //        assertThat(getValue(addEditTaskViewModel.dataLoading)).isTrue()
@@ -100,7 +100,7 @@
 //        tasksRepository.addTasks(task)
 //
 //        // Load the task with the viewmodel
-//        addEditTaskViewModel.start(task.id)
+//        addEditTaskViewModel.start(task.uid)
 //
 //        // Verify a task is loaded
 //        assertThat(getValue(addEditTaskViewModel.title)).isEqualTo(task.title)

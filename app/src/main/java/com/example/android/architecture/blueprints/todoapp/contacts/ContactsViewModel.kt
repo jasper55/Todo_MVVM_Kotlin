@@ -31,6 +31,9 @@ class ContactsViewModel(
     private val _snackbarText = MutableLiveData<Event<Int>>()
     val snackbarMessage: LiveData<Event<Int>> = _snackbarText
 
+    private val _errorMessageEvent = MutableLiveData<Event<String>>()
+    val errorMessageEvent: LiveData<Event<String>> = _errorMessageEvent
+
     // Not used at the moment
     private val isDataLoadingError = MutableLiveData<Boolean>()
 
@@ -58,9 +61,17 @@ class ContactsViewModel(
             // updateContactIdString
             newListString?.let {
                 tasksRepository.saveContactId(task, newListString)
-//            showSnackbarMessage(R.string.task_marked_complete)
+            showSnackbarMessage(R.string.task_marked_complete)
             }
         }
+    }
+
+    private fun showSnackbarMessage(message: Int) {
+        _snackbarText.value = Event(message)
+    }
+
+    private fun showErrorMessage(message: String) {
+        _errorMessageEvent.value = Event(message)
     }
 
     fun loadContacts(taskId: Int?, context: Context?) {
@@ -79,14 +90,14 @@ class ContactsViewModel(
                 if (contactIdString == ""){
                     isDataLoadingError.value = false
                     _items.value = emptyList()
-                    _snackbarText.value = Event(R.string.loading_tasks_error)
+                    showErrorMessage(getApplication<Application>().getString(R.string.loading_tasks_error))
                 } else {
                 isDataLoadingError.value = false
                 _items.value = ArrayList(contactList) }
             } else {
                 isDataLoadingError.value = false
                 _items.value = emptyList()
-                _snackbarText.value = Event(R.string.loading_tasks_error)
+                showErrorMessage(getApplication<Application>().getString(R.string.loading_tasks_error))
             }
 
             EspressoIdlingResource.decrement() // Set app as idle.

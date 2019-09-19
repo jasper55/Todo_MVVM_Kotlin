@@ -8,6 +8,8 @@ import androidx.fragment.app.Fragment
 import com.example.android.architecture.blueprints.todoapp.R
 import com.example.android.architecture.blueprints.todoapp.databinding.ContactlistFragBinding
 import com.example.android.architecture.blueprints.todoapp.util.obtainViewModel
+import com.example.android.architecture.blueprints.todoapp.util.setupDismissableSnackbar
+import com.google.android.material.snackbar.Snackbar
 import timber.log.Timber
 import java.util.ArrayList
 
@@ -25,6 +27,7 @@ class ContactsFragment : Fragment() {
 
         getTaskIdFromBundle()
         setupContactListAdapter()
+        setupDismissableSnackbar()
         contactViewDataBinding.lifecycleOwner = this.viewLifecycleOwner
         contactViewDataBinding.viewmodel?.loadContacts(taskId, context)
     }
@@ -71,6 +74,12 @@ class ContactsFragment : Fragment() {
             contactViewDataBinding.contactListView.adapter = listAdapter
         } else {
             Timber.w("ViewModel not initialized when attempting to set up adapter.")
+        }
+    }
+
+    private fun setupDismissableSnackbar(length: Int = Snackbar.LENGTH_LONG) {
+        contactViewDataBinding.viewmodel?.let {
+            view?.setupDismissableSnackbar(this,it.errorMessageEvent, length)
         }
     }
 

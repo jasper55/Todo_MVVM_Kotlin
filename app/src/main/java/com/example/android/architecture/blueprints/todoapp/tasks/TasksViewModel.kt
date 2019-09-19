@@ -43,9 +43,11 @@ import android.content.Context.ACTIVITY_SERVICE
 import android.app.ActivityManager
 import android.os.Build
 import android.app.AlarmManager
+import android.app.Application
 import android.app.PendingIntent
 import android.content.Intent
 import android.util.Log
+import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.*
 import java.io.File
 
@@ -59,7 +61,8 @@ import java.io.File
  * getter method.
  */
 class TasksViewModel(
-        private val tasksRepository: TasksLocalDataSource
+        private val tasksRepository: TasksLocalDataSource,
+        private val application: Application
 ) : ViewModel() {
 
     val _items = MutableLiveData<List<Task>>().apply { value = emptyList() }
@@ -70,6 +73,9 @@ class TasksViewModel(
 
     val _isInternetAvailable = MutableLiveData<Boolean>()
     val isInternetAvailable: LiveData<Boolean> = _isInternetAvailable
+
+    val _userLoggedIn = MutableLiveData<Boolean>()
+    val userLoggedIn: LiveData<Boolean> = _userLoggedIn
 
     private val _currentFilteringLabel = MutableLiveData<Int>()
     val currentFilteringLabel: LiveData<Int> = _currentFilteringLabel
@@ -86,6 +92,9 @@ class TasksViewModel(
     private val _snackbarText = MutableLiveData<Event<Int>>()
     val snackbarMessage: LiveData<Event<Int>> = _snackbarText
 
+    private val _errorMessageEvent = MutableLiveData<Event<String>>()
+    val errorMessageEvent: LiveData<Event<String>> = _errorMessageEvent
+
     private var _currentFiltering = TasksFilterType.ALL_TASKS
 
     private var _currentSorting = TasksFilterType.SORT_BY.DUE_DATE
@@ -93,13 +102,14 @@ class TasksViewModel(
     // Not used at the moment
     private val isDataLoadingError = MutableLiveData<Boolean>()
 
-    private val networkAvaiable = MutableLiveData<Boolean>()
-
     private val _openTaskEvent = MutableLiveData<Event<Int>>()
     val openTaskEvent: LiveData<Event<Int>> = _openTaskEvent
 
     private val _newTaskEvent = MutableLiveData<Event<Unit>>()
     val newTaskEvent: LiveData<Event<Unit>> = _newTaskEvent
+
+    private val _LoginEvent = MutableLiveData<Event<Boolean>>()
+    val LoginEvent: LiveData<Event<Boolean>> = _LoginEvent
 
     // This LiveData depends on another so we can use a transformation.
     val empty: LiveData<Boolean> = Transformations.map(_items) {
@@ -107,12 +117,14 @@ class TasksViewModel(
     }
 
     private var firebaseHelper: FirebaseDatabaseHelper
+    private var userAuth: FirebaseAuth
 
 
     init {
         // Set initial state
         setFiltering(TasksFilterType.ALL_TASKS)
         firebaseHelper = FirebaseDatabaseHelper()
+        userAuth = FirebaseAuth.getInstance()
     }
 
     /**
@@ -181,7 +193,7 @@ class TasksViewModel(
     }
 
     fun showNoInternetConnection() {
-        showSnackbarMessage(R.string.no_internet_connection)
+        showErrorMessage(application.getString(R.string.no_internet_connection))
     }
 
     fun completeTask(task: Task, completed: Boolean) = viewModelScope.launch {
@@ -235,6 +247,10 @@ class TasksViewModel(
 
     private fun showSnackbarMessage(message: Int) {
         _snackbarText.value = Event(message)
+    }
+
+    private fun showErrorMessage(message: String) {
+        _errorMessageEvent.value = Event(message)
     }
 
     /**
@@ -308,16 +324,12 @@ class TasksViewModel(
 
     }
 
-    fun saveDataIfInternetAvailable() {
-        if (networkAvaiable.value!!) {
-            saveDataToFirebase()
-        } else {
-            showNoInternetConnection()
-        }
-    }
-
-    fun saveDataToFirebase() = viewModelScope.launch {
+    fun saveDataToFirebase(isConnected: Boolean) = viewModelScope.launch {
         if (items.value == emptyList<Task>()) {
+            return@launch
+        }
+        if (!isConnected) {
+            showNoInternetConnection()
             return@launch
         }
 
@@ -329,10 +341,10 @@ class TasksViewModel(
 
 
     fun checkNetworkConnection(activity: AppCompatActivity) {
-        networkAvaiable.value =
+        _isInternetAvailable.value =
                 (activity.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager)
                         .activeNetworkInfo?.isConnected == true
-        if (!networkAvaiable.value!!) {
+        if (!isInternetAvailable.value!!) {
             showNoInternetConnection()
         }
     }
@@ -367,7 +379,7 @@ class TasksViewModel(
 
     fun loadDataFromFBIfAvailable() {
         if (items?.value == emptyList<Task>()) {
-            getTaskListFromFirebase(networkAvaiable.value!!)
+            getTaskListFromFirebase(isInternetAvailable.value!!)
         }
     }
 
@@ -428,6 +440,20 @@ class TasksViewModel(
         return dir!!.delete()
     }
 
+    fun navigateToLoginFrag() {
+        _LoginEvent.value = Event(true)
+    }
+
+    fun logout() {
+        viewModelScope.launch {
+            userAuth.signOut()
+            if (userAuth.currentUser == null) {
+                _userLoggedIn.value = false
+                showSnackbarMessage(R.string.logout_successful)
+            }
+        }
+    }
+
 
     private fun restartApp() {
         val intent = Intent(getApplicationContext<Context>(), TasksActivity::class.java)
@@ -436,6 +462,20 @@ class TasksViewModel(
         val mgr = getApplicationContext<Context>().getSystemService(Context.ALARM_SERVICE) as AlarmManager
         mgr.set(AlarmManager.RTC, System.currentTimeMillis() + 100, mPendingIntent)
         System.exit(0)
+    }
+
+    fun setLoginStatus() {
+        if (userAuth.currentUser == null) {
+            _userLoggedIn.value = false
+        }
+        _userLoggedIn.value = true
+    }
+
+    fun checkUserStatus() {
+        if (userAuth.currentUser == null){
+            _userLoggedIn.value = false
+            showErrorMessage(application.getString(R.string.synchronization_failed))
+        }
     }
 
     private fun sortByDate(tasks: List<Task>): List<Task> {
@@ -452,4 +492,6 @@ class TasksViewModel(
         val sortedList = tasks.sortedBy { it.id }
         return sortedList
     }
+
+
 }

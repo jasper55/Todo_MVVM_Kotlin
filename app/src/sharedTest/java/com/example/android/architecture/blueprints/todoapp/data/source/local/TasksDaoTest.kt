@@ -69,12 +69,12 @@
 //        val task = Task("title", "description")
 //        database.taskDao().insertTask(task)
 //
-//        // WHEN - Get the task by id from the database
-//        val loaded = database.taskDao().getTaskById(task.id)
+//        // WHEN - Get the task by uid from the database
+//        val loaded = database.taskDao().getTaskById(task.uid)
 //
 //        // THEN - The loaded data contains the expected values
 //        assertThat<Task>(loaded as Task, notNullValue())
-//        assertThat(loaded.id, `is`(task.id))
+//        assertThat(loaded.uid, `is`(task.uid))
 //        assertThat(loaded.title, `is`(task.title))
 //        assertThat(loaded.description, `is`(task.description))
 //        assertThat(loaded.isCompleted, `is`(task.isCompleted))
@@ -86,13 +86,13 @@
 //        val task = Task("title", "description")
 //        database.taskDao().insertTask(task)
 //
-//        // When a task with the same id is inserted
-//        val newTask = Task("title2", "description2", true, task.id)
+//        // When a task with the same uid is inserted
+//        val newTask = Task("title2", "description2", true, task.uid)
 //        database.taskDao().insertTask(newTask)
 //
 //        // THEN - The loaded data contains the expected values
-//        val loaded = database.taskDao().getTaskById(task.id)
-//        assertThat(loaded?.id, `is`(task.id))
+//        val loaded = database.taskDao().getTaskById(task.uid)
+//        assertThat(loaded?.uid, `is`(task.uid))
 //        assertThat(loaded?.title, `is`("title2"))
 //        assertThat(loaded?.description, `is`("description2"))
 //        assertThat(loaded?.isCompleted, `is`(true))
@@ -109,7 +109,7 @@
 //
 //        // THEN - There is only 1 task in the database, and contains the expected values
 //        assertThat(tasks.size, `is`(1))
-//        assertThat(tasks[0].id, `is`(task.id))
+//        assertThat(tasks[0].uid, `is`(task.uid))
 //        assertThat(tasks[0].title, `is`(task.title))
 //        assertThat(tasks[0].description, `is`(task.description))
 //        assertThat(tasks[0].isCompleted, `is`(task.isCompleted))
@@ -122,12 +122,12 @@
 //        database.taskDao().insertTask(originalTask)
 //
 //        // When the task is updated
-//        val updatedTask = Task("new title", "new description", true, originalTask.id)
+//        val updatedTask = Task("new title", "new description", true, originalTask.uid)
 //        database.taskDao().updateTask(updatedTask)
 //
 //        // THEN - The loaded data contains the expected values
-//        val loaded = database.taskDao().getTaskById(originalTask.id)
-//        assertThat(loaded?.id, `is`(originalTask.id))
+//        val loaded = database.taskDao().getTaskById(originalTask.uid)
+//        assertThat(loaded?.uid, `is`(originalTask.uid))
 //        assertThat(loaded?.title, `is`("new title"))
 //        assertThat(loaded?.description, `is`("new description"))
 //        assertThat(loaded?.isCompleted, `is`(true))
@@ -140,11 +140,11 @@
 //        database.taskDao().insertTask(task)
 //
 //        // When the task is updated
-//        database.taskDao().updateCompleted(task.id, false)
+//        database.taskDao().updateCompleted(task.uid, false)
 //
 //        // THEN - The loaded data contains the expected values
-//        val loaded = database.taskDao().getTaskById(task.id)
-//        assertThat(loaded?.id, `is`(task.id))
+//        val loaded = database.taskDao().getTaskById(task.uid)
+//        assertThat(loaded?.uid, `is`(task.uid))
 //        assertThat(loaded?.title, `is`(task.title))
 //        assertThat(loaded?.description, `is`(task.description))
 //        assertThat(loaded?.isCompleted, `is`(false))
@@ -156,8 +156,8 @@
 //        val task = Task("title", "description")
 //        database.taskDao().insertTask(task)
 //
-//        // When deleting a task by id
-//        database.taskDao().deleteTaskById(task.id)
+//        // When deleting a task by uid
+//        database.taskDao().deleteTaskById(task.uid)
 //
 //        // THEN - The list is empty
 //        val tasks = database.taskDao().getTasks()

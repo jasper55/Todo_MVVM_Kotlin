@@ -54,12 +54,12 @@
 //    }
 //
 //    override suspend fun saveTask(task: Task) {
-//        tasksServiceData[task.id] = task
+//        tasksServiceData[task.uid] = task
 //    }
 //
 //    override suspend fun completeTask(task: Task) {
-//        val completedTask = Task(task.title, task.description, true, task.id)
-//        tasksServiceData[task.id] = completedTask
+//        val completedTask = Task(task.title, task.description, true, task.uid)
+//        tasksServiceData[task.uid] = completedTask
 //    }
 //
 //    override suspend fun completeTask(taskId: String) {
@@ -68,8 +68,8 @@
 //    }
 //
 //    override suspend fun activateTask(task: Task) {
-//        val activeTask = Task(task.title, task.description, false, task.id)
-//        tasksServiceData[task.id] = activeTask
+//        val activeTask = Task(task.title, task.description, false, task.uid)
+//        tasksServiceData[task.uid] = activeTask
 //    }
 //
 //    override suspend fun activateTask(taskId: String) {
@@ -93,7 +93,7 @@
 //    @VisibleForTesting
 //    fun addTasks(vararg tasks: Task) {
 //        for (task in tasks) {
-//            tasksServiceData[task.id] = task
+//            tasksServiceData[task.uid] = task
 //        }
 //    }
 //}
