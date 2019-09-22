@@ -71,10 +71,10 @@ class TasksViewModel(
     private val _dataLoading = MutableLiveData<Boolean>()
     val dataLoading: LiveData<Boolean> = _dataLoading
 
-    val _isInternetAvailable = MutableLiveData<Boolean>()
+    private val _isInternetAvailable = MutableLiveData<Boolean>()
     val isInternetAvailable: LiveData<Boolean> = _isInternetAvailable
 
-    val _userLoggedIn = MutableLiveData<Boolean>()
+    private val _userLoggedIn = MutableLiveData<Boolean>()
     val userLoggedIn: LiveData<Boolean> = _userLoggedIn
 
     private val _currentFilteringLabel = MutableLiveData<Int>()
@@ -95,7 +95,7 @@ class TasksViewModel(
     private val _errorMessageEvent = MutableLiveData<Event<String>>()
     val errorMessageEvent: LiveData<Event<String>> = _errorMessageEvent
 
-    private var _currentFiltering = TasksFilterType.ALL_TASKS
+    private var _currentFiltering = TasksFilterType.ACTIVE_TASKS
 
     private var _currentSorting = TasksFilterType.SORT_BY.DUE_DATE
 
@@ -122,7 +122,7 @@ class TasksViewModel(
 
     init {
         // Set initial state
-        setFiltering(TasksFilterType.ALL_TASKS)
+        setFiltering(TasksFilterType.ACTIVE_TASKS)
         firebaseHelper = FirebaseDatabaseHelper()
         userAuth = FirebaseAuth.getInstance()
     }
