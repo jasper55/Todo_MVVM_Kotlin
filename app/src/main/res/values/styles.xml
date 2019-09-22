@@ -4,10 +4,12 @@
     <!-- Base application theme. -->
     <style name="AppTheme" parent="Base.AppTheme" />
 
-    <style name="AppTheme.OverlapSystemBar" parent="Base.AppTheme" />
+    <style name="AppTheme.OverlapSystemBar" parent="Base.AppTheme" /> <!-- referenziert auf andere styles xml-->
+
 
     <style name="Base.AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <!-- Customize your theme here. -->
+        <item name="android:windowBackground">@color/transparent</item><!-- status bar-->
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
         <!-- For Android sdk versions 26+. -->
@@ -23,7 +25,9 @@
         <item name="android:tint">@color/colorAccent</item>
     </style>
 
-    <style name="Toolbar" parent="ThemeOverlay.AppCompat.Light" />
+    <style name="Toolbar" parent="ThemeOverlay.AppCompat.Light">
+        <item name="android:windowBackground">@color/transparent</item>
+    </style>
 
     <style name="white_checkbox_style" parent="@style/Widget.AppCompat.CompoundButton.CheckBox">
         <item name="android:colorControlNormal">@color/white</item>
