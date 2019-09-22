@@ -18,11 +18,22 @@
 
     <style name="AppTheme" parent="Base.AppTheme" />
 
+    <!-- theme for task activity-->
     <style name="AppTheme.OverlapSystemBar" parent="Base.AppTheme">
         <item name="android:windowDrawsSystemBarBackgrounds">false</item>
-        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:windowBackground">@color/transparent</item><!-- status bar-->
         <item name="android:windowTranslucentStatus">true</item>
         <item name="android:fitsSystemWindows">true</item>
+    </style>
+
+    <!-- theme for login + register fragment-->
+    <style name="Theme.AppCompat.DayNight.NoActionBar" parent="Base.AppTheme">
+        <item name="android:windowBackground">@color/transparent</item><!-- status bar-->
+        <item name="android:windowTranslucentStatus">true</item><!-- ohne status bar blaue-->
+    </style>
+
+    <style name="Toolbar" parent="ThemeOverlay.AppCompat.Light">
+
     </style>
 
 </resources>
