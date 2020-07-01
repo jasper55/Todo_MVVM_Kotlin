@@ -30,7 +30,7 @@
     </style>
 
     <style name="white_checkbox_style" parent="@style/Widget.AppCompat.CompoundButton.CheckBox">
-        <item name="android:colorControlNormal">@color/white</item>
+        <item name="android:colorControlNormal">@color/colorWhite</item>
         <item name="android:colorControlActivated">@color/colorAccent</item>
         <item name="android:colorControlHighlight">@color/colorPrimaryDark</item>
         <item name="android:strokeWidth">1</item>
