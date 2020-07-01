@@ -29,6 +29,9 @@ import com.example.android.architecture.blueprints.todoapp.util.DateUtil
  * @param description description of the task
  * @param isCompleted whether or not this task is completed
  * @param uid          uid of the task
+ * @param dueDate      due date of the task
+ * @param time         expiry time of the task
+ * @param connectedIDString connectetd contacts of the task
  */
 @Entity(tableName = "tasks")
 data class Task @JvmOverloads constructor(

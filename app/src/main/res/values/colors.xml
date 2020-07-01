@@ -22,6 +22,7 @@
     <color name="colorTextPrimary">#000000</color>
     <color name="colorGrey">#757575</color>
     <color name="colorRed">#F06292</color>
+    <color name="colorWhite">#FFFFFF</color>
     <color name="error">#BCF11919</color>
 
     <drawable name="completedTaskBackground">#EFFAFF</drawable>
