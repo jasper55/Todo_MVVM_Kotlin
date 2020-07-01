@@ -31,6 +31,14 @@
         android:title="@string/refresh"
         app:showAsAction="never" />
     <item
+        android:id="@+id/menu_save_to_remote"
+        android:title="@string/save_to_remote"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/menu_save_to_local"
+        android:title="@string/save_to_local"
+        app:showAsAction="never" />
+    <item
         android:id="@+id/menu_synchronize"
         android:title="@string/synchronize"
         app:showAsAction="never" />

@@ -79,6 +79,8 @@
     <string name="no_contact_hint">no contacts added yet</string>
     <string name="no_contact_permission">You don\'t have access to your contacts</string>
     <string name="synchronize">synchronize databases</string>
+    <string name="save_to_local">save tasks to local db</string>
+    <string name="save_to_remote">save tasks to remote db</string>
     <string name="delete_all_tasks">delete all tasks</string>
     <string name="clear_app_data">clear app data</string>
     <string name="log_out">log out</string>

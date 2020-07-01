@@ -334,7 +334,7 @@ class TasksViewModel(
         }
     }
 
-    private fun getTaskListFromFirebase(connected: Boolean) {
+    private fun getTaskListFromFirebaseAndStoreToLocalDB(connected: Boolean) {
         viewModelScope.launch {
             if (connected) {
                 EspressoIdlingResource.increment() // Set app as busy.
@@ -362,10 +362,10 @@ class TasksViewModel(
         }
     }
 
-    fun loadDataFromFBIfAvailable() {
-        if (items?.value == emptyList<Task>()) {
-            getTaskListFromFirebase(isInternetAvailable.value!!)
-        }
+    fun loadDataFromFirebaseDB() {
+//        if (items.value == emptyList<Task>()) {
+            getTaskListFromFirebaseAndStoreToLocalDB(isInternetAvailable.value!!)
+//        }
     }
 
     fun deleteAllTasks() {
