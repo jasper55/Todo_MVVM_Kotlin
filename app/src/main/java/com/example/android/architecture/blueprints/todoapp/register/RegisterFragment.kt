@@ -83,7 +83,7 @@ class RegisterFragment : Fragment() {
         findNavController().navigate(action)
     }
 
-    private fun setupSnackbar(length: Int, bgColor: Int = context!!.getColor(R.color.colorTextPrimary)) {
+    private fun setupSnackbar(length: Int, bgColor: Int = context!!.getColor(R.color.colorSnackbar)) {
         viewDataBinding.viewmodel?.let {
             view?.setupSnackbar(this, it.snackbarMessage, length, bgColor)
         }

@@ -15,6 +15,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.CheckBox
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.viewModelScope
 import androidx.navigation.fragment.findNavController
 import com.example.android.architecture.blueprints.todoapp.EventObserver
 import com.example.android.architecture.blueprints.todoapp.R
@@ -25,6 +26,7 @@ import com.example.android.architecture.blueprints.todoapp.util.*
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
+import kotlinx.coroutines.launch
 import timber.log.Timber
 
 
@@ -168,16 +170,16 @@ class TaskDetailFragment : Fragment() {
                 ContactBookService.CALL_PICK_CONTACT -> {
                     viewDataBinding.viewmodel?.let {
                         view?.setupSnackbar(this, it.snackbarMessage, Snackbar.LENGTH_SHORT)
+                        it.viewModelScope.launch {
+                            val contactIdString = it.getContactIdString()
+                            val newContactId = data?.let { ContactBookService.getContactID(it, context) }
+                            val contactString = ContactBookService.addContactToString(contactIdString!!, newContactId)
+                            // initiate List which needs to be displayed by adapter
+                            // ContactBookService.getContactListFromString(contactString)
+                            it._contactIdString.value = contactString
+                            contactString?.let { viewModel?.saveContactId(it) }
+                        }
                     }
-                    val contactIdString = viewModel?.getContactIdString()
-                    val newContactId = data?.let { ContactBookService.getContactID(it, context) }
-
-                    val contactString = ContactBookService.addContactToString(contactIdString!!, newContactId)
-                    // initiate List which needs to be displayed by adapter
-                    // ContactBookService.getContactListFromString(contactString)
-                    viewModel?._contactIdString.value = contactString
-
-                    contactString?.let { viewModel?.saveContactId(it) }
                 }
             }
     }

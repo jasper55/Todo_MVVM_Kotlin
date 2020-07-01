@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:background="@drawable/gradient_darkblue_45">
+    android:background="@drawable/gradient_black_45">
 
     <data>
 
@@ -76,7 +76,7 @@
                 android:text="@string/stay_logged_in"
                 android:textSize="10dp"
                 android:textStyle="italic"
-                android:theme="@style/CheckboxStyle"
+                android:theme="@style/white_checkbox_style"
                 android:textColor="@color/white"/>
 
             <CheckBox
@@ -87,7 +87,7 @@
                 android:text="@string/remember_me"
                 android:textSize="10dp"
                 android:textStyle="italic"
-                android:theme="@style/CheckboxStyle"
+                android:theme="@style/white_checkbox_style"
                 android:textColor="@color/white" />
 
             <Button

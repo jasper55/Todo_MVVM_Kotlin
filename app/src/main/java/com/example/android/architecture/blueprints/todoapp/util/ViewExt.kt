@@ -38,7 +38,7 @@ import com.google.android.material.snackbar.Snackbar
 
 val FORE_EVER = 1000000000
 
-fun View.showSnackbar(snackbarText: String, timeLength: Int, color: Int = context!!.getColor(R.color.colorTextPrimary)) {
+fun View.showSnackbar(snackbarText: String, timeLength: Int, color: Int = context!!.getColor(R.color.colorAccent)) {
     Snackbar.make(this, snackbarText, timeLength).run {
         addCallback(object : Snackbar.Callback() {
             override fun onShown(sb: Snackbar?) {

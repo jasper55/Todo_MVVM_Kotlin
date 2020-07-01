@@ -38,7 +38,7 @@ class TaskDetailViewModel(
     var contactIdString: LiveData<String> = _contactIdString
 
     var _contactPermissionGranted = MutableLiveData<Boolean>()
-    var contactPermissionGranted : LiveData<Boolean> = _contactPermissionGranted
+    var contactPermissionGranted: LiveData<Boolean> = _contactPermissionGranted
 
     private val _isDataAvailable = MutableLiveData<Boolean>()
     val isDataAvailable: LiveData<Boolean> = _isDataAvailable
@@ -103,22 +103,17 @@ class TaskDetailViewModel(
         }
     }
 
-    fun saveDueDate(dateLong: Long, date: String) {
+    fun saveDueDate(dateLong: Long, date: String) = viewModelScope.launch {
         // needed otherwise view not updated
-
         _dueDate.value = date
-        viewModelScope.launch {
-            val task = _task.value ?: return@launch
-            tasksRepository.setDueDate(task, dateLong)
-        }
+        val task = _task.value ?: return@launch
+        tasksRepository.setDueDate(task, dateLong)
     }
 
-    fun saveTime(timeLong: Long, time: String) {
+    fun saveTime(timeLong: Long, time: String) = viewModelScope.launch {
         _time.value = time
-        viewModelScope.launch {
-            val task = _task.value ?: return@launch
-            tasksRepository.setTime(task, timeLong)
-        }
+        val task = _task.value ?: return@launch
+        tasksRepository.setTime(task, timeLong)
     }
 
     fun saveContactId(contactId: String) {
@@ -155,23 +150,27 @@ class TaskDetailViewModel(
         _isDataAvailable.value = task != null
         _dueDate.value = DateUtil.parseFromLong(_task.value?.dueDate, getApplication())
         _time.value = DateUtil.parseTimeFromLong(_task.value?.time, getApplication())
-        _contactPermissionGranted.value = PermissionChecker.checkPermission(PermissionChecker.REQUEST_CONTACTS_CODE,context)
+        _contactPermissionGranted.value = PermissionChecker.checkPermission(PermissionChecker.REQUEST_CONTACTS_CODE, context)
         if (_contactPermissionGranted.value!!) {
             //_contactName.value = _task.value?.contactId?.let { ContactBookService.getContactNameFromDB(it, context) }
             //_contactName.value = _task.value?.contactId?.let { ContactBookService.stringToList("abud harald sebastian").toString() }
             _contactIdString.value = getContactIdString()
-        } else { showErrorMessage(getApplication<Application>().getString(R.string.no_contact_permission)) }
+        } else {
+            showErrorMessage(getApplication<Application>().getString(R.string.no_contact_permission))
+        }
 
         if (_contactIdString.value != null) {
             contactIdString = _contactIdString
         }
     }
 
-    fun getContactIdString(): String?{
+    fun getContactIdString(): String? {
         if (_contactPermissionGranted.value!!) {
             return _task.value?.contactIdString
-        } else { showSnackbarMessage(R.string.no_contact_permission)
-        return ""}
+        } else {
+            showSnackbarMessage(R.string.no_contact_permission)
+            return ""
+        }
     }
 
     private fun onTaskLoaded(task: Task, context: Context) {
