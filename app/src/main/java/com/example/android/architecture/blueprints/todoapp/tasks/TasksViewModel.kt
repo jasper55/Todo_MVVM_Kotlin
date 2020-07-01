@@ -492,6 +492,5 @@ class TasksViewModel(
         val sortedList = tasks.sortedBy { it.id }
         return sortedList
     }
-
-
+    
 }
