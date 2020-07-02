@@ -80,6 +80,17 @@
                 android:textAllCaps="false" />
 
             <TextView
+                android:id="@+id/errorPrompt"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/btn_signup"
+                android:layout_marginTop="48dp"
+                android:background="@color/colorRed"
+                android:padding="8dp"
+                android:textColor="@color/colorWhite"
+                android:visibility="gone" />
+
+            <TextView
                 android:id="@+id/link_login"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

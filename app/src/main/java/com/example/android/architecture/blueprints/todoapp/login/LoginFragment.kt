@@ -1,7 +1,6 @@
 package com.example.android.architecture.blueprints.todoapp.login
 
 import android.content.Intent
-import android.opengl.Visibility
 import android.os.Bundle
 import android.view.ViewGroup
 import android.view.LayoutInflater
@@ -14,7 +13,7 @@ import com.example.android.architecture.blueprints.todoapp.EventObserver
 import com.example.android.architecture.blueprints.todoapp.R
 import com.example.android.architecture.blueprints.todoapp.databinding.LoginFragmentBinding
 import com.example.android.architecture.blueprints.todoapp.tasks.TasksActivity
-import com.example.android.architecture.blueprints.todoapp.util.beforeTextChanged
+import com.example.android.architecture.blueprints.todoapp.util.onTextChanged
 import com.example.android.architecture.blueprints.todoapp.util.obtainViewModel
 import com.example.android.architecture.blueprints.todoapp.util.setupDismissableSnackbar
 import com.example.android.architecture.blueprints.todoapp.util.setupSnackbar
@@ -67,10 +66,9 @@ class LoginFragment : Fragment() {
 
     private fun listenForLoginResponse() {
         viewModel.loginIsIdle.observe(this, Observer {
-            if(it){
+            if (it) {
                 hideUIAndShowProgressBar()
-            }
-            else {
+            } else {
                 hideProgressBar()
             }
         })
@@ -109,10 +107,10 @@ class LoginFragment : Fragment() {
             }
         })
 
-        viewDataBinding.loginEmail.beforeTextChanged {
+        viewDataBinding.loginEmail.onTextChanged {
             viewDataBinding.errorPrompt.visibility = View.GONE
         }
-        viewDataBinding.loginPassword.beforeTextChanged {
+        viewDataBinding.loginPassword.onTextChanged {
             viewDataBinding.errorPrompt.visibility = View.GONE
         }
     }
@@ -175,7 +173,7 @@ class LoginFragment : Fragment() {
     }
 
     private fun checkIfInternetAvailable() {
-        if(!viewDataBinding.viewmodel!!.checkNetworkConnection(activity as AppCompatActivity))
+        if (!viewDataBinding.viewmodel!!.checkNetworkConnection(activity as AppCompatActivity))
             navigateToTaskActivity()
     }
 
