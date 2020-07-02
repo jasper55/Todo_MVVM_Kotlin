@@ -12,6 +12,10 @@ import com.example.android.architecture.blueprints.todoapp.Event
 import com.example.android.architecture.blueprints.todoapp.R
 import com.example.android.architecture.blueprints.todoapp.userrepository.User
 import com.google.firebase.auth.FirebaseAuth
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 class LoginViewModel : ViewModel() {
 
@@ -35,6 +39,10 @@ class LoginViewModel : ViewModel() {
 
     private val _areLoginInFieldCorrect = MutableLiveData<Boolean>()
     val areLoginInFieldCorrect: LiveData<Boolean> = _areLoginInFieldCorrect
+
+    private val _loginIsIdle = MutableLiveData<Boolean>()
+    val loginIsIdle: LiveData<Boolean> = _loginIsIdle
+
 
     private val _loginErrorMessage = MutableLiveData<String>()
     val loginErrorMessage: LiveData<String> = _loginErrorMessage
@@ -82,8 +90,10 @@ class LoginViewModel : ViewModel() {
             _areLoginInFieldCorrect.value = false
             return
         } else {
+            _loginIsIdle.value = true
             FirebaseAuth.getInstance().signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener {
+                    Thread.sleep(5000)
                     if (!it.isSuccessful) return@addOnCompleteListener
 
                     // else if
@@ -100,6 +110,7 @@ class LoginViewModel : ViewModel() {
                     Log.i("Login:", "Failed to login: ${it.message}")
 
                 }
+            _loginIsIdle.value = false
         }
     }
 

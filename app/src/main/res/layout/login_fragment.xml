@@ -17,6 +17,8 @@
 
     </data>
 
+
+
     <LinearLayout
         android:id="@+id/fragment_login"
         android:layout_width="match_parent"
@@ -25,6 +27,12 @@
         android:paddingLeft="24dp"
         android:paddingTop="124dp"
         android:paddingRight="24dp">
+
+        <ProgressBar
+            android:id="@+id/loginResponseProgressBar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="gone"/>
 
         <RelativeLayout
             android:id="@+id/loginBottomView"

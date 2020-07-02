@@ -1,6 +1,7 @@
 package com.example.android.architecture.blueprints.todoapp.login
 
 import android.content.Intent
+import android.opengl.Visibility
 import android.os.Bundle
 import android.view.ViewGroup
 import android.view.LayoutInflater
@@ -61,6 +62,41 @@ class LoginFragment : Fragment() {
         checkIfInternetAvailable()
         checkIfUserIsAlreadyLoggedIn()
         listenForLoginFieldChanges()
+        listenForLoginResponse()
+    }
+
+    private fun listenForLoginResponse() {
+        viewModel.loginIsIdle.observe(this, Observer {
+            if(it){
+                hideUIAndShowProgressBar()
+            }
+            else {
+                hideProgressBar()
+            }
+        })
+
+    }
+
+    private fun hideUIAndShowProgressBar() {
+        viewDataBinding.apply {
+            errorPrompt.visibility = View.GONE
+            loginEmail.visibility = View.GONE
+            loginPassword.visibility = View.GONE
+            loginRememberMe.visibility = View.GONE
+            loginStayLoggedIn.visibility = View.GONE
+            loginResponseProgressBar.visibility = View.VISIBLE
+        }
+    }
+
+    private fun hideProgressBar() {
+        viewDataBinding.apply {
+            errorPrompt.visibility = View.VISIBLE
+            loginEmail.visibility = View.VISIBLE
+            loginPassword.visibility = View.VISIBLE
+            loginRememberMe.visibility = View.VISIBLE
+            loginStayLoggedIn.visibility = View.VISIBLE
+            loginResponseProgressBar.visibility = View.GONE
+        }
     }
 
     private fun listenForLoginFieldChanges() {
