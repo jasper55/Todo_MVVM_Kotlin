@@ -13,6 +13,7 @@ import com.example.android.architecture.blueprints.todoapp.EventObserver
 import com.example.android.architecture.blueprints.todoapp.R
 import com.example.android.architecture.blueprints.todoapp.databinding.LoginFragmentBinding
 import com.example.android.architecture.blueprints.todoapp.tasks.TasksActivity
+import com.example.android.architecture.blueprints.todoapp.util.beforeTextChanged
 import com.example.android.architecture.blueprints.todoapp.util.obtainViewModel
 import com.example.android.architecture.blueprints.todoapp.util.setupDismissableSnackbar
 import com.example.android.architecture.blueprints.todoapp.util.setupSnackbar
@@ -71,6 +72,13 @@ class LoginFragment : Fragment() {
                 viewDataBinding.errorPrompt.visibility = View.GONE
             }
         })
+
+        viewDataBinding.loginEmail.beforeTextChanged {
+            viewDataBinding.errorPrompt.visibility = View.GONE
+        }
+        viewDataBinding.loginPassword.beforeTextChanged {
+            viewDataBinding.errorPrompt.visibility = View.GONE
+        }
     }
 
     private fun getUserId(): String {
