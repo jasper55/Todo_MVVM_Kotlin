@@ -28,7 +28,6 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.example.android.architecture.blueprints.todoapp.Event
 import com.example.android.architecture.blueprints.todoapp.R
 import com.example.android.architecture.blueprints.todoapp.ScrollChildSwipeRefreshLayout
-import com.example.android.architecture.blueprints.todoapp.generated.callback.OnClickListener
 import com.example.android.architecture.blueprints.todoapp.tasks.TasksViewModel
 import com.google.android.material.snackbar.Snackbar
 
@@ -38,7 +37,7 @@ import com.google.android.material.snackbar.Snackbar
 
 val FORE_EVER = 1000000000
 
-fun View.showSnackbar(snackbarText: String, timeLength: Int, color: Int = context!!.getColor(R.color.colorTextPrimary)) {
+fun View.showSnackbar(snackbarText: String, timeLength: Int, color: Int = context!!.getColor(R.color.colorAccent)) {
     Snackbar.make(this, snackbarText, timeLength).run {
         addCallback(object : Snackbar.Callback() {
             override fun onShown(sb: Snackbar?) {
@@ -107,7 +106,7 @@ fun View.setupDismissableSnackbar(
                         dismiss()
                     }
                 })
-                setActionTextColor(context!!.getColor(R.color.white))
+                setActionTextColor(context!!.getColor(R.color.colorWhite))
                 duration  = 1000000000
                 show()
             }

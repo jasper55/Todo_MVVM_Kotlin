@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:background="@drawable/gradient_blue_45">
+    android:background="@drawable/gradient_black_45">
 
     <data>
 
@@ -44,10 +44,10 @@
                 android:layout_marginBottom="8dp"
                 android:padding="16dp"
                 android:hint="@string/email"
-                android:textColorHint="@color/white"
+                android:textColorHint="@color/colorWhite"
                 android:background="@drawable/half_solid_rounded_corners_edittex"
                 android:text="@={viewmodel.user.email}"
-                android:textColor="@color/white"
+                android:textColor="@color/colorWhite"
                 android:inputType="textEmailAddress" />
 
 
@@ -60,10 +60,10 @@
                 android:layout_below="@id/input_email"
                 android:padding="16dp"
                 android:hint="@string/password"
-                android:textColorHint="@color/white"
+                android:textColorHint="@color/colorWhite"
                 android:background="@drawable/half_solid_rounded_corners_edittex"
                 android:text="@={viewmodel.user.password}"
-                android:textColor="@color/white"
+                android:textColor="@color/colorWhite"
                 android:inputType="textPassword" />
 
             <Button
@@ -75,7 +75,7 @@
                 android:background="@drawable/rounded_corners_transparent_button"
                 android:onClick="@{()-> listener.onRegisterUserClicked()}"
                 android:text="Create Account"
-                android:textColor="@color/white"
+                android:textColor="@color/colorWhite"
                 android:textStyle="bold"
                 android:textAllCaps="false" />
 
@@ -87,7 +87,7 @@
                 android:layout_centerHorizontal="true"
                 android:onClick="@{()-> listener.onNavigateToLoginClicked()}"
                 android:text="Already a member, login in here!"
-                android:textColor="@color/white" />
+                android:textColor="@color/colorWhite" />
 
         </RelativeLayout>
 

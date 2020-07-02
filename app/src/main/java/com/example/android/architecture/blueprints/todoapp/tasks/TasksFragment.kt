@@ -60,7 +60,7 @@ class TasksFragment : Fragment() {
                     true
                 }
                 R.id.menu_save_to_remote -> {
-                    viewDataBinding.viewmodel?.saveDataToFirebase(true)
+                    viewDataBinding.viewmodel?.saveDataToFirebase(viewDataBinding.viewmodel?.isInternetAvailable?.value!!, false)
                     true
                 }
                 R.id.menu_save_to_local -> {
@@ -68,21 +68,26 @@ class TasksFragment : Fragment() {
                     true
                 }
                 R.id.menu_synchronize -> {
+                    viewDataBinding.viewmodel?.synchronizeDbs()
                     viewDataBinding.viewmodel?.checkNetworkConnection(act)
                     viewDataBinding.viewmodel?.checkUserStatus()
                     if (viewDataBinding.viewmodel?.isInternetAvailable?.value!! && viewDataBinding.viewmodel?.userLoggedIn?.value!!) {
-                        viewDataBinding.viewmodel?.saveDataToFirebase(true)
+                        viewDataBinding.viewmodel?.saveDataToFirebase(true, true)
                         viewDataBinding.viewmodel?.loadDataFromFirebaseDB()
                     }
                     true
                 }
-                R.id.menu_delete -> {
-                    viewDataBinding.viewmodel?.deleteAllTasks()
+                R.id.menu_delete_db_tasks -> {
+                    viewDataBinding.viewmodel?.deleteAllTasksFromLocalDB()
+                    true
+                }
+                R.id.menu_delete_remote_tasks -> {
+                    viewDataBinding.viewmodel?.deleteAllTasksFromRemoteDB()
                     true
                 }
                 R.id.menu_clear_app_data -> {
                     viewDataBinding.viewmodel?.clearAppData(act)
-                    viewDataBinding.viewmodel?.saveDataToFirebase(viewDataBinding.viewmodel?.isInternetAvailable?.value!!)
+//                    viewDataBinding.viewmodel?.saveDataToFirebase(viewDataBinding.viewmodel?.isInternetAvailable?.value!!, false)
                     true
                 }
                 R.id.menu_log_in -> {
@@ -116,8 +121,14 @@ class TasksFragment : Fragment() {
         setupFab()
         viewmodel?.checkNetworkConnection(act)
         //runBlockingScope(viewmodel)
-        viewmodel?.loadTasks(false)
+//        viewmodel?.loadTasks(false)
+        viewmodel?.synchronizeDbs()
         viewmodel?.setLoginStatus()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        viewDataBinding.viewmodel?.checkNetworkConnection(act)
     }
 
     private fun runBlockingScope(viewmodel: TasksViewModel?) {
@@ -127,7 +138,7 @@ class TasksFragment : Fragment() {
             withContext(ioDispatcher) {
                 coroutineScope {
                     launch { viewmodel?.loadTasks(false) }
-                    launch { viewmodel?.saveDataToFirebase(true) }
+                    launch { viewmodel?.saveDataToFirebase(true, false) }
                     launch { viewmodel?.loadDataFromFirebaseDB() }
                 }
             }
@@ -146,7 +157,7 @@ class TasksFragment : Fragment() {
         })
     }
 
-    private fun setupSnackbar(length: Int, bgColor: Int = context!!.getColor(R.color.colorTextPrimary)) {
+    private fun setupSnackbar(length: Int, bgColor: Int = context!!.getColor(R.color.colorSnackbar)) {
         viewDataBinding.viewmodel?.let {
             view?.setupSnackbar(this, it.snackbarMessage, length, bgColor)
         }

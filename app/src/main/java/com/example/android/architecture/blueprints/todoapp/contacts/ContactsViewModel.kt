@@ -90,7 +90,7 @@ class ContactsViewModel(
                 if (contactIdString == ""){
                     isDataLoadingError.value = false
                     _items.value = emptyList()
-                    showErrorMessage(getApplication<Application>().getString(R.string.loading_tasks_error))
+//                    showErrorMessage(getApplication<Application>().getString(R.string.loading_tasks_error))
                 } else {
                 isDataLoadingError.value = false
                 _items.value = ArrayList(contactList) }

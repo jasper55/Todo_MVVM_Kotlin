@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:background="@drawable/gradient_darkblue_45">
+    android:background="@drawable/gradient_black_45">
 
     <data>
 
@@ -76,8 +76,8 @@
                 android:text="@string/stay_logged_in"
                 android:textSize="10dp"
                 android:textStyle="italic"
-                android:theme="@style/CheckboxStyle"
-                android:textColor="@color/white"/>
+                android:theme="@style/white_checkbox_style"
+                android:textColor="@color/colorWhite"/>
 
             <CheckBox
                 android:id="@+id/loginRememberMe"
@@ -87,8 +87,8 @@
                 android:text="@string/remember_me"
                 android:textSize="10dp"
                 android:textStyle="italic"
-                android:theme="@style/CheckboxStyle"
-                android:textColor="@color/white" />
+                android:theme="@style/white_checkbox_style"
+                android:textColor="@color/colorWhite" />
 
             <Button
                 android:id="@+id/loginButton"
@@ -99,7 +99,7 @@
                 android:background="@drawable/rounded_corners_transparent_button"
                 android:onClick="@{()-> listener.onLoginClicked()}"
                 android:text="Login"
-                android:textColor="@color/white"
+                android:textColor="@color/colorWhite"
                 android:textStyle="bold"
                 android:textAllCaps="false" />
 
@@ -112,7 +112,7 @@
                 android:layout_centerHorizontal="true"
                 android:onClick="@{()-> listener.onRegisterClicked()}"
                 android:text="@string/register_link_text"
-                android:textColor="@color/white" />
+                android:textColor="@color/colorWhite" />
 
         </RelativeLayout>
 
