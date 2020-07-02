@@ -24,8 +24,7 @@
         android:orientation="vertical"
         android:paddingLeft="24dp"
         android:paddingTop="124dp"
-        android:paddingRight="24dp"
-        >
+        android:paddingRight="24dp">
 
         <RelativeLayout
             android:id="@+id/loginBottomView"
@@ -40,17 +39,17 @@
                 android:id="@+id/loginPassword"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_below="@id/loginEmail"
                 android:layout_marginTop="8dp"
                 android:layout_marginBottom="8dp"
-                android:padding="16dp"
-                android:layout_below="@id/loginEmail"
                 android:background="@drawable/rounded_corners_edittext"
                 android:hint="@string/password"
-                android:textColorHint="@color/colorAccent"
-                android:textCursorDrawable="@null"
-                android:textColor="@color/colorAccent"
+                android:inputType="textPassword"
+                android:padding="16dp"
                 android:text="@={viewmodel.user.password}"
-                android:inputType="textPassword"/>
+                android:textColor="@color/colorAccent"
+                android:textColorHint="@color/colorAccent"
+                android:textCursorDrawable="@null" />
 
             <EditText
                 android:id="@+id/loginEmail"
@@ -59,14 +58,14 @@
                 android:layout_alignParentTop="true"
                 android:layout_marginTop="8dp"
                 android:layout_marginBottom="8dp"
-                android:padding="16dp"
                 android:background="@drawable/rounded_corners_edittext"
                 android:hint="@string/email"
-                android:textColorHint="@color/colorAccent"
-                android:textCursorDrawable="@null"
-                android:textColor="@color/colorAccent"
+                android:inputType="textEmailAddress"
+                android:padding="16dp"
                 android:text="@={viewmodel.user.email}"
-                android:inputType="textEmailAddress"/>
+                android:textColor="@color/colorAccent"
+                android:textColorHint="@color/colorAccent"
+                android:textCursorDrawable="@null" />
 
             <CheckBox
                 android:id="@+id/loginStayLoggedIn"
@@ -74,10 +73,10 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@id/loginRememberMe"
                 android:text="@string/stay_logged_in"
+                android:textColor="@color/colorWhite"
                 android:textSize="10dp"
                 android:textStyle="italic"
-                android:theme="@style/white_checkbox_style"
-                android:textColor="@color/colorWhite"/>
+                android:theme="@style/white_checkbox_style" />
 
             <CheckBox
                 android:id="@+id/loginRememberMe"
@@ -85,10 +84,10 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@id/loginPassword"
                 android:text="@string/remember_me"
+                android:textColor="@color/colorWhite"
                 android:textSize="10dp"
                 android:textStyle="italic"
-                android:theme="@style/white_checkbox_style"
-                android:textColor="@color/colorWhite" />
+                android:theme="@style/white_checkbox_style" />
 
             <Button
                 android:id="@+id/loginButton"
@@ -99,9 +98,21 @@
                 android:background="@drawable/rounded_corners_transparent_button"
                 android:onClick="@{()-> listener.onLoginClicked()}"
                 android:text="Login"
+                android:textAllCaps="false"
                 android:textColor="@color/colorWhite"
-                android:textStyle="bold"
-                android:textAllCaps="false" />
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/errorPrompt"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/loginButton"
+                android:layout_marginTop="48dp"
+                android:background="@color/colorRed"
+                android:padding="8dp"
+                android:text="testorasdas"
+                android:textColor="@color/colorWhite"
+                android:visibility="visible" />
 
 
             <TextView

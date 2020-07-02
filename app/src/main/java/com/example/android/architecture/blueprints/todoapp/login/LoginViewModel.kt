@@ -1,6 +1,9 @@
 package com.example.android.architecture.blueprints.todoapp.login
 
+import android.content.Context
+import android.net.ConnectivityManager
 import android.util.Log
+import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
@@ -27,6 +30,15 @@ class LoginViewModel : ViewModel() {
     private val _errorMessageEvent = MutableLiveData<Event<String>>()
     val errorMessageEvent: LiveData<Event<String>> = _errorMessageEvent
 
+    private val _isInternetAvailable = MutableLiveData<Boolean>()
+    val isInternetAvailable: LiveData<Boolean> = _isInternetAvailable
+
+    private val _areLoginInFieldCorrect = MutableLiveData<Boolean>()
+    val areLoginInFieldCorrect: LiveData<Boolean> = _areLoginInFieldCorrect
+
+    private val _loginErrorMessage = MutableLiveData<String>()
+    val loginErrorMessage: LiveData<String> = _loginErrorMessage
+
     val user: MutableLiveData<User> = MutableLiveData()
 
     init {
@@ -43,13 +55,13 @@ class LoginViewModel : ViewModel() {
 
         if (email == null || password == null) return
         FirebaseAuth.getInstance().signInWithEmailAndPassword(email, password)
-                .addOnCompleteListener {
-                    if (!it.isSuccessful) return@addOnCompleteListener
+            .addOnCompleteListener {
+                if (!it.isSuccessful) return@addOnCompleteListener
 
-                    // else if
-                    //showSnackbarMessage(R.string.user_created)
-                    val userUid = it.result?.user?.uid!!
-                }
+                // else if
+                //showSnackbarMessage(R.string.user_created)
+                val userUid = it.result?.user?.uid!!
+            }
         _openTaskListEvent.value = Event(userUid)
     }
 
@@ -57,8 +69,20 @@ class LoginViewModel : ViewModel() {
         val email: String? = user.value?.email
         val password: String? = user.value?.password
 
-        if (email == null || password == null) return
-        FirebaseAuth.getInstance().signInWithEmailAndPassword(email, password)
+        if (email == null || password == null) {
+            if (email == null || password == null) {
+                _loginErrorMessage.value = "fill in your login details"
+            }
+            if (email == null && !password.isNullOrBlank()) {
+                _loginErrorMessage.value = "email is empty"
+            }
+            if (password == null && !email.isNullOrBlank()) {
+                _loginErrorMessage.value = "password is empty"
+            }
+            _areLoginInFieldCorrect.value = false
+            return
+        } else {
+            FirebaseAuth.getInstance().signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener {
                     if (!it.isSuccessful) return@addOnCompleteListener
 
@@ -67,11 +91,27 @@ class LoginViewModel : ViewModel() {
                     showSnackbarText(R.string.user_logged_in)
                     _openTaskListEvent.value = Event(userUid)
                     Log.i("Login:", "Login succesful")
+                    _areLoginInFieldCorrect.value = true
                 }
                 .addOnFailureListener {
-                    showErrorMessage("Failed to login: ${it.message}")
+                    _areLoginInFieldCorrect.value = false
+//                showErrorMessage("Failed to login: ${it.message}")
+                    _loginErrorMessage.value = it.message
                     Log.i("Login:", "Failed to login: ${it.message}")
+
                 }
+        }
+    }
+
+    fun checkNetworkConnection(activity: AppCompatActivity): Boolean {
+        _isInternetAvailable.value =
+            (activity.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager)
+                .activeNetworkInfo?.isConnected == true
+        return isInternetAvailable.value!!
+    }
+
+    fun displayEmailInvalidPrompt() {
+
     }
 
     private fun showSnackbarText(message: Int) {

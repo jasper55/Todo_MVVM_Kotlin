@@ -5,7 +5,9 @@ import android.os.Bundle
 import android.view.ViewGroup
 import android.view.LayoutInflater
 import android.view.View
+import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import com.example.android.architecture.blueprints.todoapp.EventObserver
 import com.example.android.architecture.blueprints.todoapp.R
@@ -55,7 +57,20 @@ class LoginFragment : Fragment() {
         setupSnackbar(Snackbar.LENGTH_SHORT)
         //setupSnackbarMessage()
         setupDismissableSnackbar()
+        checkIfInternetAvailable()
         checkIfUserIsAlreadyLoggedIn()
+        listenForLoginFieldChanges()
+    }
+
+    private fun listenForLoginFieldChanges() {
+        viewModel.areLoginInFieldCorrect.observe(this, Observer {
+            if (it == false) {
+                viewDataBinding.errorPrompt.text = viewModel.loginErrorMessage.value
+                viewDataBinding.errorPrompt.visibility = View.VISIBLE
+            } else {
+                viewDataBinding.errorPrompt.visibility = View.GONE
+            }
+        })
     }
 
     private fun getUserId(): String {
@@ -115,16 +130,25 @@ class LoginFragment : Fragment() {
         }
     }
 
+    private fun checkIfInternetAvailable() {
+        if(!viewDataBinding.viewmodel!!.checkNetworkConnection(activity as AppCompatActivity))
+            navigateToTaskActivity()
+    }
+
     private fun checkIfUserIsAlreadyLoggedIn() {
         val auth = FirebaseAuth.getInstance()
 
         if (auth.currentUser != null) {
-            val action = LoginFragmentDirections.actionLoginFragmentToTasksFragment()
-            val intent = Intent(context, TasksActivity::class.java)
-            startActivity(intent)
-            findNavController().navigate(action)
+            navigateToTaskActivity()
         } else {
             return
         }
+    }
+
+    private fun navigateToTaskActivity() {
+        val action = LoginFragmentDirections.actionLoginFragmentToTasksFragment()
+        val intent = Intent(context, TasksActivity::class.java)
+        startActivity(intent)
+        findNavController().navigate(action)
     }
 }
