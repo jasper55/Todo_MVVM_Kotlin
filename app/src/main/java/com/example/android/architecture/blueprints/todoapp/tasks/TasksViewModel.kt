@@ -256,12 +256,10 @@ class TasksViewModel(
                 val tasksToShow = ArrayList<Task>()
                 var sortedList = tasks
 
-                if (tasksToShow.isNullOrEmpty()) {
-                    _snackbarText.value = Event(R.string.local_db_empty)
+                if (tasks.isNullOrEmpty()) {
+                    _snackbarText.value = Event(R.string.no_tasks_on_local_db)
                     loadDataFromFirebaseDB()
-                }
-
-                else {
+                } else {
 
                     // We filter the tasks based on the requestType
                     when (_currentFiltering) {
@@ -302,7 +300,6 @@ class TasksViewModel(
                     isDataLoadingError.value = false
                     _items.value = ArrayList(tasksToShow)
                     Timber.i("Tasks loaded from local db")
-                    saveDataToFirebase(isInternetAvailable.value!!,true)
                 }
             } else {
                 isDataLoadingError.value = true
@@ -316,25 +313,22 @@ class TasksViewModel(
 
     }
 
-    fun saveDataToFirebase(isConnected: Boolean, isSyncingProccess: Boolean) = viewModelScope.launch {
+    fun saveDataToFirebase(isConnected: Boolean) = viewModelScope.launch {
         if (!isConnected) {
             showNoInternetConnection()
             return@launch
         }
         if (items.value == emptyList<Task>() && isConnected) {
+            _snackbarText.value = Event(R.string.tasks_saved_to_remote_db)
+
             showErrorMessage(application.getString(R.string.local_db_empty))
             return@launch
         }
 
-
         firebaseHelper.deleteAllTasks()
-        firebaseHelper.saveToDatabase(items?.value!!)
-        if (!isSyncingProccess) {
+        firebaseHelper.saveToDatabase(items.value!!)
         _snackbarText.value = Event(R.string.tasks_saved_to_remote_db)
-        }
-        else {
-            _snackbarText.value = Event(R.string.remote_tasks_successfully_synced)
-        }
+//        _snackbarText.value = Event(R.string.remote_tasks_successfully_synced)
 //            EspressoIdlingResource.decrement() // Set app as idle.
     }
 
@@ -355,7 +349,7 @@ class TasksViewModel(
                 val firebaseCallback = object : FirebaseCallback {
                     override fun onCallback(todoList: List<Task>) {
 
-                        if (items.value == emptyList<Task>()) {
+                        if (items.value.isNullOrEmpty()) {
                             showErrorMessage(application.getString(R.string.remote_db_empty))
                         } else {
                             _items.value = todoList
@@ -383,9 +377,7 @@ class TasksViewModel(
     }
 
     fun loadDataFromFirebaseDB() {
-//        if (items.value == emptyList<Task>()) {
         getTaskListFromFirebaseAndStoreToLocalDB(isInternetAvailable.value!!)
-//        }
     }
 
     fun deleteAllTasksFromLocalDB() {

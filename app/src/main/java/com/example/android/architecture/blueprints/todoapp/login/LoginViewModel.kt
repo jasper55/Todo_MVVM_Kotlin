@@ -82,10 +82,10 @@ class LoginViewModel : ViewModel() {
                 _loginErrorMessage.value = "fill in your login details"
             }
             if (email == null && !password.isNullOrBlank()) {
-                _loginErrorMessage.value = "email is empty"
+                _loginErrorMessage.value = "please fill in your email address"
             }
             if (password == null && !email.isNullOrBlank()) {
-                _loginErrorMessage.value = "password is empty"
+                _loginErrorMessage.value = "no password entered, please fill in your password"
             }
             _areLoginInFieldCorrect.value = false
             return
@@ -93,7 +93,6 @@ class LoginViewModel : ViewModel() {
             _loginIsIdle.value = true
             FirebaseAuth.getInstance().signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener {
-                    Thread.sleep(5000)
                     if (!it.isSuccessful) return@addOnCompleteListener
 
                     // else if
@@ -102,6 +101,7 @@ class LoginViewModel : ViewModel() {
                     _openTaskListEvent.value = Event(userUid)
                     Log.i("Login:", "Login succesful")
                     _areLoginInFieldCorrect.value = true
+                    Thread.sleep(5000)
                 }
                 .addOnFailureListener {
                     _areLoginInFieldCorrect.value = false

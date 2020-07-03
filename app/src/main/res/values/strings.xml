@@ -75,7 +75,6 @@
     <string name="log_out">log out</string>
     <string name="log_in">log in</string>
 
-
     <!-- Firebase actions -->
     <string name="user_created">Your registration has been successful</string>
     <string name="create_user_failed">Registration failed</string>
@@ -92,8 +91,9 @@
     <string name="forgot_password">Forgot your password?</string>
     <string name="register_link_text">Don\'t have an account yet, register here</string>
     <string name="synchronization_failed">Synchronization failed: You are not logged in!</string>
-    <string name="taskId_missing">Error: task id couldnt be generated</string>
+    <string name="taskId_missing">Error: task id couldn\'t be generated</string>
     <string name="local_db_empty">Couldn\'t load tasks from db. Db is empty!</string>
+    <string name="no_tasks_on_local_db">no tasks found on local database</string>
     <string name="remote_db_empty">Couldn\'t load task from remote db. Db is empty!</string>
 
 </resources>

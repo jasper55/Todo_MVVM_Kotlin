@@ -206,7 +206,8 @@ class TaskDetailFragment : Fragment() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             R.id.menu_delete_db_task -> {
-                viewDataBinding.viewmodel?.deleteTask()
+//                viewDataBinding.viewmodel?.deleteTask()
+                viewDataBinding.viewmodel?.showDeleteDialog(context!!)
                 true
             }
             else -> false

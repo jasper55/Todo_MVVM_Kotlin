@@ -5,6 +5,7 @@ import androidx.lifecycle.*
 
 import android.app.Application
 import android.content.Context
+import androidx.appcompat.app.AlertDialog
 import com.example.android.architecture.blueprints.todoapp.Event
 import com.example.android.architecture.blueprints.todoapp.R
 import com.example.android.architecture.blueprints.todoapp.data.Result
@@ -70,7 +71,7 @@ class TaskDetailViewModel(
     val taskId: Int?
         get() = _task.value?.id
 
-    fun deleteTask() = viewModelScope.launch {
+    private fun deleteTask() = viewModelScope.launch {
         taskId?.let {
             tasksRepository.deleteTask(it)
             _deleteTaskCommand.value = Event(Unit)
@@ -196,6 +197,22 @@ class TaskDetailViewModel(
 
     private fun showErrorMessage(message: String) {
         _errorMessageEvent.value = Event(message)
+    }
+
+    fun showDeleteDialog(context: Context) {
+        val builder = AlertDialog.Builder(context)
+
+        builder.setTitle("Deleting tasks")
+        builder.setMessage("Are you sure you want to delete the task?")
+
+        builder.setPositiveButton("YES"){dialog, which ->
+            deleteTask()
+        }
+        builder.setNegativeButton("No"){dialog,which ->
+            return@setNegativeButton
+        }
+        val dialog: AlertDialog = builder.create()
+        dialog.show()
     }
 
 }

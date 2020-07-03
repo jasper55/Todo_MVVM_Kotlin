@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.ViewGroup
 import android.view.LayoutInflater
 import android.view.View
+import android.view.animation.AnimationUtils
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
@@ -102,6 +103,7 @@ class LoginFragment : Fragment() {
             if (it == false) {
                 viewDataBinding.errorPrompt.text = viewModel.loginErrorMessage.value
                 viewDataBinding.errorPrompt.visibility = View.VISIBLE
+                viewDataBinding.errorPrompt.startAnimation(AnimationUtils.loadAnimation(context,R.anim.shake))
             } else {
                 viewDataBinding.errorPrompt.visibility = View.GONE
             }

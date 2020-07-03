@@ -60,7 +60,7 @@ class TasksFragment : Fragment() {
                     true
                 }
                 R.id.menu_save_to_remote -> {
-                    viewDataBinding.viewmodel?.saveDataToFirebase(viewDataBinding.viewmodel?.isInternetAvailable?.value!!, false)
+                    viewDataBinding.viewmodel?.saveDataToFirebase(viewDataBinding.viewmodel?.isInternetAvailable?.value!!)
                     true
                 }
                 R.id.menu_save_to_local -> {
@@ -72,7 +72,7 @@ class TasksFragment : Fragment() {
                     viewDataBinding.viewmodel?.checkNetworkConnection(act)
                     viewDataBinding.viewmodel?.checkUserStatus()
                     if (viewDataBinding.viewmodel?.isInternetAvailable?.value!! && viewDataBinding.viewmodel?.userLoggedIn?.value!!) {
-                        viewDataBinding.viewmodel?.saveDataToFirebase(true, true)
+                        viewDataBinding.viewmodel?.saveDataToFirebase(true)
                         viewDataBinding.viewmodel?.loadDataFromFirebaseDB()
                     }
                     true
@@ -87,7 +87,6 @@ class TasksFragment : Fragment() {
                 }
                 R.id.menu_clear_app_data -> {
                     viewDataBinding.viewmodel?.clearAppData(act)
-//                    viewDataBinding.viewmodel?.saveDataToFirebase(viewDataBinding.viewmodel?.isInternetAvailable?.value!!, false)
                     true
                 }
                 R.id.menu_log_in -> {
@@ -138,7 +137,7 @@ class TasksFragment : Fragment() {
             withContext(ioDispatcher) {
                 coroutineScope {
                     launch { viewmodel?.loadTasks(false) }
-                    launch { viewmodel?.saveDataToFirebase(true, false) }
+                    launch { viewmodel?.saveDataToFirebase(true) }
                     launch { viewmodel?.loadDataFromFirebaseDB() }
                 }
             }
