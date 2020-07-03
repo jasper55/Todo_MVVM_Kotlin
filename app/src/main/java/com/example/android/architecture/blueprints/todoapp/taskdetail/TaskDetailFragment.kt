@@ -20,7 +20,6 @@ import android.view.ViewGroup
 import android.widget.CheckBox
 import android.widget.DatePicker
 import android.widget.TimePicker
-import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.fragment.findNavController
@@ -32,7 +31,6 @@ import com.example.android.architecture.blueprints.todoapp.util.*
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.launch
 import timber.log.Timber
-import java.util.Calendar
 
 
 /**
@@ -118,7 +116,7 @@ class TaskDetailFragment : Fragment(), TimePickerDialog.OnTimeSetListener, DateP
 
         viewDataBinding.lifecycleOwner = this.viewLifecycleOwner
 
-        viewDataBinding.listener = object :
+        viewDataBinding.userActionlistener = object :
 
             TaskDetailUserActionsListener {
 
