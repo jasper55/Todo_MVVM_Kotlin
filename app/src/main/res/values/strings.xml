@@ -95,5 +95,6 @@
     <string name="local_db_empty">Couldn\'t load tasks from db. Db is empty!</string>
     <string name="no_tasks_on_local_db">no tasks found on local database</string>
     <string name="remote_db_empty">Couldn\'t load task from remote db. Db is empty!</string>
+    <string name="error_accessing_local_db">An error has occured while loading taks from your local db!</string>
 
 </resources>

@@ -60,21 +60,20 @@ class TasksFragment : Fragment() {
                     true
                 }
                 R.id.menu_save_to_remote -> {
-                    viewDataBinding.viewmodel?.saveDataToFirebase(viewDataBinding.viewmodel?.isInternetAvailable?.value!!)
+                    viewDataBinding.viewmodel?.saveDataToFirebase(false)
                     true
                 }
                 R.id.menu_save_to_local -> {
-                    viewDataBinding.viewmodel?.loadDataFromFirebaseDB()
+                    viewDataBinding.viewmodel?.getTaskListFromFirebaseAndStoreToLocalDB()
                     true
                 }
                 R.id.menu_synchronize -> {
-                    viewDataBinding.viewmodel?.synchronizeDbs()
-                    viewDataBinding.viewmodel?.checkNetworkConnection(act)
-                    viewDataBinding.viewmodel?.checkUserStatus()
-                    if (viewDataBinding.viewmodel?.isInternetAvailable?.value!! && viewDataBinding.viewmodel?.userLoggedIn?.value!!) {
-                        viewDataBinding.viewmodel?.saveDataToFirebase(true)
-                        viewDataBinding.viewmodel?.loadDataFromFirebaseDB()
-                    }
+                    viewDataBinding.viewmodel?.syncDatabases(act)
+//                    viewDataBinding.viewmodel?.checkNetworkConnection(act)
+//                    viewDataBinding.viewmodel?.checkUserStatus()
+//                    if (viewDataBinding.viewmodel?.isInternetAvailable?.value!! && viewDataBinding.viewmodel?.userLoggedIn?.value!!) {
+//                        viewDataBinding.viewmodel?.saveDataToFirebase()
+//                    }
                     true
                 }
                 R.id.menu_delete_db_tasks -> {
@@ -121,7 +120,7 @@ class TasksFragment : Fragment() {
         viewmodel?.checkNetworkConnection(act)
         //runBlockingScope(viewmodel)
 //        viewmodel?.loadTasks(false)
-        viewmodel?.synchronizeDbs()
+        viewmodel?.syncDatabases(act)
         viewmodel?.setLoginStatus()
     }
 
@@ -137,8 +136,7 @@ class TasksFragment : Fragment() {
             withContext(ioDispatcher) {
                 coroutineScope {
                     launch { viewmodel?.loadTasks(false) }
-                    launch { viewmodel?.saveDataToFirebase(true) }
-                    launch { viewmodel?.loadDataFromFirebaseDB() }
+                    launch { viewmodel?.saveDataToFirebase(false) }
                 }
             }
         }
