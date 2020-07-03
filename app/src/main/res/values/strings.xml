@@ -67,8 +67,8 @@
     <string name="no_contact_hint">no contacts added yet</string>
     <string name="no_contact_permission">You don\'t have access to your contacts</string>
     <string name="synchronize">synchronize databases</string>
-    <string name="save_to_local">get tasks from remote db</string>
-    <string name="save_to_remote">get tasks from local db</string>
+    <string name="save_to_local">transfer tasks to local db</string>
+    <string name="save_to_remote">transfer tasks to remote db</string>
     <string name="delete_all_db_tasks">delete all tasks from local db</string>
     <string name="delete_all_remote_tasks">delete all tasks from remote db</string>
     <string name="clear_app_data">clear app data</string>
@@ -95,6 +95,6 @@
     <string name="local_db_empty">Couldn\'t load tasks from db. Db is empty!</string>
     <string name="no_tasks_on_local_db">no tasks found on local database</string>
     <string name="remote_db_empty">Couldn\'t load task from remote db. Db is empty!</string>
-    <string name="error_accessing_local_db">An error has occured while loading taks from your local db!</string>
+    <string name="error_accessing_local_db">An error has occurred while loading tasks from your local db!</string>
 
 </resources>

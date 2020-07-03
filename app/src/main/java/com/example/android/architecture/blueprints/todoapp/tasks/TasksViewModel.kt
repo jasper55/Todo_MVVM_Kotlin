@@ -251,14 +251,15 @@ class TasksViewModel(
                 val localTasks = tasksResult.data
                 val remoteTasks = getTasksFromRemoteDB(isInternetAvailable.value!!)
 
-                if (localTasks != remoteTasks) {
+                val listsAreEqual = localTasks.containsAll(remoteTasks) && remoteTasks.containsAll(localTasks)
+                if (!listsAreEqual && localTasks.isNullOrEmpty() && remoteTasks.isNullOrEmpty()) {
                     showDatabasesAreDifferentDialog(context)
                 }
 
                 if (localTasks.isNullOrEmpty()) {
                     showLoacalDBIsEmptyDialog(context)  // invokes loading tasks from remote db dialog
                 }
-                if (remoteTasks.isNotEmpty()) {
+                if (remoteTasks.isNullOrEmpty()) {
                     showRemoteDBIsEmptyDialog(context)
                 }
             } else {
@@ -311,7 +312,7 @@ class TasksViewModel(
     private fun showDatabasesAreDifferentDialog(context: Context) {
         val builder = AlertDialog.Builder(context)
 
-        builder.setTitle("Syncing Process")
+        builder.setTitle("Syncing Process...")
         builder.setMessage("Differences between local and remote database detected. " +
             "\n" +
             "\n" +
@@ -456,7 +457,7 @@ class TasksViewModel(
                 val firebaseCallback = object : FirebaseCallback {
                     override fun onCallback(todoList: List<Task>) {
 
-                        if (items.value.isNullOrEmpty()) {
+                        if (todoList.isNullOrEmpty()) {
                             showErrorMessage(application.getString(R.string.remote_db_empty))
                         } else {
                             _items.value = todoList
@@ -504,10 +505,6 @@ class TasksViewModel(
             }
         }
         return returnedTaskList
-    }
-
-    fun loadDataFromFirebaseDB() {
-
     }
 
     fun deleteAllTasksFromLocalDB() {
