@@ -5,12 +5,16 @@ import android.os.Bundle
 import android.view.ViewGroup
 import android.view.LayoutInflater
 import android.view.View
+import android.view.animation.AnimationUtils
+import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import com.example.android.architecture.blueprints.todoapp.EventObserver
 import com.example.android.architecture.blueprints.todoapp.R
 import com.example.android.architecture.blueprints.todoapp.databinding.LoginFragmentBinding
 import com.example.android.architecture.blueprints.todoapp.tasks.TasksActivity
+import com.example.android.architecture.blueprints.todoapp.util.onTextChanged
 import com.example.android.architecture.blueprints.todoapp.util.obtainViewModel
 import com.example.android.architecture.blueprints.todoapp.util.setupDismissableSnackbar
 import com.example.android.architecture.blueprints.todoapp.util.setupSnackbar
@@ -55,7 +59,62 @@ class LoginFragment : Fragment() {
         setupSnackbar(Snackbar.LENGTH_SHORT)
         //setupSnackbarMessage()
         setupDismissableSnackbar()
+        checkIfInternetAvailable()
         checkIfUserIsAlreadyLoggedIn()
+        listenForLoginFieldChanges()
+        listenForLoginResponse()
+    }
+
+    private fun listenForLoginResponse() {
+        viewModel.loginIsIdle.observe(this, Observer {
+            if (it) {
+                hideUIAndShowProgressBar()
+            } else {
+                hideProgressBar()
+            }
+        })
+
+    }
+
+    private fun hideUIAndShowProgressBar() {
+        viewDataBinding.apply {
+            errorPrompt.visibility = View.GONE
+            loginEmail.visibility = View.GONE
+            loginPassword.visibility = View.GONE
+            loginRememberMe.visibility = View.GONE
+            loginStayLoggedIn.visibility = View.GONE
+            loginResponseProgressBar.visibility = View.VISIBLE
+        }
+    }
+
+    private fun hideProgressBar() {
+        viewDataBinding.apply {
+            errorPrompt.visibility = View.VISIBLE
+            loginEmail.visibility = View.VISIBLE
+            loginPassword.visibility = View.VISIBLE
+            loginRememberMe.visibility = View.VISIBLE
+            loginStayLoggedIn.visibility = View.VISIBLE
+            loginResponseProgressBar.visibility = View.GONE
+        }
+    }
+
+    private fun listenForLoginFieldChanges() {
+        viewModel.areLoginInFieldCorrect.observe(this, Observer {
+            if (it == false) {
+                viewDataBinding.errorPrompt.text = viewModel.loginErrorMessage.value
+                viewDataBinding.errorPrompt.visibility = View.VISIBLE
+                viewDataBinding.errorPrompt.startAnimation(AnimationUtils.loadAnimation(context,R.anim.shake))
+            } else {
+                viewDataBinding.errorPrompt.visibility = View.GONE
+            }
+        })
+
+        viewDataBinding.loginEmail.onTextChanged {
+            viewDataBinding.errorPrompt.visibility = View.GONE
+        }
+        viewDataBinding.loginPassword.onTextChanged {
+            viewDataBinding.errorPrompt.visibility = View.GONE
+        }
     }
 
     private fun getUserId(): String {
@@ -115,16 +174,25 @@ class LoginFragment : Fragment() {
         }
     }
 
+    private fun checkIfInternetAvailable() {
+        if (!viewDataBinding.viewmodel!!.checkNetworkConnection(activity as AppCompatActivity))
+            navigateToTaskActivity()
+    }
+
     private fun checkIfUserIsAlreadyLoggedIn() {
         val auth = FirebaseAuth.getInstance()
 
         if (auth.currentUser != null) {
-            val action = LoginFragmentDirections.actionLoginFragmentToTasksFragment()
-            val intent = Intent(context, TasksActivity::class.java)
-            startActivity(intent)
-            findNavController().navigate(action)
+            navigateToTaskActivity()
         } else {
             return
         }
+    }
+
+    private fun navigateToTaskActivity() {
+        val action = LoginFragmentDirections.actionLoginFragmentToTasksFragment()
+        val intent = Intent(context, TasksActivity::class.java)
+        startActivity(intent)
+        findNavController().navigate(action)
     }
 }

@@ -32,6 +32,7 @@ import android.app.Application
 import android.app.PendingIntent
 import android.content.Intent
 import android.util.Log
+import androidx.appcompat.app.AlertDialog
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.*
 import java.io.File
@@ -46,8 +47,8 @@ import java.io.File
  * getter method.
  */
 class TasksViewModel(
-        private val tasksRepository: TasksLocalDataSource,
-        private val application: Application
+    private val tasksRepository: TasksLocalDataSource,
+    private val application: Application
 ) : ViewModel() {
 
     val _items = MutableLiveData<List<Task>>().apply { value = emptyList() }
@@ -83,9 +84,6 @@ class TasksViewModel(
     private var _currentFiltering = TasksFilterType.ACTIVE_TASKS
 
     private var _currentSorting = TasksFilterType.SORT_BY.DUE_DATE
-
-    // Not used at the moment
-    private val isDataLoadingError = MutableLiveData<Boolean>()
 
     private val _openTaskEvent = MutableLiveData<Event<Int>>()
     val openTaskEvent: LiveData<Event<Int>> = _openTaskEvent
@@ -128,33 +126,33 @@ class TasksViewModel(
         when (requestType) {
             TasksFilterType.ALL_TASKS -> {
                 setFilter(R.string.label_all, R.string.no_tasks_all,
-                        R.drawable.logo_no_fill, true)
+                    R.drawable.logo_no_fill, true)
             }
             TasksFilterType.ACTIVE_TASKS -> {
                 setFilter(R.string.label_active, R.string.no_tasks_active,
-                        R.drawable.ic_check_circle_96dp, false)
+                    R.drawable.ic_check_circle_96dp, false)
             }
             TasksFilterType.COMPLETED_TASKS -> {
                 setFilter(R.string.label_completed, R.string.no_tasks_completed,
-                        R.drawable.ic_verified_user_96dp, false)
+                    R.drawable.ic_verified_user_96dp, false)
             }
             TasksFilterType.FAVORITE_TASKS -> {
                 setFilter(R.string.label_favorite, R.string.no_favorite_tasks,
-                        R.drawable.ic_verified_user_96dp, true)
+                    R.drawable.ic_verified_user_96dp, true)
             }
             TasksFilterType.SORT -> {
                 when (_currentSorting) {
                     TasksFilterType.SORT_BY.DUE_DATE -> {
                         setFilter(R.string.label_sorted_date, R.string.sorted_tasks,
-                                R.drawable.ic_verified_user_96dp, true)
+                            R.drawable.ic_verified_user_96dp, true)
                     }
                     TasksFilterType.SORT_BY.NAME -> {
                         setFilter(R.string.label_sorted_name, R.string.sorted_tasks,
-                                R.drawable.ic_verified_user_96dp, true)
+                            R.drawable.ic_verified_user_96dp, true)
                     }
                     TasksFilterType.SORT_BY.ID -> {
                         setFilter(R.string.label_sorted_id, R.string.sorted_tasks,
-                                R.drawable.ic_verified_user_96dp, true)
+                            R.drawable.ic_verified_user_96dp, true)
                     }
                 }
             }
@@ -218,13 +216,13 @@ class TasksViewModel(
     fun showEditResultMessage(result: Int) {
         when (result) {
             EDIT_RESULT_OK -> _snackbarText.setValue(
-                    Event(R.string.successfully_saved_task_message)
+                Event(R.string.successfully_saved_task_message)
             )
             ADD_EDIT_RESULT_OK -> _snackbarText.setValue(
-                    Event(R.string.successfully_added_task_message)
+                Event(R.string.successfully_added_task_message)
             )
             DELETE_RESULT_OK -> _snackbarText.setValue(
-                    Event(R.string.successfully_deleted_task_message)
+                Event(R.string.successfully_deleted_task_message)
             )
         }
 
@@ -242,12 +240,118 @@ class TasksViewModel(
      * @param forceUpdate   Pass in true to refresh the data in the [TasksDataSource]
      * @param showLoadingUI Pass in true to display a loading icon in the UI
      */
+
+    fun syncDatabases(context: Context) {
+        _dataLoading.value = true
+        EspressoIdlingResource.increment() // Set app as busy.
+        viewModelScope.launch {
+            val tasksResult = tasksRepository.getTasks()
+
+            if (tasksResult is Success) {
+                val localTasks = tasksResult.data
+                val remoteTasks = getTasksFromRemoteDB(isInternetAvailable.value!!)
+
+                val listsAreEqual = localTasks.containsAll(remoteTasks) && remoteTasks.containsAll(localTasks)
+                if (!listsAreEqual && localTasks.isNullOrEmpty() && remoteTasks.isNullOrEmpty()) {
+                    showDatabasesAreDifferentDialog(context)
+                }
+
+                if (localTasks.isNullOrEmpty()) {
+                    showLoacalDBIsEmptyDialog(context)  // invokes loading tasks from remote db dialog
+                }
+                if (remoteTasks.isNullOrEmpty()) {
+                    showRemoteDBIsEmptyDialog(context)
+                }
+            } else {
+                _errorMessageEvent.value = Event(context.getString(R.string.error_accessing_local_db))
+                showCheckRemoteDBDialog(context)
+//                _items.value = emptyList()
+//                _snackbarText.value = Event(R.string.local_db_empty)
+            }
+
+            loadTasks(false)
+            _dataLoading.value = false
+            EspressoIdlingResource.decrement() // Set app as idle.
+        }
+
+    }
+
+
+    private fun showLoacalDBIsEmptyDialog(context: Context) {
+        val builder = AlertDialog.Builder(context)
+
+        builder.setTitle("Syncing Process")
+        builder.setMessage("Your local db is empty. \n" +
+            "do you want to load tasks from your remote db?")
+
+        builder.setPositiveButton("YES") { dialog, which ->
+            getTaskListFromFirebaseAndStoreToLocalDB()
+        }
+        builder.setNegativeButton("No") { dialog, which ->
+            return@setNegativeButton
+        }
+        val dialog: AlertDialog = builder.create()
+        dialog.show()
+    }
+
+    private fun showRemoteDBIsEmptyDialog(context: Context) {
+        val builder = AlertDialog.Builder(context)
+
+        builder.setTitle("Syncing Process")
+        builder.setMessage("Your remote database is empty, do you want to load tasks from your local db?")
+
+        builder.setPositiveButton("YES") { dialog, which ->
+            saveDataToFirebase(isSyncing = true)
+        }
+        builder.setNegativeButton("No") { dialog, which ->
+            return@setNegativeButton
+        }
+        val dialog: AlertDialog = builder.create()
+        dialog.show()
+    }
+
+    private fun showDatabasesAreDifferentDialog(context: Context) {
+        val builder = AlertDialog.Builder(context)
+
+        builder.setTitle("Syncing Process...")
+        builder.setMessage("Differences between local and remote database detected. " +
+            "\n" +
+            "\n" +
+            "Do you want sync databases and which database should be updated?")
+
+        builder.setPositiveButton("REMOTE") { dialog, which ->
+            getTaskListFromFirebaseAndStoreToLocalDB()
+        }
+        builder.setNegativeButton("LOCAL") { dialog, which ->
+            return@setNegativeButton
+        }
+        builder.setNeutralButton("Cancel") { dialog, which ->
+            return@setNeutralButton
+        }
+        val dialog: AlertDialog = builder.create()
+        dialog.show()
+    }
+
+    private fun showCheckRemoteDBDialog(context: Context) {
+        val builder = AlertDialog.Builder(context)
+
+        builder.setTitle("Syncing Process")
+        builder.setMessage("Do you want to load tasks from your remote db?")
+
+        builder.setPositiveButton("YES") { dialog, which ->
+            getTaskListFromFirebaseAndStoreToLocalDB()
+        }
+        builder.setNegativeButton("No") { dialog, which ->
+            return@setNegativeButton
+        }
+        val dialog: AlertDialog = builder.create()
+        dialog.show()
+    }
+
     fun loadTasks(forceUpdate: Boolean) {
 
         _dataLoading.value = true
 
-        // Espresso does not work well with coroutines yet. See
-        // https://github.com/Kotlin/kotlinx.coroutines/issues/982
         EspressoIdlingResource.increment() // Set app as busy.
 
         viewModelScope.launch {
@@ -257,6 +361,11 @@ class TasksViewModel(
                 val tasks = tasksResult.data
                 val tasksToShow = ArrayList<Task>()
                 var sortedList = tasks
+
+//                if (tasks.isNullOrEmpty()) {
+//                    _snackbarText.value = Event(R.string.no_tasks_on_local_db)
+//                    loadDataFromFirebaseDB()
+//                } else {
 
                 // We filter the tasks based on the requestType
                 when (_currentFiltering) {
@@ -294,13 +403,12 @@ class TasksViewModel(
                         }
                     }
                 }
-                isDataLoadingError.value = false
                 _items.value = ArrayList(tasksToShow)
                 Timber.i("Tasks loaded from local db")
+//                }
             } else {
-                isDataLoadingError.value = false
                 _items.value = emptyList()
-                _snackbarText.value = Event(R.string.loading_tasks_error)
+                _snackbarText.value = Event(R.string.local_db_empty)
             }
 
             _dataLoading.value = false
@@ -309,50 +417,62 @@ class TasksViewModel(
 
     }
 
-    fun saveDataToFirebase(isConnected: Boolean) = viewModelScope.launch {
-        if (items.value == emptyList<Task>()) {
-            return@launch
-        }
+    fun saveDataToFirebase(isSyncing: Boolean) = viewModelScope.launch {
+        val isConnected = isInternetAvailable.value!!
         if (!isConnected) {
             showNoInternetConnection()
             return@launch
         }
+        if (items.value == emptyList<Task>() && isConnected) {
+            _snackbarText.value = Event(R.string.tasks_saved_to_remote_db)
+
+            showErrorMessage(application.getString(R.string.local_db_empty))
+            return@launch
+        }
 
         firebaseHelper.deleteAllTasks()
-        firebaseHelper.saveToDatabase(items?.value!!)
-        _snackbarText.value = Event(R.string.tasks_saved_to_remote_db)
+        firebaseHelper.saveToDatabase(items.value!!)
+        if (isSyncing) {
+            _snackbarText.value = Event(R.string.remote_tasks_successfully_synced)
+        } else {
+            _snackbarText.value = Event(R.string.tasks_saved_to_remote_db)
+        }
 //            EspressoIdlingResource.decrement() // Set app as idle.
     }
 
 
     fun checkNetworkConnection(activity: AppCompatActivity) {
         _isInternetAvailable.value =
-                (activity.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager)
-                        .activeNetworkInfo?.isConnected == true
+            (activity.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager)
+                .activeNetworkInfo?.isConnected == true
         if (!isInternetAvailable.value!!) {
             showNoInternetConnection()
         }
     }
 
-    private fun getTaskListFromFirebase(connected: Boolean) {
+    fun getTaskListFromFirebaseAndStoreToLocalDB() {
+        val connected = isInternetAvailable.value!!
         viewModelScope.launch {
             if (connected) {
                 EspressoIdlingResource.increment() // Set app as busy.
                 val firebaseCallback = object : FirebaseCallback {
                     override fun onCallback(todoList: List<Task>) {
-                        _items.value = todoList
-                        viewModelScope.launch {
-                            items.value?.forEach {
-                                tasksRepository.saveTask(it)
+
+                        if (todoList.isNullOrEmpty()) {
+                            showErrorMessage(application.getString(R.string.remote_db_empty))
+                        } else {
+                            _items.value = todoList
+                            _snackbarText.value = Event(R.string.tasks_retrieved_from_remote_db)
+                            viewModelScope.launch {
+                                tasksRepository.deleteAllTasks()
+                                items.value?.forEach {
+                                    tasksRepository.saveTask(it)
+                                }
                             }
                         }
                     }
                 }
                 firebaseHelper.readTasks(firebaseCallback)
-                if (items.value == emptyList<Task>())
-                else
-                    _snackbarText.value = Event(R.string.tasks_retrieved_from_remote_db)
-
                 EspressoIdlingResource.decrement() // Set app as idle.
 
             } else {
@@ -362,18 +482,44 @@ class TasksViewModel(
         }
     }
 
-    fun loadDataFromFBIfAvailable() {
-        if (items?.value == emptyList<Task>()) {
-            getTaskListFromFirebase(isInternetAvailable.value!!)
+    private fun getTasksFromRemoteDB(connected: Boolean): List<Task> {
+        var returnedTaskList: List<Task> = emptyList()
+        viewModelScope.launch {
+            if (connected) {
+                EspressoIdlingResource.increment() // Set app as busy.
+                val firebaseCallback = object : FirebaseCallback {
+                    override fun onCallback(todoList: List<Task>) {
+
+                        if (!items.value.isNullOrEmpty()) {
+                            returnedTaskList = todoList
+                            _snackbarText.value = Event(R.string.tasks_retrieved_from_remote_db)
+//                            viewModelScope.launch {
+//                                items.value?.forEach {
+//                                    tasksRepository.saveTask(it)
+//                                }
+//                            }
+                        }
+                    }
+                }
+                firebaseHelper.readTasks(firebaseCallback)
+                EspressoIdlingResource.decrement() // Set app as idle.
+            }
+        }
+        return returnedTaskList
+    }
+
+    fun deleteAllTasksFromLocalDB() {
+        viewModelScope.launch {
+            tasksRepository.deleteAllTasks()
+            _snackbarText.value = Event(R.string.all_local_tasks_deleted)
+            loadTasks(false)
         }
     }
 
-    fun deleteAllTasks() {
+    fun deleteAllTasksFromRemoteDB() {
         viewModelScope.launch {
-            tasksRepository.deleteAllTasks()
             firebaseHelper.deleteAllTasks()
-            _snackbarText.value = Event(R.string.all_tasks_deleted)
-            loadTasks(false)
+            _snackbarText.value = Event(R.string.all_remote_tasks_deleted)
         }
     }
 
@@ -408,7 +554,8 @@ class TasksViewModel(
                 }
             }
         }
-        deleteAllTasks()
+        deleteAllTasksFromLocalDB()
+        deleteAllTasksFromRemoteDB()
         //restartApp()
     }
 
@@ -457,7 +604,7 @@ class TasksViewModel(
     }
 
     fun checkUserStatus() {
-        if (userAuth.currentUser == null){
+        if (userAuth.currentUser == null) {
             _userLoggedIn.value = false
             showErrorMessage(application.getString(R.string.synchronization_failed))
         }
@@ -477,5 +624,4 @@ class TasksViewModel(
         val sortedList = tasks.sortedBy { it.id }
         return sortedList
     }
-
 }

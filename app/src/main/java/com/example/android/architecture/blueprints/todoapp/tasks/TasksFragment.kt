@@ -35,6 +35,7 @@ class TasksFragment : Fragment() {
     private lateinit var viewDataBinding: TasksFragBinding
     private lateinit var listAdapter: TasksAdapter
     private lateinit var act: AppCompatActivity
+    private var firstStart = true
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
@@ -46,48 +47,59 @@ class TasksFragment : Fragment() {
     }
 
     override fun onOptionsItemSelected(item: MenuItem) =
-            when (item.itemId) {
-                R.id.menu_clear -> {
-                    viewDataBinding.viewmodel?.clearCompletedTasks()
-                    true
-                }
-                R.id.menu_filter -> {
-                    showFilteringPopUpMenu()
-                    true
-                }
-                R.id.menu_refresh -> {
-                    viewDataBinding.viewmodel?.loadTasks(true)
-                    true
-                }
-                R.id.menu_synchronize -> {
-                    viewDataBinding.viewmodel?.checkNetworkConnection(act)
-                    viewDataBinding.viewmodel?.checkUserStatus()
-                    if (viewDataBinding.viewmodel?.isInternetAvailable?.value!! && viewDataBinding.viewmodel?.userLoggedIn?.value!!) {
-                        viewDataBinding.viewmodel?.saveDataToFirebase(true)
-                        viewDataBinding.viewmodel?.loadDataFromFBIfAvailable()
-                    }
-                    true
-                }
-                R.id.menu_delete -> {
-                    viewDataBinding.viewmodel?.deleteAllTasks()
-                    true
-                }
-                R.id.menu_clear_app_data -> {
-                    viewDataBinding.viewmodel?.clearAppData(act)
-                    viewDataBinding.viewmodel?.saveDataToFirebase(viewDataBinding.viewmodel?.isInternetAvailable?.value!!)
-                    true
-                }
-                R.id.menu_log_in -> {
-                    viewDataBinding.viewmodel?.navigateToLoginFrag()
-                    true
-                }
-                R.id.menu_log_out -> {
-                    viewDataBinding.viewmodel?.logout()
-                    true
-                }
-
-                else -> false
+        when (item.itemId) {
+            R.id.menu_clear -> {
+                viewDataBinding.viewmodel?.clearCompletedTasks()
+                true
             }
+            R.id.menu_filter -> {
+                showFilteringPopUpMenu()
+                true
+            }
+            R.id.menu_refresh -> {
+                viewDataBinding.viewmodel?.loadTasks(true)
+                true
+            }
+            R.id.menu_save_to_remote -> {
+                viewDataBinding.viewmodel?.saveDataToFirebase(false)
+                true
+            }
+            R.id.menu_save_to_local -> {
+                viewDataBinding.viewmodel?.getTaskListFromFirebaseAndStoreToLocalDB()
+                true
+            }
+            R.id.menu_synchronize -> {
+                viewDataBinding.viewmodel?.syncDatabases(act)
+//                    viewDataBinding.viewmodel?.checkNetworkConnection(act)
+//                    viewDataBinding.viewmodel?.checkUserStatus()
+//                    if (viewDataBinding.viewmodel?.isInternetAvailable?.value!! && viewDataBinding.viewmodel?.userLoggedIn?.value!!) {
+//                        viewDataBinding.viewmodel?.saveDataToFirebase()
+//                    }
+                true
+            }
+            R.id.menu_delete_db_tasks -> {
+                viewDataBinding.viewmodel?.deleteAllTasksFromLocalDB()
+                true
+            }
+            R.id.menu_delete_remote_tasks -> {
+                viewDataBinding.viewmodel?.deleteAllTasksFromRemoteDB()
+                true
+            }
+            R.id.menu_clear_app_data -> {
+                viewDataBinding.viewmodel?.clearAppData(act)
+                true
+            }
+            R.id.menu_log_in -> {
+                viewDataBinding.viewmodel?.navigateToLoginFrag()
+                true
+            }
+            R.id.menu_log_out -> {
+                viewDataBinding.viewmodel?.logout()
+                true
+            }
+
+            else -> false
+        }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         inflater.inflate(R.menu.tasks_fragment_menu, menu)
@@ -108,8 +120,21 @@ class TasksFragment : Fragment() {
         setupFab()
         viewmodel?.checkNetworkConnection(act)
         //runBlockingScope(viewmodel)
-        viewmodel?.loadTasks(false)
+//        viewmodel?.loadTasks(false)
+        if (firstStart) {
+            viewmodel?.syncDatabases(act)
+            firstStart = false
+        }
         viewmodel?.setLoginStatus()
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+    }
+
+    override fun onResume() {
+        super.onResume()
+        viewDataBinding.viewmodel?.checkNetworkConnection(act)
     }
 
     private fun runBlockingScope(viewmodel: TasksViewModel?) {
@@ -119,8 +144,7 @@ class TasksFragment : Fragment() {
             withContext(ioDispatcher) {
                 coroutineScope {
                     launch { viewmodel?.loadTasks(false) }
-                    launch { viewmodel?.saveDataToFirebase(true) }
-                    launch { viewmodel?.loadDataFromFBIfAvailable() }
+                    launch { viewmodel?.saveDataToFirebase(false) }
                 }
             }
         }
@@ -172,13 +196,13 @@ class TasksFragment : Fragment() {
             setOnMenuItemClickListener {
                 viewDataBinding.viewmodel?.run {
                     setFiltering(
-                            when (it.itemId) {
-                                R.id.active -> TasksFilterType.ACTIVE_TASKS
-                                R.id.completed -> TasksFilterType.COMPLETED_TASKS
-                                R.id.favorite -> TasksFilterType.FAVORITE_TASKS
-                                R.id.sort -> TasksFilterType.SORT
-                                else -> TasksFilterType.ALL_TASKS
-                            }
+                        when (it.itemId) {
+                            R.id.active -> TasksFilterType.ACTIVE_TASKS
+                            R.id.completed -> TasksFilterType.COMPLETED_TASKS
+                            R.id.favorite -> TasksFilterType.FAVORITE_TASKS
+                            R.id.sort -> TasksFilterType.SORT
+                            else -> TasksFilterType.ALL_TASKS
+                        }
                     )
                     loadTasks(false)
                 }
@@ -198,8 +222,8 @@ class TasksFragment : Fragment() {
 
     private fun navigateToAddNewTask() {
         val action = TasksFragmentDirections
-                .actionTasksFragmentToAddEditTaskFragment(-1,
-                        resources.getString(R.string.add_task))
+            .actionTasksFragmentToAddEditTaskFragment(-1,
+                resources.getString(R.string.add_task))
         findNavController().navigate(action)
     }
 
@@ -227,9 +251,9 @@ class TasksFragment : Fragment() {
     private fun setupRefreshLayout() {
         viewDataBinding.refreshLayout.run {
             setColorSchemeColors(
-                    ContextCompat.getColor(requireActivity(), R.color.colorPrimary),
-                    ContextCompat.getColor(requireActivity(), R.color.colorAccent),
-                    ContextCompat.getColor(requireActivity(), R.color.colorPrimaryDark)
+                ContextCompat.getColor(requireActivity(), R.color.colorPrimary),
+                ContextCompat.getColor(requireActivity(), R.color.colorAccent),
+                ContextCompat.getColor(requireActivity(), R.color.colorPrimaryDark)
             )
             // Set the scrolling view in the custom SwipeRefreshLayout.
             scrollUpChild = viewDataBinding.tasksList

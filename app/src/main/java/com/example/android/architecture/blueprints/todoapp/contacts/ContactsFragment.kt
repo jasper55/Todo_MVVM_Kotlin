@@ -1,5 +1,6 @@
 package com.example.android.architecture.blueprints.todoapp.contacts
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -7,6 +8,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.example.android.architecture.blueprints.todoapp.R
 import com.example.android.architecture.blueprints.todoapp.databinding.ContactlistFragBinding
+import com.example.android.architecture.blueprints.todoapp.taskdetail.TaskDetailViewModel
 import com.example.android.architecture.blueprints.todoapp.util.obtainViewModel
 import com.example.android.architecture.blueprints.todoapp.util.setupDismissableSnackbar
 import com.google.android.material.snackbar.Snackbar
@@ -53,8 +55,8 @@ class ContactsFragment : Fragment() {
             listener = object :
 
                     ContactItemUserActionsListener {
-                override fun onSendEmailClicked(contactEmail: String) {
-                    viewmodel?.sendMailTo(contactEmail)
+                override fun onSendEmailClicked(contactEmail: String,title: String, message: String) {
+                    viewmodel?.sendMailTo(contactEmail,title, message)
                 }
 
                 override fun onContactDeleted(contact: Contact) {
@@ -70,6 +72,7 @@ class ContactsFragment : Fragment() {
 
         val viewModel = contactViewDataBinding.viewmodel
         if (viewModel != null) {
+//            listAdapter = ContactsAdapter(ArrayList(0), viewModel, taskDetailViewModel,this)
             listAdapter = ContactsAdapter(ArrayList(0), viewModel)
             contactViewDataBinding.contactListView.adapter = listAdapter
         } else {
@@ -88,4 +91,16 @@ class ContactsFragment : Fragment() {
         if (bundle != null) {
             taskId = bundle.getInt("taskId") }
     }
+
+//    override fun onContactDeleted(contact: Contact) {
+//        TODO("Not yet implemented")
+//    }
+//
+//    override fun onSendEmailClicked(email: String, title: String, message: String) {
+//        val emailIntent = Intent(Intent.ACTION_SEND)
+//        emailIntent.putExtra(Intent.EXTRA_EMAIL, arrayOf<String>(email))
+//        emailIntent.type = "message/rfc822"
+//
+//        startActivity(Intent.createChooser(emailIntent, "Choose an Email client :"))
+//    }
 }

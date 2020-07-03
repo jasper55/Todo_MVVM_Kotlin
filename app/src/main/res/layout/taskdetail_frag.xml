@@ -31,7 +31,7 @@
         <!--type="com.example.android.architecture.blueprints.todoapp.contacts.ContactsViewModel" />-->
 
         <variable
-            name="listener"
+            name="userActionlistener"
             type="com.example.android.architecture.blueprints.todoapp.taskdetail.TaskDetailUserActionsListener" />
     </data>
 
@@ -122,8 +122,8 @@
                                     android:layout_gravity="center_vertical"
                                     android:layout_marginRight="3dp"
                                     android:layout_weight="1"
-                                    android:checked="@{viewmodel.completed}"
-                                    android:onClick="@{(view) -> listener.onCompleteChanged(view)}" />
+                                    android:checked="@{viewmodel.task.completed}"
+                                    android:onClick="@{(view) -> userActionlistener.onCompleteChanged(view)}" />
 
                                 <CheckBox
                                     android:id="@+id/task_detail_favorite"
@@ -132,9 +132,9 @@
                                     android:layout_gravity="center_vertical"
                                     android:layout_weight="1"
                                     android:button="@android:drawable/btn_star"
-                                    android:checked="@{viewmodel.favorite}"
+                                    android:checked="@{viewmodel.task.favorite}"
                                     android:gravity="end"
-                                    android:onClick="@{(view) -> listener.onFavoriteChanged(view)}" />
+                                    android:onClick="@{(view) -> userActionlistener.onFavoriteChanged(view)}" />
                             </LinearLayout>
 
                             <TextView
@@ -199,7 +199,7 @@
                                 android:layout_height="wrap_content"
                                 android:layout_below="@id/task_due_date_header"
                                 android:hint="@string/due_date_hint"
-                                android:onClick="@{(view) -> listener.onDueDateChanged(view)}"
+                                android:onClick="@{(view) -> userActionlistener.onDueDateChanged(view)}"
                                 android:paddingTop="1dp"
                                 android:text="@{viewmodel.dueDate}"
                                 android:textAppearance="?android:attr/textAppearanceMedium" />
@@ -220,7 +220,7 @@
                                 android:layout_height="wrap_content"
                                 android:layout_below="@id/task_time_header"
                                 android:hint="@string/time_hint"
-                                android:onClick="@{(view) -> listener.onTimeChanged(view)}"
+                                android:onClick="@{(view) -> userActionlistener.onTimeChanged(view)}"
                                 android:paddingTop="0.5dp"
                                 android:text="@{viewmodel.time}"
                                 android:textAppearance="?android:attr/textAppearanceMedium" />
@@ -267,7 +267,7 @@
                                 android:background="@drawable/ic_add"
                                 android:backgroundTint="@color/colorGrey"
                                 android:gravity="end"
-                                android:onClick="@{(view) -> listener.onAddContactClicked(view)}" />
+                                android:onClick="@{(view) -> userActionlistener.onAddContactClicked(view)}" />
 
                             <!--android:scaleType="centerInside"-->
                         </LinearLayout>

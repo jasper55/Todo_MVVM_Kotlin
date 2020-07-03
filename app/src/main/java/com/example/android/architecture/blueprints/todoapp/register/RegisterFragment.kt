@@ -1,23 +1,25 @@
 package com.example.android.architecture.blueprints.todoapp.register
 
 
+import android.app.Activity
+import android.content.Context
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.animation.AnimationUtils
+import android.view.inputmethod.InputMethodManager
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.example.android.architecture.blueprints.todoapp.EventObserver
 import com.example.android.architecture.blueprints.todoapp.R
 import com.example.android.architecture.blueprints.todoapp.databinding.RegisterFragmentBinding
-import com.example.android.architecture.blueprints.todoapp.login.LoginFragment
-import com.example.android.architecture.blueprints.todoapp.login.LoginFragmentArgs
-import com.example.android.architecture.blueprints.todoapp.tasks.TasksFragmentArgs
 import com.example.android.architecture.blueprints.todoapp.util.obtainViewModel
+import com.example.android.architecture.blueprints.todoapp.util.onTextChanged
 import com.example.android.architecture.blueprints.todoapp.util.setupDismissableSnackbar
 import com.example.android.architecture.blueprints.todoapp.util.setupSnackbar
 import com.google.android.material.snackbar.Snackbar
+
 
 class RegisterFragment : Fragment() {
 
@@ -55,12 +57,35 @@ class RegisterFragment : Fragment() {
         setupNavigation()
         setupSnackbar(Snackbar.LENGTH_SHORT)
         setupDismissableSnackbar()
+        listenForPasswordFieldChanges()
     }
 
     private fun getUserId(): String? {
         return arguments?.let {
             RegisterFragmentArgs.fromBundle(it).USERID
         }
+    }
+
+    private fun listenForPasswordFieldChanges() {
+        viewDataBinding.inputPassword.onTextChanged {
+            if (!isInteger(it)) {
+                hideKeyboard(context!!)
+                viewDataBinding.inputPassword.text.dropLast(1)
+                viewDataBinding.errorPrompt.text = "Only numbers are allowed for your password"
+                viewDataBinding.errorPrompt.visibility = View.VISIBLE
+                viewDataBinding.errorPrompt.startAnimation(AnimationUtils.loadAnimation(context,R.anim.shake))
+            } else {
+                viewDataBinding.errorPrompt.visibility = View.GONE
+            }
+        }
+    }
+
+    private fun isInteger(str: String?) = str?.toIntOrNull()?.let { true } ?: false
+
+    private fun hideKeyboard(context: Context) {
+        val view: View = this.view!!.findFocus()
+        val imm: InputMethodManager = context.getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
+        imm.hideSoftInputFromWindow(view.windowToken, 0)
     }
 
     private fun saveUserUidToBundle(userUid: String) {
@@ -72,8 +97,19 @@ class RegisterFragment : Fragment() {
 
     private fun setupNavigation() {
         viewDataBinding.viewmodel?.openLoginEvent?.observe(this, EventObserver {
-            navigateToLogin(it)
+            if(isPasswordLength6()) {
+                navigateToLogin(it)
+            } else {
+                viewDataBinding.errorPrompt.visibility = View.VISIBLE
+                viewDataBinding.errorPrompt.text = "Your password must consist of 6 numbers"
+                return@EventObserver
+            }
+
         })
+    }
+
+    private fun isPasswordLength6(): Boolean {
+        return viewDataBinding.inputPassword.length() == 6
     }
 
 

@@ -2,6 +2,8 @@ package com.example.android.architecture.blueprints.todoapp.contacts
 
 import android.app.Application
 import android.content.Context
+import android.content.Intent
+import androidx.core.content.ContextCompat.startActivity
 import androidx.lifecycle.*
 import com.example.android.architecture.blueprints.todoapp.Event
 import com.example.android.architecture.blueprints.todoapp.data.Result
@@ -90,7 +92,7 @@ class ContactsViewModel(
                 if (contactIdString == ""){
                     isDataLoadingError.value = false
                     _items.value = emptyList()
-                    showErrorMessage(getApplication<Application>().getString(R.string.loading_tasks_error))
+//                    showErrorMessage(getApplication<Application>().getString(R.string.loading_tasks_error))
                 } else {
                 isDataLoadingError.value = false
                 _items.value = ArrayList(contactList) }
@@ -105,7 +107,15 @@ class ContactsViewModel(
         }
     }
 
-    fun sendMailTo(contactEmail: String) {
+    fun sendMailTo(contactEmail: String,title: String, message: String) {
+        showErrorMessage(getApplication<Application>().getString(R.string.loading_tasks_error))
+
+        val emailIntent = Intent(Intent.ACTION_SEND)
+        emailIntent.putExtra(Intent.EXTRA_EMAIL, arrayOf<String>(contactEmail))
+        emailIntent.type = "message/rfc822"
+
+
+        getApplication<Application>().baseContext.startActivity(Intent.createChooser(emailIntent, "Choose an Email client :"))
 
     }
 }

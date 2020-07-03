@@ -11,6 +11,10 @@
             type="com.example.android.architecture.blueprints.todoapp.contacts.Contact" />
 
         <variable
+            name="task"
+            type="com.example.android.architecture.blueprints.todoapp.data.Task" />
+
+        <variable
             name="listener"
             type="com.example.android.architecture.blueprints.todoapp.contacts.ContactItemUserActionsListener" />
     </data>
@@ -41,7 +45,7 @@
             android:background="@android:color/transparent"
             android:layout_weight="1"
             android:gravity="end"
-            android:onClick="@{(view) -> listener.onSendEmailClicked(contact.contactEmail)}"
+            android:onClick="@{(view) -> listener.onSendEmailClicked(contact.contactEmail,task.title,task.description)}"
             app:srcCompat="@android:drawable/ic_dialog_email" />
 
         <ImageButton

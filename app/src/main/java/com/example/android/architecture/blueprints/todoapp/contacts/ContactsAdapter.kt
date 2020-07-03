@@ -6,10 +6,14 @@ import android.view.ViewGroup
 import android.widget.BaseAdapter
 import androidx.databinding.DataBindingUtil
 import com.example.android.architecture.blueprints.todoapp.databinding.ContactItemBinding
+import com.example.android.architecture.blueprints.todoapp.taskdetail.TaskDetailViewModel
 
 class ContactsAdapter(
         private var contacts: List<Contact>,
         private val viewModel: ContactsViewModel
+//    private val listener: ContactItemUserActionsListener
+//        private val taskDetailViewModel: TaskDetailViewModel
+//        private val onSendEmailClickedListener: OnSendEmailClickedListener
 ) : BaseAdapter() {
 
     fun replaceData(contacts: List<Contact>) {
@@ -40,8 +44,15 @@ class ContactsAdapter(
                 viewModel.deleteContact(contact)
             }
 
-            override fun onSendEmailClicked(contactEmail: String) {
-                viewModel.sendMailTo(contactEmail)
+            override fun onSendEmailClicked(contactEmail: String,title: String, message: String) {
+                // viewModel.sendMailTo(contactEmail)
+                viewModel.sendMailTo(contactEmail,title,message)
+//                viewModel.sendMailTo(contactEmail,title,message)
+//                taskDetailViewModel.apply {
+//                    val title = task.value!!.title
+//                    val message = task.value!!.description
+//                        onSendEmailClickedListener.onSendEmailClicked(contactEmail,title,message)
+//                }
             }
         }
 
@@ -59,4 +70,10 @@ class ContactsAdapter(
         this.contacts = contacts
         notifyDataSetChanged()
     }
+
+
+//    interface OnSendEmailClickedListener {
+//
+//        fun onSendEmailClicked(email: String,title: String, message: String)
+//    }
 }
