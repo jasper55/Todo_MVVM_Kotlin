@@ -26,19 +26,19 @@ class TaskDetailViewModel(
         application: Application
 ) : AndroidViewModel(application) {
 
-    val _task = MutableLiveData<Task>()
+    private val _task = MutableLiveData<Task>()
     val task: LiveData<Task> = _task
 
-    var _dueDate = MutableLiveData<String>()
+    private var _dueDate = MutableLiveData<String>()
     var dueDate: LiveData<String> = _dueDate
 
-    var _time = MutableLiveData<String>()
+    private var _time = MutableLiveData<String>()
     var time: LiveData<String> = _time
 
-    var _contactIdString = MutableLiveData<String>()
+    private var _contactIdString = MutableLiveData<String>()
     var contactIdString: LiveData<String> = _contactIdString
 
-    var _contactPermissionGranted = MutableLiveData<Boolean>()
+    private var _contactPermissionGranted = MutableLiveData<Boolean>()
     var contactPermissionGranted: LiveData<Boolean> = _contactPermissionGranted
 
     private val _isDataAvailable = MutableLiveData<Boolean>()
@@ -59,14 +59,14 @@ class TaskDetailViewModel(
     private val _errorMessageEvent = MutableLiveData<Event<String>>()
     val errorMessageEvent: LiveData<Event<String>> = _errorMessageEvent
 
-    // This LiveData depends on another so we can use a transformation.
-    val completed: LiveData<Boolean> = Transformations.map(_task) { input: Task? ->
-        input?.isCompleted ?: false
-    }
-
-    val favorite: LiveData<Boolean> = Transformations.map(_task) { input: Task? ->
-        input?.isFavorite ?: false
-    }
+//    // This LiveData depends on another so we can use a transformation.
+//    val completed: LiveData<Boolean> = Transformations.map(_task) { input: Task? ->
+//        input?.isCompleted ?: false
+//    }
+//
+//    val favorite: LiveData<Boolean> = Transformations.map(_task) { input: Task? ->
+//        input?.isFavorite ?: false
+//    }
 
     val taskId: Int?
         get() = _task.value?.id
@@ -83,6 +83,8 @@ class TaskDetailViewModel(
     }
 
     fun setCompleted(completed: Boolean) = viewModelScope.launch {
+        EspressoIdlingResource.increment() // Set app as busy.
+
         val task = _task.value ?: return@launch
         if (completed) {
             tasksRepository.completeTask(task)
@@ -91,6 +93,7 @@ class TaskDetailViewModel(
             tasksRepository.activateTask(task)
             showSnackbarMessage(R.string.task_marked_active)
         }
+        EspressoIdlingResource.decrement()
     }
 
     fun setFavored(favored: Boolean) = viewModelScope.launch {
@@ -106,12 +109,14 @@ class TaskDetailViewModel(
 
     fun saveDueDate(dateLong: Long, date: String) = viewModelScope.launch {
         // needed otherwise view not updated
+        _task.value!!.dueDate = dateLong
         _dueDate.value = date
         val task = _task.value ?: return@launch
         tasksRepository.setDueDate(task, dateLong)
     }
 
     fun saveTime(timeLong: Long, time: String) = viewModelScope.launch {
+        _task.value!!.time = timeLong
         _time.value = time
         val task = _task.value ?: return@launch
         tasksRepository.setTime(task, timeLong)
@@ -155,14 +160,14 @@ class TaskDetailViewModel(
         if (_contactPermissionGranted.value!!) {
             //_contactName.value = _task.value?.contactId?.let { ContactBookService.getContactNameFromDB(it, context) }
             //_contactName.value = _task.value?.contactId?.let { ContactBookService.stringToList("abud harald sebastian").toString() }
-            _contactIdString.value = getContactIdString()
+//            _contactIdString.value = getContactIdString()
         } else {
             showErrorMessage(getApplication<Application>().getString(R.string.no_contact_permission))
         }
 
-        if (_contactIdString.value != null) {
-            contactIdString = _contactIdString
-        }
+//        if (_contactIdString.value != null) {
+//            contactIdString = _contactIdString
+//        }
     }
 
     fun getContactIdString(): String? {
@@ -183,9 +188,9 @@ class TaskDetailViewModel(
         _isDataAvailable.value = false
     }
 
-    fun onRefresh(context: Context) {
-        taskId?.let { start(it, context) }
-    }
+//    fun onRefresh(context: Context) {
+//        taskId?.let { start(it, context) }
+//    }
 
     fun onRefresh() {
         //taskId?.let { start(it, context) }
@@ -215,4 +220,16 @@ class TaskDetailViewModel(
         dialog.show()
     }
 
+    fun setContactString(contactString: String) {
+        task.value!!.contactIdString = contactString
+        saveContactId(contactString)
+    }
+
+    fun setPermissionGranted(b: Boolean) {
+        _contactPermissionGranted.value = true
+    }
+
+    fun setTime(s: String) {
+        _time.value = s
+    }
 }

@@ -122,7 +122,7 @@
                                     android:layout_gravity="center_vertical"
                                     android:layout_marginRight="3dp"
                                     android:layout_weight="1"
-                                    android:checked="@{viewmodel.completed}"
+                                    android:checked="@{viewmodel.task.completed}"
                                     android:onClick="@{(view) -> listener.onCompleteChanged(view)}" />
 
                                 <CheckBox
@@ -132,7 +132,7 @@
                                     android:layout_gravity="center_vertical"
                                     android:layout_weight="1"
                                     android:button="@android:drawable/btn_star"
-                                    android:checked="@{viewmodel.favorite}"
+                                    android:checked="@{viewmodel.task.favorite}"
                                     android:gravity="end"
                                     android:onClick="@{(view) -> listener.onFavoriteChanged(view)}" />
                             </LinearLayout>

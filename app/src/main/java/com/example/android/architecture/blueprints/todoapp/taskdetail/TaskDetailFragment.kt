@@ -2,6 +2,10 @@ package com.example.android.architecture.blueprints.todoapp.taskdetail
 
 import android.Manifest
 import android.app.Activity.RESULT_OK
+import android.app.AlertDialog
+import android.app.DatePickerDialog
+import android.app.TimePickerDialog
+import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
@@ -14,6 +18,9 @@ import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.widget.CheckBox
+import android.widget.DatePicker
+import android.widget.TimePicker
+import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.fragment.findNavController
@@ -25,12 +32,13 @@ import com.example.android.architecture.blueprints.todoapp.util.*
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.launch
 import timber.log.Timber
+import java.util.Calendar
 
 
 /**
  * Main UI for the task detail screen.
  */
-class TaskDetailFragment : Fragment() {
+class TaskDetailFragment : Fragment(), TimePickerDialog.OnTimeSetListener, DatePickerDialog.OnDateSetListener {
     private lateinit var viewDataBinding: TaskdetailFragBinding // is been generated because taskdetail_frag.xml
 
     private lateinit var viewModel: TaskDetailViewModel
@@ -53,21 +61,21 @@ class TaskDetailFragment : Fragment() {
     }
 
     private fun setupDataPickers() {
-        timePicker = TimePickerFragment()
-        datePicker = DatePickerFragment()
+        timePicker = TimePickerFragment(this)
+        datePicker = DatePickerFragment(this)
     }
 
     private fun setupNavigation() {
         viewModel.deleteTaskCommand.observe(this, EventObserver {
             val action = TaskDetailFragmentDirections
-                    .actionTaskDetailFragmentToTasksFragment(DELETE_RESULT_OK)
+                .actionTaskDetailFragmentToTasksFragment(DELETE_RESULT_OK)
             findNavController().navigate(action)
         })
         viewModel.editTaskCommand.observe(this, EventObserver {
             val taskId = TaskDetailFragmentArgs.fromBundle(arguments!!).TASKID
             val action = TaskDetailFragmentDirections
-                    .actionTaskDetailFragmentToAddEditTaskFragment(taskId,
-                            resources.getString(R.string.edit_task))
+                .actionTaskDetailFragmentToAddEditTaskFragment(taskId,
+                    resources.getString(R.string.edit_task))
             findNavController().navigate(action)
         })
     }
@@ -80,62 +88,62 @@ class TaskDetailFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
-        val taskId = arguments?.let {
+        taskId = arguments?.let {
             TaskDetailFragmentArgs.fromBundle(it).TASKID
         }
+        loadData(taskId)
+    }
+
+    private fun loadData(taskId: Int?) {
         context?.let {
             viewDataBinding.viewmodel?.start(taskId, it)
         }
     }
 
     override fun onCreateView(
-            inflater: LayoutInflater,
-            container: ViewGroup?,
-            savedInstanceState: Bundle?
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
     ): View? {
         val baseView = inflater.inflate(R.layout.taskdetail_frag, container, false)
         viewModel = obtainViewModel(TaskDetailViewModel::class.java)
         viewDataBinding = TaskdetailFragBinding.bind(baseView).apply {
             viewmodel = viewModel
-            listener = object :
-
-                    TaskDetailUserActionsListener {
-
-                override fun onAddContactClicked(v: View) {
-                    if (viewmodel?.contactPermissionGranted?.value!!) {
-                        startPickContactIntent()
-                    } else requestPermission(PermissionChecker.REQUEST_ADD_CONTACT)
-                }
-
-                override fun onTimeChanged(v: View) {
-                    timePicker.showDialog(context)
-                    val time = timePicker.getTime()
-                    val long = DateUtil.parseTimeToLong(time)
-                    viewModel?.saveTime(long, time)
-                }
-
-                override fun onDueDateChanged(v: View) {
-                    datePicker.showDialog(context)
-                    val date = datePicker.getDate()
-                    val long = DateUtil.parseToLong(date)
-                    viewModel?.saveDueDate(long, date)
-                }
-
-                override fun onFavoriteChanged(v: View) {
-                    viewmodel?.setFavored((v as CheckBox).isChecked)
-                }
-
-                override fun onCompleteChanged(v: View) {
-                    viewmodel?.setCompleted((v as CheckBox).isChecked)
-                }
-            }
         }
+
 
         taskId = TaskDetailFragmentArgs.fromBundle(arguments!!).TASKID
 
         addContactsFragmentToView(taskId!!)
 
-        viewDataBinding.setLifecycleOwner(this.viewLifecycleOwner)
+        viewDataBinding.lifecycleOwner = this.viewLifecycleOwner
+
+        viewDataBinding.listener = object :
+
+            TaskDetailUserActionsListener {
+
+            override fun onAddContactClicked(v: View) {
+                if (viewModel.contactPermissionGranted.value!!) {
+                    startPickContactIntent()
+                } else requestPermission(PermissionChecker.REQUEST_ADD_CONTACT)
+            }
+
+            override fun onTimeChanged(v: View) {
+                timePicker.showDialog(context)
+            }
+
+            override fun onDueDateChanged(v: View) {
+                datePicker.showDialog(context)
+            }
+
+            override fun onFavoriteChanged(v: View) {
+                viewModel.setFavored((v as CheckBox).isChecked)
+            }
+
+            override fun onCompleteChanged(v: View) {
+                viewModel.setCompleted((v as CheckBox).isChecked)
+            }
+        }
         setHasOptionsMenu(true)
         return baseView // only this view is return as the other view is declared inside the xml
     }
@@ -157,8 +165,8 @@ class TaskDetailFragment : Fragment() {
 
     private fun requestPermission(code: Int) {
         requestPermissions(
-                arrayOf(Manifest.permission.READ_CONTACTS),
-                code)
+            arrayOf(Manifest.permission.READ_CONTACTS),
+            code)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -173,24 +181,24 @@ class TaskDetailFragment : Fragment() {
                             val contactString = ContactBookService.addContactToString(contactIdString!!, newContactId)
                             // initiate List which needs to be displayed by adapter
                             // ContactBookService.getContactListFromString(contactString)
-                            it._contactIdString.value = contactString
-                            contactString?.let { viewModel?.saveContactId(it) }
+                            viewModel.setContactString(contactString)
                         }
                     }
+                    loadData(taskId)
                 }
             }
     }
 
     override fun onRequestPermissionsResult(
-            requestCode: Int,
-            permissions: Array<String>,
-            grantResults: IntArray
+        requestCode: Int,
+        permissions: Array<String>,
+        grantResults: IntArray
     ) {
         when (requestCode) {
             PermissionChecker.REQUEST_ADD_CONTACT -> {
                 if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     Timber.i("READ_CONTACTS permission granted")
-                    viewDataBinding.viewmodel?._contactPermissionGranted?.value = true
+                    viewDataBinding.viewmodel?.setPermissionGranted(true)
                     startPickContactIntent()
                 } else {
                     //else do nothing - will be call back on next launch
@@ -222,5 +230,19 @@ class TaskDetailFragment : Fragment() {
             pickContactIntent.type = ContactsContract.CommonDataKinds.Phone.CONTENT_TYPE // Show user only contacts w/ phone numbers
             startActivityForResult(pickContactIntent, ContactBookService.CALL_PICK_CONTACT)
         }
+    }
+
+
+
+    override fun onTimeSet(p0: TimePicker?, hour: Int, min: Int) {
+        val time = "$hour:$min"
+        val long = DateUtil.parseTimeToLong(time)
+        viewModel.saveTime(long, time)
+    }
+
+    override fun onDateSet(p0: DatePicker?, dYear: Int, dMonth: Int, dDay: Int) {
+        val date = "$dDay.${dMonth + 1}.$dYear"
+        val long = DateUtil.parseToLong(date)
+        viewModel.saveDueDate(long,date)
     }
 }
