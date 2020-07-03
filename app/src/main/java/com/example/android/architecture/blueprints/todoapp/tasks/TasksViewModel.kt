@@ -281,7 +281,8 @@ class TasksViewModel(
         val builder = AlertDialog.Builder(context)
 
         builder.setTitle("Syncing Process")
-        builder.setMessage("No tasks found on local db, Do you want to load tasks from your remote db?")
+        builder.setMessage("Your local db is empty. \n" +
+            "do you want to load tasks from your remote db?")
 
         builder.setPositiveButton("YES") { dialog, which ->
             getTaskListFromFirebaseAndStoreToLocalDB()
@@ -297,7 +298,7 @@ class TasksViewModel(
         val builder = AlertDialog.Builder(context)
 
         builder.setTitle("Syncing Process")
-        builder.setMessage("No tasks found on remote db, Do you want to load tasks from your remote db?")
+        builder.setMessage("Your remote database is empty, do you want to load tasks from your local db?")
 
         builder.setPositiveButton("YES") { dialog, which ->
             saveDataToFirebase(isSyncing = true)
