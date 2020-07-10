@@ -39,26 +39,9 @@ class ContactsAdapter(
             DataBindingUtil.getBinding(view) ?: throw IllegalStateException()
         }
 
-        val userActionsListener = object : ContactItemUserActionsListener {
-            override fun onContactDeleted(contact: Contact) {
-                viewModel.deleteContact(contact)
-            }
-
-            override fun onSendEmailClicked(contactEmail: String,title: String, message: String) {
-                // viewModel.sendMailTo(contactEmail)
-                viewModel.sendMailTo(contactEmail,title,message)
-//                viewModel.sendMailTo(contactEmail,title,message)
-//                taskDetailViewModel.apply {
-//                    val title = task.value!!.title
-//                    val message = task.value!!.description
-//                        onSendEmailClickedListener.onSendEmailClicked(contactEmail,title,message)
-//                }
-            }
-        }
 
         with(binding) {
             contact = contacts[position]
-            listener = userActionsListener
             executePendingBindings()
 
             return binding.root
@@ -71,9 +54,4 @@ class ContactsAdapter(
         notifyDataSetChanged()
     }
 
-
-//    interface OnSendEmailClickedListener {
-//
-//        fun onSendEmailClicked(email: String,title: String, message: String)
-//    }
 }

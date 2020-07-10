@@ -55,8 +55,12 @@ class ContactsFragment : Fragment() {
             listener = object :
 
                     ContactItemUserActionsListener {
-                override fun onSendEmailClicked(contactEmail: String,title: String, message: String) {
-                    viewmodel?.sendMailTo(contactEmail,title, message)
+                override fun onSendEmailClicked(contactEmail: String) {
+                    viewmodel?.sendMailTo(contactEmail,context!!)
+                }
+
+                override fun onCallNumber(phoneNumber: String) {
+                    viewmodel?.callPhoneNumber(phoneNumber,context!!)
                 }
 
                 override fun onContactDeleted(contact: Contact) {
@@ -92,15 +96,4 @@ class ContactsFragment : Fragment() {
             taskId = bundle.getInt("taskId") }
     }
 
-//    override fun onContactDeleted(contact: Contact) {
-//        TODO("Not yet implemented")
-//    }
-//
-//    override fun onSendEmailClicked(email: String, title: String, message: String) {
-//        val emailIntent = Intent(Intent.ACTION_SEND)
-//        emailIntent.putExtra(Intent.EXTRA_EMAIL, arrayOf<String>(email))
-//        emailIntent.type = "message/rfc822"
-//
-//        startActivity(Intent.createChooser(emailIntent, "Choose an Email client :"))
-//    }
 }
