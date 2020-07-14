@@ -1,5 +1,6 @@
 package com.example.android.architecture.blueprints.todoapp.contacts
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -52,6 +53,11 @@ class ContactsFragment : Fragment() {
             viewmodel = contactsViewModel
         }
         return contactView
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        contactViewDataBinding.viewmodel?.loadContacts(taskId, context)
     }
 
     private fun setupContactListAdapter() {

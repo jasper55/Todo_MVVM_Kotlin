@@ -1,12 +1,17 @@
 package com.example.android.architecture.blueprints.todoapp.login
 
+import android.app.Activity
+import android.content.Context
+import android.content.Context.INPUT_METHOD_SERVICE
 import android.content.Intent
 import android.os.Bundle
-import android.view.ViewGroup
 import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import android.view.animation.AnimationUtils
+import android.view.inputmethod.InputMethodManager
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat.getSystemService
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
@@ -14,8 +19,8 @@ import com.example.android.architecture.blueprints.todoapp.EventObserver
 import com.example.android.architecture.blueprints.todoapp.R
 import com.example.android.architecture.blueprints.todoapp.databinding.LoginFragmentBinding
 import com.example.android.architecture.blueprints.todoapp.tasks.TasksActivity
-import com.example.android.architecture.blueprints.todoapp.util.onTextChanged
 import com.example.android.architecture.blueprints.todoapp.util.obtainViewModel
+import com.example.android.architecture.blueprints.todoapp.util.onTextChanged
 import com.example.android.architecture.blueprints.todoapp.util.setupDismissableSnackbar
 import com.example.android.architecture.blueprints.todoapp.util.setupSnackbar
 import com.example.android.architecture.blueprints.todoapp.util.setupSnackbarMessage
@@ -39,8 +44,6 @@ class LoginFragment : Fragment() {
 
                 override fun onLoginClicked() {
                     viewDataBinding.viewmodel?.loginUser()
-                    //user.uid?.let { viewDataBinding.viewmodel?.loginUser(it) }
-
                 }
 
                 override fun onRegisterClicked() {
@@ -57,7 +60,6 @@ class LoginFragment : Fragment() {
         viewDataBinding.lifecycleOwner = this.viewLifecycleOwner
         setupNavigation()
         setupSnackbar(Snackbar.LENGTH_SHORT)
-        //setupSnackbarMessage()
         setupDismissableSnackbar()
         checkIfInternetAvailable()
         checkIfUserIsAlreadyLoggedIn()
@@ -78,13 +80,14 @@ class LoginFragment : Fragment() {
 
     private fun hideUIAndShowProgressBar() {
         viewDataBinding.apply {
+            loginResponseProgressBar.visibility = View.VISIBLE
             errorPrompt.visibility = View.GONE
             loginEmail.visibility = View.GONE
             loginPassword.visibility = View.GONE
             loginRememberMe.visibility = View.GONE
             loginStayLoggedIn.visibility = View.GONE
-            loginResponseProgressBar.show()
-            loginResponseProgressBar.visibility = View.VISIBLE
+            loginButton.visibility = View.GONE
+            hideKeyboard(context!!)
         }
     }
 
@@ -95,9 +98,13 @@ class LoginFragment : Fragment() {
             loginPassword.visibility = View.VISIBLE
             loginRememberMe.visibility = View.VISIBLE
             loginStayLoggedIn.visibility = View.VISIBLE
-            loginResponseProgressBar.hide()
             loginResponseProgressBar.visibility = View.GONE
         }
+    }
+
+    private fun hideKeyboard(context: Context) {
+            val imm = context.getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
+            imm.hideSoftInputFromWindow(view?.windowToken, 0)
     }
 
     private fun listenForLoginFieldChanges() {
@@ -105,7 +112,7 @@ class LoginFragment : Fragment() {
             if (it == false) {
                 viewDataBinding.errorPrompt.text = viewModel.loginErrorMessage.value
                 viewDataBinding.errorPrompt.visibility = View.VISIBLE
-                viewDataBinding.errorPrompt.startAnimation(AnimationUtils.loadAnimation(context,R.anim.shake))
+                viewDataBinding.errorPrompt.startAnimation(AnimationUtils.loadAnimation(context, R.anim.shake))
             } else {
                 viewDataBinding.errorPrompt.visibility = View.GONE
             }

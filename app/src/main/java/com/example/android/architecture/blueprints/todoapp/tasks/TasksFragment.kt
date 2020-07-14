@@ -123,7 +123,10 @@ class TasksFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
-        viewDataBinding.viewmodel?.checkNetworkConnection(act)
+        viewDataBinding.viewmodel?.run {
+            checkNetworkConnection(act)
+            refresh()
+        }
     }
 
     private fun runBlockingScope(viewmodel: TasksViewModel?) {

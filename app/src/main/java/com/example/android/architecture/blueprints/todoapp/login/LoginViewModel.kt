@@ -8,12 +8,15 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.example.android.architecture.blueprints.todoapp.Event
 import com.example.android.architecture.blueprints.todoapp.R
 import com.example.android.architecture.blueprints.todoapp.userrepository.User
+import com.example.android.architecture.blueprints.todoapp.util.EspressoIdlingResource
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.async
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
@@ -91,26 +94,34 @@ class LoginViewModel : ViewModel() {
             return
         } else {
             _loginIsIdle.value = true
-            FirebaseAuth.getInstance().signInWithEmailAndPassword(email, password)
-                .addOnCompleteListener {
-                    if (!it.isSuccessful) return@addOnCompleteListener
+            EspressoIdlingResource.increment() // Set app as busy.
 
-                    // else if
-                    val userUid = it.result?.user?.uid!!
-                    showSnackbarText(R.string.user_logged_in)
-                    _openTaskListEvent.value = Event(userUid)
-                    Log.i("Login:", "Login succesful")
-                    _areLoginInFieldCorrect.value = true
-                    Thread.sleep(5000)
-                }
-                .addOnFailureListener {
-                    _areLoginInFieldCorrect.value = false
+            viewModelScope.launch {
+                async {
+                    FirebaseAuth.getInstance().signInWithEmailAndPassword(email, password)
+                        .addOnCompleteListener {
+                            if (!it.isSuccessful) return@addOnCompleteListener
+
+                            // else if
+                            val userUid = it.result?.user?.uid!!
+                            showSnackbarText(R.string.user_logged_in)
+                            _openTaskListEvent.value = Event(userUid)
+                            Log.i("Login:", "Login succesful")
+                            _areLoginInFieldCorrect.value = true
+                            Thread.sleep(5000)
+                        }
+                        .addOnFailureListener {
+                            _areLoginInFieldCorrect.value = false
 //                showErrorMessage("Failed to login: ${it.message}")
-                    _loginErrorMessage.value = it.message
-                    Log.i("Login:", "Failed to login: ${it.message}")
+                            _loginErrorMessage.value = it.message
+                            Log.i("Login:", "Failed to login: ${it.message}")
 
-                }
-            _loginIsIdle.value = false
+                        }
+                    delay(2000)
+                    _loginIsIdle.value = false
+                    EspressoIdlingResource.decrement() // Set app as idle.
+                }.await()
+            }
         }
     }
 
