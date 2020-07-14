@@ -2,7 +2,6 @@ package com.example.android.architecture.blueprints.todoapp.login
 
 import android.app.Activity
 import android.content.Context
-import android.content.Context.INPUT_METHOD_SERVICE
 import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -11,7 +10,6 @@ import android.view.ViewGroup
 import android.view.animation.AnimationUtils
 import android.view.inputmethod.InputMethodManager
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.content.ContextCompat.getSystemService
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
@@ -21,9 +19,7 @@ import com.example.android.architecture.blueprints.todoapp.databinding.LoginFrag
 import com.example.android.architecture.blueprints.todoapp.tasks.TasksActivity
 import com.example.android.architecture.blueprints.todoapp.util.obtainViewModel
 import com.example.android.architecture.blueprints.todoapp.util.onTextChanged
-import com.example.android.architecture.blueprints.todoapp.util.setupDismissableSnackbar
 import com.example.android.architecture.blueprints.todoapp.util.setupSnackbar
-import com.example.android.architecture.blueprints.todoapp.util.setupSnackbarMessage
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FirebaseAuth
 
@@ -60,7 +56,6 @@ class LoginFragment : Fragment() {
         viewDataBinding.lifecycleOwner = this.viewLifecycleOwner
         setupNavigation()
         setupSnackbar(Snackbar.LENGTH_SHORT)
-        setupDismissableSnackbar()
         checkIfInternetAvailable()
         checkIfUserIsAlreadyLoggedIn()
         listenForLoginFieldChanges()
@@ -76,6 +71,26 @@ class LoginFragment : Fragment() {
             }
         })
 
+    }
+
+    private fun listenForLoginFieldChanges() {
+        viewModel.areLoginInFieldsCorrect.observe(this, Observer {
+            if (it == false) {
+                hideKeyboard(context!!)
+                viewDataBinding.errorPrompt.visibility = View.VISIBLE
+                viewDataBinding.errorPrompt.text = viewModel.loginErrorMessage.value
+                viewDataBinding.errorPrompt.startAnimation(AnimationUtils.loadAnimation(context, R.anim.shake))
+            } else {
+                viewDataBinding.errorPrompt.visibility = View.GONE
+            }
+        })
+
+        viewDataBinding.loginEmail.onTextChanged {
+            viewDataBinding.errorPrompt.visibility = View.GONE
+        }
+        viewDataBinding.loginPassword.onTextChanged {
+            viewDataBinding.errorPrompt.visibility = View.GONE
+        }
     }
 
     private fun hideUIAndShowProgressBar() {
@@ -98,6 +113,7 @@ class LoginFragment : Fragment() {
             loginPassword.visibility = View.VISIBLE
             loginRememberMe.visibility = View.VISIBLE
             loginStayLoggedIn.visibility = View.VISIBLE
+            loginButton.visibility = View.VISIBLE
             loginResponseProgressBar.visibility = View.GONE
         }
     }
@@ -107,24 +123,6 @@ class LoginFragment : Fragment() {
             imm.hideSoftInputFromWindow(view?.windowToken, 0)
     }
 
-    private fun listenForLoginFieldChanges() {
-        viewModel.areLoginInFieldCorrect.observe(this, Observer {
-            if (it == false) {
-                viewDataBinding.errorPrompt.text = viewModel.loginErrorMessage.value
-                viewDataBinding.errorPrompt.visibility = View.VISIBLE
-                viewDataBinding.errorPrompt.startAnimation(AnimationUtils.loadAnimation(context, R.anim.shake))
-            } else {
-                viewDataBinding.errorPrompt.visibility = View.GONE
-            }
-        })
-
-        viewDataBinding.loginEmail.onTextChanged {
-            viewDataBinding.errorPrompt.visibility = View.GONE
-        }
-        viewDataBinding.loginPassword.onTextChanged {
-            viewDataBinding.errorPrompt.visibility = View.GONE
-        }
-    }
 
     private fun getUserId(): String {
         return arguments?.let {
@@ -136,18 +134,6 @@ class LoginFragment : Fragment() {
         viewDataBinding.viewmodel?.let {
 
             view?.setupSnackbar(this, it.snackbarText, length, bgColor)
-        }
-    }
-
-    private fun setupSnackbarMessage(length: Int = Snackbar.LENGTH_LONG, bgColor: Int = context!!.getColor(R.color.colorRed)) {
-        viewDataBinding.viewmodel?.let {
-            view?.setupSnackbarMessage(this, it.snackbarMessage, length, bgColor)
-        }
-    }
-
-    private fun setupDismissableSnackbar(length: Int = Snackbar.LENGTH_LONG) {
-        viewDataBinding.viewmodel?.let {
-            view?.setupDismissableSnackbar(this, it.errorMessageEvent, length)
         }
     }
 
@@ -171,16 +157,6 @@ class LoginFragment : Fragment() {
     private fun navigateToRegisterFrag() {
         val action = LoginFragmentDirections.actionLoginFragmentToRegisterFragment(null.toString())
         findNavController().navigate(action)
-    }
-
-    private fun checkIfUserIsAlreadyLoggedIn(userUid: String) {
-        val auth = FirebaseAuth.getInstance()
-
-        if (auth.currentUser != null) {
-            navigateToTaskActivity(userUid)
-        } else {
-            return
-        }
     }
 
     private fun checkIfInternetAvailable() {

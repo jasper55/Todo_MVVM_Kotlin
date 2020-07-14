@@ -323,22 +323,6 @@ class TasksViewModel(
         dialog.show()
     }
 
-    private fun showCheckRemoteDBDialog(context: Context) {
-        val builder = AlertDialog.Builder(context)
-
-        builder.setTitle("Syncing Process")
-        builder.setMessage("Do you want to load tasks from your remote db?")
-
-        builder.setPositiveButton("YES") { dialog, which ->
-            getTaskListFromFirebaseAndStoreToLocalDB()
-        }
-        builder.setNegativeButton("No") { dialog, which ->
-            return@setNegativeButton
-        }
-        val dialog: AlertDialog = builder.create()
-        dialog.show()
-    }
-
     suspend fun loadTasksFromLocalDB(forceUpdate: Boolean): List<Task> {
 
         var localTasks: List<Task> = emptyList()
@@ -346,7 +330,6 @@ class TasksViewModel(
         _dataLoading.value = true
         EspressoIdlingResource.increment() // Set app as busy.
 
-//        viewModelScope.launch {
             val tasksResult = tasksRepository.getTasks()
 
             if (tasksResult is Success) {
@@ -357,7 +340,6 @@ class TasksViewModel(
                 _items.value = emptyList()
                 _snackbarText.value = Event(R.string.local_db_empty)
             }
-//        }
 
         _dataLoading.value = false
         EspressoIdlingResource.decrement() // Set app as idle.
