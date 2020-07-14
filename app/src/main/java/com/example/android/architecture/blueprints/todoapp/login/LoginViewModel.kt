@@ -92,6 +92,7 @@ class LoginViewModel : ViewModel() {
 
             viewModelScope.launch {
                 async {
+                    delay(2000)
                     FirebaseAuth.getInstance().signInWithEmailAndPassword(email, password)
                         .addOnCompleteListener {
                             if (!it.isSuccessful) return@addOnCompleteListener
@@ -109,7 +110,6 @@ class LoginViewModel : ViewModel() {
                             _areLoginInFieldsCorrect.value = false
                             Log.i("Login:", "Failed to login: ${it.message}")
                         }
-                    delay(2000)
                     _loginIsIdle.value = false
                     EspressoIdlingResource.decrement() // Set app as idle.
                 }.await()

@@ -20,6 +20,7 @@ import com.example.android.architecture.blueprints.todoapp.tasks.TasksActivity
 import com.example.android.architecture.blueprints.todoapp.util.obtainViewModel
 import com.example.android.architecture.blueprints.todoapp.util.onTextChanged
 import com.example.android.architecture.blueprints.todoapp.util.setupSnackbar
+import com.example.android.architecture.blueprints.todoapp.util.vibratePhone
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FirebaseAuth
 
@@ -77,6 +78,7 @@ class LoginFragment : Fragment() {
         viewModel.areLoginInFieldsCorrect.observe(this, Observer {
             if (it == false) {
                 hideKeyboard(context!!)
+                vibratePhone()
                 viewDataBinding.errorPrompt.visibility = View.VISIBLE
                 viewDataBinding.errorPrompt.text = viewModel.loginErrorMessage.value
                 viewDataBinding.errorPrompt.startAnimation(AnimationUtils.loadAnimation(context, R.anim.shake))
