@@ -28,7 +28,7 @@
         android:paddingTop="124dp"
         android:paddingRight="24dp">
 
-        <ProgressBar
+        <androidx.core.widget.ContentLoadingProgressBar
             android:id="@+id/loginResponseProgressBar"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

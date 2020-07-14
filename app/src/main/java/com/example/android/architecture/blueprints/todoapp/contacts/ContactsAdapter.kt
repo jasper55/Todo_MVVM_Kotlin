@@ -1,5 +1,6 @@
 package com.example.android.architecture.blueprints.todoapp.contacts
 
+import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -9,11 +10,9 @@ import com.example.android.architecture.blueprints.todoapp.databinding.ContactIt
 import com.example.android.architecture.blueprints.todoapp.taskdetail.TaskDetailViewModel
 
 class ContactsAdapter(
-        private var contacts: List<Contact>,
-        private val viewModel: ContactsViewModel
-//    private val listener: ContactItemUserActionsListener
-//        private val taskDetailViewModel: TaskDetailViewModel
-//        private val onSendEmailClickedListener: OnSendEmailClickedListener
+    private var contacts: List<Contact>,
+    private val viewModel: ContactsViewModel,
+    private val context: Context
 ) : BaseAdapter() {
 
     fun replaceData(contacts: List<Contact>) {
@@ -39,9 +38,24 @@ class ContactsAdapter(
             DataBindingUtil.getBinding(view) ?: throw IllegalStateException()
         }
 
+        val userActionsListener = object : ContactItemUserActionsListener {
+            override fun onContactDeleted(contact: Contact) {
+                viewModel.deleteContact(contact)
+            }
+
+            override fun onSendEmailClicked(contactEmail: String) {
+                viewModel.sendMailTo(contactEmail,context)
+            }
+
+            override fun onCallNumber(phoneNumber: String) {
+                viewModel.callPhoneNumber(phoneNumber, context)
+            }
+
+        }
 
         with(binding) {
             contact = contacts[position]
+            listener = userActionsListener
             executePendingBindings()
 
             return binding.root

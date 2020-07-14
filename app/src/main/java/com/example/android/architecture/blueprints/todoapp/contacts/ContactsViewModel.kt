@@ -35,9 +35,6 @@ class ContactsViewModel(
     private val _title = MutableLiveData<String>()
     private val _description = MutableLiveData<String>()
 
-
-//    private val taskId?: String by inject()
-
     private val _dataLoading = MutableLiveData<Boolean>()
     val dataLoading: LiveData<Boolean> = _dataLoading
 
@@ -76,7 +73,6 @@ class ContactsViewModel(
             // updateContactIdString
             newListString?.let {
                 tasksRepository.saveContactId(task, newListString)
-            showSnackbarMessage(R.string.task_marked_complete)
             }
         }
     }
@@ -118,14 +114,6 @@ class ContactsViewModel(
     }
 
     fun sendMailTo(contactEmail: String,context: Context) {
-        showErrorMessage(context.getString(R.string.loading_tasks_error))
-
-//        val emailIntent = Intent(Intent.ACTION_SEND)
-//        emailIntent.putExtra(Intent.EXTRA_EMAIL, arrayOf<String>(contactEmail))
-//        emailIntent.type = "message/rfc822"
-
-
-//        getApplication<Application>().baseContext.startActivity(Intent.createChooser(emailIntent, "Choose an Email client :"))
 
         /*ACTION_SEND action to launch an email client installed on your Android device.*/
         val mIntent = Intent(Intent.ACTION_SEND)
@@ -142,9 +130,7 @@ class ContactsViewModel(
         val message = _description.value
         mIntent.putExtra(Intent.EXTRA_TEXT, message)
 
-
         try {
-            //start email intent
             context.startActivity(Intent.createChooser(mIntent, "Choose an Email Client..."))
         }
         catch (e: Exception){

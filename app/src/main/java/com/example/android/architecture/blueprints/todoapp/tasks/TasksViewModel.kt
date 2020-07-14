@@ -171,7 +171,7 @@ class TasksViewModel(
         viewModelScope.launch {
             tasksRepository.clearCompletedTasks()
             _snackbarText.value = Event(R.string.completed_tasks_cleared)
-            loadTasks(false)
+            loadTasksFromLocalDB(false)
         }
     }
 
@@ -242,39 +242,90 @@ class TasksViewModel(
      */
 
     fun syncDatabases(context: Context) {
+
         _dataLoading.value = true
         EspressoIdlingResource.increment() // Set app as busy.
+//        var localTasks: List<Task>
+//        var remoteTasks: List<Task>
+
         viewModelScope.launch {
-            val tasksResult = tasksRepository.getTasks()
 
-            if (tasksResult is Success) {
-                val localTasks = tasksResult.data
-                val remoteTasks = getTasksFromRemoteDB(isInternetAvailable.value!!)
+            Log.d("TASKVIEWMODEL", "before netowkr reqwuest")
 
-                val listsAreEqual = localTasks.containsAll(remoteTasks) && remoteTasks.containsAll(localTasks)
-                if (!listsAreEqual && localTasks.isNullOrEmpty() && remoteTasks.isNullOrEmpty()) {
-                    showDatabasesAreDifferentDialog(context)
+            var remoteTasks: List<Task> = emptyList()
+            async {
+                if (isInternetAvailable.value!!) {
+                    EspressoIdlingResource.increment() // Set app as busy.
+//                    val firebaseCallback = object : FirebaseCallback {
+//                        override fun onCallback(todoList: List<Task>) {
+//                            if (!todoList.isNullOrEmpty()) {
+//                                Log.d("TASKVIEWMODEL", "remoteTasks: ${todoList.toString()}")
+////                                remoteTasks = todoList
+//                            }
+//                        }
+//                    }
+                    remoteTasks = firebaseHelper.readTasks()
+                    EspressoIdlingResource.decrement() // Set app as idle.
                 }
+//                getTasksFromRemoteDB(isInternetAvailable.value!!)
+            }.await()
+//            val remoteTasks = getTasksFromRemoteDB(isInternetAvailable.value!!)
 
-                if (localTasks.isNullOrEmpty()) {
-                    showLoacalDBIsEmptyDialog(context)  // invokes loading tasks from remote db dialog
-                }
-                if (remoteTasks.isNullOrEmpty()) {
-                    showRemoteDBIsEmptyDialog(context)
-                }
-            } else {
-                _errorMessageEvent.value = Event(context.getString(R.string.error_accessing_local_db))
-                showCheckRemoteDBDialog(context)
-//                _items.value = emptyList()
-//                _snackbarText.value = Event(R.string.local_db_empty)
+
+            var tasks: List<Task> = emptyList()
+
+             async {
+
+                _dataLoading.value = true
+
+                EspressoIdlingResource.increment() // Set app as busy.
+
+//                viewModelScope.launch {
+                    val tasksResult = tasksRepository.getTasks()
+
+                    if (tasksResult is Success) {
+
+                        tasks = tasksResult.data
+                        Log.d("TASKVIEWMODEL", "locaclTasks: ${tasks.toString()}")
+
+                        _items.value = tasks
+                        sortTasks()
+                    } else {
+                        _items.value = emptyList()
+                        _snackbarText.value = Event(R.string.local_db_empty)
+                    }
+
+                    _dataLoading.value = false
+                    EspressoIdlingResource.decrement() // Set app as idle.
+//                }.join()
+
+
+//                loadTasksFromLocalDB(false)
+            }.await()
+//            val localTasks = loadTasksFromLocalDB(false)
+
+            val localTasks = tasks
+            val listsAreEqual = localTasks.containsAll(remoteTasks) && remoteTasks.containsAll(localTasks)
+            if (!listsAreEqual && localTasks.isNullOrEmpty() && remoteTasks.isNullOrEmpty()) {
+                showDatabasesAreDifferentDialog(context)
             }
+            if (localTasks.isNullOrEmpty()) {
+                showLoacalDBIsEmptyDialog(context)  // invokes loading tasks from remote db dialog
+            }
+            if (remoteTasks.isNullOrEmpty()) {
+                showRemoteDBIsEmptyDialog(context)
+            }
+            sortTasks()
 
-            loadTasks(false)
             _dataLoading.value = false
+
             EspressoIdlingResource.decrement() // Set app as idle.
         }
-
     }
+
+
+
+
 
 
     private fun showLoacalDBIsEmptyDialog(context: Context) {
@@ -348,7 +399,9 @@ class TasksViewModel(
         dialog.show()
     }
 
-    fun loadTasks(forceUpdate: Boolean) {
+    fun loadTasksFromLocalDB(forceUpdate: Boolean): List<Task> {
+
+        var tasks: List<Task> = emptyList()
 
         _dataLoading.value = true
 
@@ -358,54 +411,9 @@ class TasksViewModel(
             val tasksResult = tasksRepository.getTasks()
 
             if (tasksResult is Success) {
-                val tasks = tasksResult.data
-                val tasksToShow = ArrayList<Task>()
-                var sortedList = tasks
-
-//                if (tasks.isNullOrEmpty()) {
-//                    _snackbarText.value = Event(R.string.no_tasks_on_local_db)
-//                    loadDataFromFirebaseDB()
-//                } else {
-
-                // We filter the tasks based on the requestType
-                when (_currentFiltering) {
-                    TasksFilterType.SORT -> {
-                        when (_currentSorting) {
-                            TasksFilterType.SORT_BY.DUE_DATE -> {
-                                _currentSorting = TasksFilterType.SORT_BY.NAME
-                                sortedList = sortByDate(tasks)
-                            }
-                            TasksFilterType.SORT_BY.NAME -> {
-                                _currentSorting = TasksFilterType.SORT_BY.ID
-                                sortedList = sortByName(tasks)
-                            }
-                            TasksFilterType.SORT_BY.ID -> {
-                                _currentSorting = TasksFilterType.SORT_BY.DUE_DATE
-                                sortedList = sortByID(tasks)
-                            }
-                        }
-                        for (task in sortedList) {
-                            tasksToShow.add(task)
-                        }
-                    }
-                }
-                for (task in tasks) {
-                    when (_currentFiltering) {
-                        TasksFilterType.ALL_TASKS -> tasksToShow.add(task)
-                        TasksFilterType.ACTIVE_TASKS -> if (task.isActive) {
-                            tasksToShow.add(task)
-                        }
-                        TasksFilterType.COMPLETED_TASKS -> if (task.isCompleted) {
-                            tasksToShow.add(task)
-                        }
-                        TasksFilterType.FAVORITE_TASKS -> if (task.isFavorite) {
-                            tasksToShow.add(task)
-                        }
-                    }
-                }
-                _items.value = ArrayList(tasksToShow)
-                Timber.i("Tasks loaded from local db")
-//                }
+                tasks = tasksResult.data
+                _items.value = tasks
+                sortTasks()
             } else {
                 _items.value = emptyList()
                 _snackbarText.value = Event(R.string.local_db_empty)
@@ -415,6 +423,55 @@ class TasksViewModel(
             EspressoIdlingResource.decrement() // Set app as idle.
         }
 
+        return tasks
+
+    }
+
+    private fun sortTasks() {
+        val tasks = _items.value
+        if (tasks.isNullOrEmpty())
+            return
+        val tasksToShow = ArrayList<Task>()
+        var sortedList = tasks
+
+        // We filter the tasks based on the requestType
+        when (_currentFiltering) {
+            TasksFilterType.SORT -> {
+                when (_currentSorting) {
+                    TasksFilterType.SORT_BY.DUE_DATE -> {
+                        _currentSorting = TasksFilterType.SORT_BY.NAME
+                        sortedList = sortByDate(tasks)
+                    }
+                    TasksFilterType.SORT_BY.NAME -> {
+                        _currentSorting = TasksFilterType.SORT_BY.ID
+                        sortedList = sortByName(tasks)
+                    }
+                    TasksFilterType.SORT_BY.ID -> {
+                        _currentSorting = TasksFilterType.SORT_BY.DUE_DATE
+                        sortedList = sortByID(tasks)
+                    }
+                }
+                for (task in sortedList) {
+                    tasksToShow.add(task)
+                }
+            }
+        }
+        for (task in tasks) {
+            when (_currentFiltering) {
+                TasksFilterType.ALL_TASKS -> tasksToShow.add(task)
+                TasksFilterType.ACTIVE_TASKS -> if (task.isActive) {
+                    tasksToShow.add(task)
+                }
+                TasksFilterType.COMPLETED_TASKS -> if (task.isCompleted) {
+                    tasksToShow.add(task)
+                }
+                TasksFilterType.FAVORITE_TASKS -> if (task.isFavorite) {
+                    tasksToShow.add(task)
+                }
+            }
+        }
+        _items.value = ArrayList(tasksToShow)
+        Timber.i("Tasks loaded from local db")
     }
 
     fun saveDataToFirebase(isSyncing: Boolean) = viewModelScope.launch {
@@ -437,7 +494,6 @@ class TasksViewModel(
         } else {
             _snackbarText.value = Event(R.string.tasks_saved_to_remote_db)
         }
-//            EspressoIdlingResource.decrement() // Set app as idle.
     }
 
 
@@ -472,7 +528,7 @@ class TasksViewModel(
                         }
                     }
                 }
-                firebaseHelper.readTasks(firebaseCallback)
+                firebaseHelper.readTasks()
                 EspressoIdlingResource.decrement() // Set app as idle.
 
             } else {
@@ -482,29 +538,24 @@ class TasksViewModel(
         }
     }
 
-    private fun getTasksFromRemoteDB(connected: Boolean): List<Task> {
+    private suspend fun getTasksFromRemoteDB(connected: Boolean): List<Task> {
         var returnedTaskList: List<Task> = emptyList()
         viewModelScope.launch {
+//            Log.d()
             if (connected) {
                 EspressoIdlingResource.increment() // Set app as busy.
                 val firebaseCallback = object : FirebaseCallback {
                     override fun onCallback(todoList: List<Task>) {
-
-                        if (!items.value.isNullOrEmpty()) {
+                        if (!todoList.isNullOrEmpty()) {
                             returnedTaskList = todoList
                             _snackbarText.value = Event(R.string.tasks_retrieved_from_remote_db)
-//                            viewModelScope.launch {
-//                                items.value?.forEach {
-//                                    tasksRepository.saveTask(it)
-//                                }
-//                            }
                         }
                     }
                 }
-                firebaseHelper.readTasks(firebaseCallback)
+                firebaseHelper.readTasks()
                 EspressoIdlingResource.decrement() // Set app as idle.
             }
-        }
+        }.join()
         return returnedTaskList
     }
 
@@ -512,7 +563,7 @@ class TasksViewModel(
         viewModelScope.launch {
             tasksRepository.deleteAllTasks()
             _snackbarText.value = Event(R.string.all_local_tasks_deleted)
-            loadTasks(false)
+            loadTasksFromLocalDB(false)
         }
     }
 

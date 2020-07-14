@@ -83,6 +83,7 @@ class LoginFragment : Fragment() {
             loginPassword.visibility = View.GONE
             loginRememberMe.visibility = View.GONE
             loginStayLoggedIn.visibility = View.GONE
+            loginResponseProgressBar.show()
             loginResponseProgressBar.visibility = View.VISIBLE
         }
     }
@@ -94,6 +95,7 @@ class LoginFragment : Fragment() {
             loginPassword.visibility = View.VISIBLE
             loginRememberMe.visibility = View.VISIBLE
             loginStayLoggedIn.visibility = View.VISIBLE
+            loginResponseProgressBar.hide()
             loginResponseProgressBar.visibility = View.GONE
         }
     }

@@ -1,6 +1,5 @@
 package com.example.android.architecture.blueprints.todoapp.contacts
 
-import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -8,7 +7,6 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.example.android.architecture.blueprints.todoapp.R
 import com.example.android.architecture.blueprints.todoapp.databinding.ContactlistFragBinding
-import com.example.android.architecture.blueprints.todoapp.taskdetail.TaskDetailViewModel
 import com.example.android.architecture.blueprints.todoapp.util.obtainViewModel
 import com.example.android.architecture.blueprints.todoapp.util.setupDismissableSnackbar
 import com.google.android.material.snackbar.Snackbar
@@ -52,22 +50,6 @@ class ContactsFragment : Fragment() {
         contactViewDataBinding = ContactlistFragBinding.bind(contactView).apply {
 
             viewmodel = contactsViewModel
-            listener = object :
-
-                    ContactItemUserActionsListener {
-                override fun onSendEmailClicked(contactEmail: String) {
-                    viewmodel?.sendMailTo(contactEmail,context!!)
-                }
-
-                override fun onCallNumber(phoneNumber: String) {
-                    viewmodel?.callPhoneNumber(phoneNumber,context!!)
-                }
-
-                override fun onContactDeleted(contact: Contact) {
-                    viewmodel?.deleteContact(contact)
-                }
-
-            }
         }
         return contactView
     }
@@ -76,8 +58,7 @@ class ContactsFragment : Fragment() {
 
         val viewModel = contactViewDataBinding.viewmodel
         if (viewModel != null) {
-//            listAdapter = ContactsAdapter(ArrayList(0), viewModel, taskDetailViewModel,this)
-            listAdapter = ContactsAdapter(ArrayList(0), viewModel)
+            listAdapter = ContactsAdapter(ArrayList(0), viewModel,context!!)
             contactViewDataBinding.contactListView.adapter = listAdapter
         } else {
             Timber.w("ViewModel not initialized when attempting to set up adapter.")

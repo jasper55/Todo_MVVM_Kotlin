@@ -129,7 +129,7 @@ class TaskDetailViewModel(
         }
     }
 
-    fun start(taskId: Int?, context: Context) {
+    fun loadData(taskId: Int?, context: Context) {
         _dataLoading.value = true
 
         // Espresso does not work well with coroutines yet. See
