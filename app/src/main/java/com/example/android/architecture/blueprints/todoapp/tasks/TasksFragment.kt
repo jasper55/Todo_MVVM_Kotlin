@@ -57,7 +57,7 @@ class TasksFragment : Fragment() {
                 true
             }
             R.id.menu_refresh -> {
-                viewDataBinding.viewmodel?.loadTasksFromLocalDB(true)
+                viewDataBinding.viewmodel?.refresh()
                 true
             }
             R.id.menu_save_to_remote -> {
@@ -193,7 +193,7 @@ class TasksFragment : Fragment() {
                             else -> TasksFilterType.ALL_TASKS
                         }
                     )
-                    loadTasksFromLocalDB(false)
+                    refresh()
                 }
                 true
             }

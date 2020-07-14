@@ -82,24 +82,16 @@ class FirebaseDatabaseHelper {
                         val it = task.getValue(Task::class.java) as Task
                         todoList.add(it)
                     }
-//                    firebaseCallback.onCallback(todoList)
                     cont.resume(todoList)
                 }
 
                 override fun onCancelled(p0: DatabaseError) {
                     val emptyList: List<Task> = emptyList()
                     cont.resume(emptyList)
-
                     Timber.i("some error occurred while loading data from firebase db")
-                    TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
                 }
             }
-
-
             dbReference.addListenerForSingleValueEvent(listener)
-
-
-
     }
 
     suspend fun saveToDatabase(todoList: List<Task>) {
