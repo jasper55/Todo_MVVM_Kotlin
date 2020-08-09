@@ -64,9 +64,9 @@ class ContactsViewModel(
         }
         if (taskResult is Result.Success) {
 
-            _title.value = taskResult.data.title
-            _description.value = taskResult.data.description
             val task = taskResult.data
+            _title.value = task.title
+            _description.value = task.description
             val contactIdString = task.contactIdString
             val newListString = contact.contactId?.let { ContactBookService.deleteContactFromList(it, contactIdString) }
 
@@ -94,7 +94,10 @@ class ContactsViewModel(
             val taskResult = taskId?.let { tasksRepository.getTask(it) }
             if (taskResult is Result.Success) {
 
-                val contactIdString = taskResult.data.contactIdString
+                val task = taskResult.data
+                _title.value = task.title
+                _description.value = task.description
+                val contactIdString = task.contactIdString
                 val contactList = ContactBookService.getContactArrayListFromDB(taskId, contactIdString, context!!)
                 if (contactIdString == ""){
                     isDataLoadingError.value = false
@@ -121,9 +124,7 @@ class ContactsViewModel(
         and data type will be to text/plain using setType() method*/
         mIntent.data = Uri.parse("mailto:")
         mIntent.type = "text/plain"
-        // put recipient email in intent
-        /* recipient is put as array because you may wanna send email to multiple emails
-           so enter comma(,) separated emails, it will be stored in array*/
+
         mIntent.putExtra(Intent.EXTRA_EMAIL, contactEmail)
         val subject = _title.value
         mIntent.putExtra(Intent.EXTRA_SUBJECT, subject)

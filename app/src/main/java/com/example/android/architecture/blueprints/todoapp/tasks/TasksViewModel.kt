@@ -21,7 +21,6 @@ import com.example.android.architecture.blueprints.todoapp.util.ADD_EDIT_RESULT_
 import com.example.android.architecture.blueprints.todoapp.util.DELETE_RESULT_OK
 import com.example.android.architecture.blueprints.todoapp.util.EDIT_RESULT_OK
 import com.example.android.architecture.blueprints.todoapp.util.EspressoIdlingResource
-import com.example.android.architecture.blueprints.todoapp.data.source.remote.FirebaseCallback
 import timber.log.Timber
 import androidx.test.core.app.ApplicationProvider.getApplicationContext
 import android.content.Context.ACTIVITY_SERVICE
