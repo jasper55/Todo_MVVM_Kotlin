@@ -1,5 +1,6 @@
 package com.example.android.architecture.blueprints.todoapp.contacts
 
+import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -9,11 +10,9 @@ import com.example.android.architecture.blueprints.todoapp.databinding.ContactIt
 import com.example.android.architecture.blueprints.todoapp.taskdetail.TaskDetailViewModel
 
 class ContactsAdapter(
-        private var contacts: List<Contact>,
-        private val viewModel: ContactsViewModel
-//    private val listener: ContactItemUserActionsListener
-//        private val taskDetailViewModel: TaskDetailViewModel
-//        private val onSendEmailClickedListener: OnSendEmailClickedListener
+    private var contacts: List<Contact>,
+    private val viewModel: ContactsViewModel,
+    private val context: Context
 ) : BaseAdapter() {
 
     fun replaceData(contacts: List<Contact>) {
@@ -44,16 +43,14 @@ class ContactsAdapter(
                 viewModel.deleteContact(contact)
             }
 
-            override fun onSendEmailClicked(contactEmail: String,title: String, message: String) {
-                // viewModel.sendMailTo(contactEmail)
-                viewModel.sendMailTo(contactEmail,title,message)
-//                viewModel.sendMailTo(contactEmail,title,message)
-//                taskDetailViewModel.apply {
-//                    val title = task.value!!.title
-//                    val message = task.value!!.description
-//                        onSendEmailClickedListener.onSendEmailClicked(contactEmail,title,message)
-//                }
+            override fun onSendEmailClicked(contactEmail: String) {
+                viewModel.sendMailTo(contactEmail,context)
             }
+
+            override fun onCallNumber(phoneNumber: String) {
+                viewModel.callPhoneNumber(phoneNumber, context)
+            }
+
         }
 
         with(binding) {
@@ -71,9 +68,4 @@ class ContactsAdapter(
         notifyDataSetChanged()
     }
 
-
-//    interface OnSendEmailClickedListener {
-//
-//        fun onSendEmailClicked(email: String,title: String, message: String)
-//    }
 }

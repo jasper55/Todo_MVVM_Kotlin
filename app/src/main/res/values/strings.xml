@@ -92,9 +92,10 @@
     <string name="register_link_text">Don\'t have an account yet, register here</string>
     <string name="synchronization_failed">Synchronization failed: You are not logged in!</string>
     <string name="taskId_missing">Error: task id couldn\'t be generated</string>
-    <string name="local_db_empty">Couldn\'t load tasks from db. Db is empty!</string>
     <string name="no_tasks_on_local_db">no tasks found on local database</string>
     <string name="remote_db_empty">Couldn\'t load task from remote db. Db is empty!</string>
+    <string name="local_db_empty">Couldn\'t load tasks from db. Db is empty!</string>
+
     <string name="error_accessing_local_db">An error has occurred while loading tasks from your local db!</string>
 
 </resources>

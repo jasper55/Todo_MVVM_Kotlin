@@ -57,7 +57,7 @@ class TasksFragment : Fragment() {
                 true
             }
             R.id.menu_refresh -> {
-                viewDataBinding.viewmodel?.loadTasks(true)
+                viewDataBinding.viewmodel?.refresh()
                 true
             }
             R.id.menu_save_to_remote -> {
@@ -70,11 +70,6 @@ class TasksFragment : Fragment() {
             }
             R.id.menu_synchronize -> {
                 viewDataBinding.viewmodel?.syncDatabases(act)
-//                    viewDataBinding.viewmodel?.checkNetworkConnection(act)
-//                    viewDataBinding.viewmodel?.checkUserStatus()
-//                    if (viewDataBinding.viewmodel?.isInternetAvailable?.value!! && viewDataBinding.viewmodel?.userLoggedIn?.value!!) {
-//                        viewDataBinding.viewmodel?.saveDataToFirebase()
-//                    }
                 true
             }
             R.id.menu_delete_db_tasks -> {
@@ -119,8 +114,6 @@ class TasksFragment : Fragment() {
         setupNavigation()
         setupFab()
         viewmodel?.checkNetworkConnection(act)
-        //runBlockingScope(viewmodel)
-//        viewmodel?.loadTasks(false)
         if (firstStart) {
             viewmodel?.syncDatabases(act)
             firstStart = false
@@ -128,13 +121,12 @@ class TasksFragment : Fragment() {
         viewmodel?.setLoginStatus()
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-    }
-
     override fun onResume() {
         super.onResume()
-        viewDataBinding.viewmodel?.checkNetworkConnection(act)
+        viewDataBinding.viewmodel?.run {
+            checkNetworkConnection(act)
+            refresh()
+        }
     }
 
     private fun runBlockingScope(viewmodel: TasksViewModel?) {
@@ -143,7 +135,7 @@ class TasksFragment : Fragment() {
         runBlocking {
             withContext(ioDispatcher) {
                 coroutineScope {
-                    launch { viewmodel?.loadTasks(false) }
+                    launch { viewmodel?.loadTasksFromLocalDB(false) }
                     launch { viewmodel?.saveDataToFirebase(false) }
                 }
             }
@@ -204,7 +196,7 @@ class TasksFragment : Fragment() {
                             else -> TasksFilterType.ALL_TASKS
                         }
                     )
-                    loadTasks(false)
+                    refresh()
                 }
                 true
             }

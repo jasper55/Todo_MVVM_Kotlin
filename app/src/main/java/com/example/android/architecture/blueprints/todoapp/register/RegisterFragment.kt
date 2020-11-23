@@ -18,6 +18,7 @@ import com.example.android.architecture.blueprints.todoapp.util.obtainViewModel
 import com.example.android.architecture.blueprints.todoapp.util.onTextChanged
 import com.example.android.architecture.blueprints.todoapp.util.setupDismissableSnackbar
 import com.example.android.architecture.blueprints.todoapp.util.setupSnackbar
+import com.example.android.architecture.blueprints.todoapp.util.vibratePhone
 import com.google.android.material.snackbar.Snackbar
 
 
@@ -70,6 +71,7 @@ class RegisterFragment : Fragment() {
         viewDataBinding.inputPassword.onTextChanged {
             if (!isInteger(it)) {
                 hideKeyboard(context!!)
+                vibratePhone()
                 viewDataBinding.inputPassword.text.dropLast(1)
                 viewDataBinding.errorPrompt.text = "Only numbers are allowed for your password"
                 viewDataBinding.errorPrompt.visibility = View.VISIBLE

@@ -8,6 +8,8 @@ import org.json.JSONArray
 import org.json.JSONObject
 import timber.log.Timber
 import java.util.*
+import kotlin.coroutines.resume
+import kotlin.coroutines.suspendCoroutine
 
 
 class FirebaseDatabaseHelper {
@@ -70,24 +72,26 @@ class FirebaseDatabaseHelper {
         return jsonObject
     }
 
-    suspend fun readTasks(firebaseCallback: FirebaseCallback) {
+    suspend fun readTasks(): List<Task> =
+        suspendCoroutine { cont ->
+            val listener = object : ValueEventListener {
+                override fun onDataChange(dataSnapshot: DataSnapshot) {
 
-        val listener = object : ValueEventListener {
-            override fun onDataChange(dataSnapshot: DataSnapshot) {
-
-                val todoList = ArrayList<Task>()
-                for (task in dataSnapshot.children) {
-                    val it = task.getValue(Task::class.java) as Task
-                    todoList.add(it)
+                    val todoList = ArrayList<Task>()
+                    for (task in dataSnapshot.children) {
+                        val it = task.getValue(Task::class.java) as Task
+                        todoList.add(it)
+                    }
+                    cont.resume(todoList)
                 }
-                firebaseCallback.onCallback(todoList)
+
+                override fun onCancelled(p0: DatabaseError) {
+                    val emptyList: List<Task> = emptyList()
+                    cont.resume(emptyList)
+                    Timber.i("some error occurred while loading data from firebase db")
+                }
             }
-            override fun onCancelled(p0: DatabaseError) {
-                Timber.i("some error occurred while loading data from firebase db")
-                TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-            }
-        }
-        dbReference.addListenerForSingleValueEvent(listener)
+            dbReference.addListenerForSingleValueEvent(listener)
     }
 
     suspend fun saveToDatabase(todoList: List<Task>) {

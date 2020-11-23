@@ -3,15 +3,22 @@ package com.example.android.architecture.blueprints.todoapp.contacts
 import android.app.Application
 import android.content.Context
 import android.content.Intent
+import android.net.Uri
+import android.widget.Toast
 import androidx.core.content.ContextCompat.startActivity
-import androidx.lifecycle.*
+import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.Transformations
+import androidx.lifecycle.viewModelScope
 import com.example.android.architecture.blueprints.todoapp.Event
-import com.example.android.architecture.blueprints.todoapp.data.Result
 import com.example.android.architecture.blueprints.todoapp.R
+import com.example.android.architecture.blueprints.todoapp.data.Result
 import com.example.android.architecture.blueprints.todoapp.data.source.local.TasksLocalDataSource
 import com.example.android.architecture.blueprints.todoapp.util.ContactBookService
 import com.example.android.architecture.blueprints.todoapp.util.EspressoIdlingResource
 import kotlinx.coroutines.launch
+
 
 class ContactsViewModel(
         private val tasksRepository: TasksLocalDataSource,
@@ -25,7 +32,8 @@ class ContactsViewModel(
         it.isEmpty()
     }
 
-//    private val taskId?: String by inject()
+    private val _title = MutableLiveData<String>()
+    private val _description = MutableLiveData<String>()
 
     private val _dataLoading = MutableLiveData<Boolean>()
     val dataLoading: LiveData<Boolean> = _dataLoading
@@ -57,13 +65,14 @@ class ContactsViewModel(
         if (taskResult is Result.Success) {
 
             val task = taskResult.data
+            _title.value = task.title
+            _description.value = task.description
             val contactIdString = task.contactIdString
             val newListString = contact.contactId?.let { ContactBookService.deleteContactFromList(it, contactIdString) }
 
             // updateContactIdString
             newListString?.let {
                 tasksRepository.saveContactId(task, newListString)
-            showSnackbarMessage(R.string.task_marked_complete)
             }
         }
     }
@@ -79,20 +88,20 @@ class ContactsViewModel(
     fun loadContacts(taskId: Int?, context: Context?) {
 
         _dataLoading.value = true
-        // Espresso does not work well with coroutines yet. See
-        // https://github.com/Kotlin/kotlinx.coroutines/issues/982
         EspressoIdlingResource.increment() // Set app as busy.
 
         viewModelScope.launch {
             val taskResult = taskId?.let { tasksRepository.getTask(it) }
             if (taskResult is Result.Success) {
 
-                val contactIdString = taskResult.data.contactIdString
+                val task = taskResult.data
+                _title.value = task.title
+                _description.value = task.description
+                val contactIdString = task.contactIdString
                 val contactList = ContactBookService.getContactArrayListFromDB(taskId, contactIdString, context!!)
                 if (contactIdString == ""){
                     isDataLoadingError.value = false
                     _items.value = emptyList()
-//                    showErrorMessage(getApplication<Application>().getString(R.string.loading_tasks_error))
                 } else {
                 isDataLoadingError.value = false
                 _items.value = ArrayList(contactList) }
@@ -107,15 +116,34 @@ class ContactsViewModel(
         }
     }
 
-    fun sendMailTo(contactEmail: String,title: String, message: String) {
-        showErrorMessage(getApplication<Application>().getString(R.string.loading_tasks_error))
+    fun sendMailTo(contactEmail: String,context: Context) {
 
-        val emailIntent = Intent(Intent.ACTION_SEND)
-        emailIntent.putExtra(Intent.EXTRA_EMAIL, arrayOf<String>(contactEmail))
-        emailIntent.type = "message/rfc822"
+        /*ACTION_SEND action to launch an email client installed on your Android device.*/
+        val mIntent = Intent(Intent.ACTION_SEND)
+        /*To send an email you need to specify mailto: as URI using setData() method
+        and data type will be to text/plain using setType() method*/
+        mIntent.data = Uri.parse("mailto:")
+        mIntent.type = "text/plain"
 
+        mIntent.putExtra(Intent.EXTRA_EMAIL, contactEmail)
+        val subject = _title.value
+        mIntent.putExtra(Intent.EXTRA_SUBJECT, subject)
+        val message = _description.value
+        mIntent.putExtra(Intent.EXTRA_TEXT, message)
 
-        getApplication<Application>().baseContext.startActivity(Intent.createChooser(emailIntent, "Choose an Email client :"))
+        try {
+            context.startActivity(Intent.createChooser(mIntent, "Choose an Email Client..."))
+        }
+        catch (e: Exception){
+            //if any thing goes wrong for example no email client application or any exception
+            //get and show exception message
+            Toast.makeText(context, e.message, Toast.LENGTH_LONG).show()
+        }
 
+    }
+
+    fun callPhoneNumber(phoneNumber: String,context: Context) {
+        val intent = Intent(Intent.ACTION_DIAL, Uri.fromParts("tel", phoneNumber, null))
+        context.startActivity(intent)
     }
 }

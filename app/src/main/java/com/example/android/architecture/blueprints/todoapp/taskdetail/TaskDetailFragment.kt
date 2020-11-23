@@ -2,10 +2,8 @@ package com.example.android.architecture.blueprints.todoapp.taskdetail
 
 import android.Manifest
 import android.app.Activity.RESULT_OK
-import android.app.AlertDialog
 import android.app.DatePickerDialog
 import android.app.TimePickerDialog
-import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
@@ -31,7 +29,6 @@ import com.example.android.architecture.blueprints.todoapp.util.*
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.launch
 import timber.log.Timber
-
 
 /**
  * Main UI for the task detail screen.
@@ -94,7 +91,7 @@ class TaskDetailFragment : Fragment(), TimePickerDialog.OnTimeSetListener, DateP
 
     private fun loadData(taskId: Int?) {
         context?.let {
-            viewDataBinding.viewmodel?.start(taskId, it)
+            viewDataBinding.viewmodel?.loadData(taskId, it)
         }
     }
 
@@ -109,16 +106,12 @@ class TaskDetailFragment : Fragment(), TimePickerDialog.OnTimeSetListener, DateP
             viewmodel = viewModel
         }
 
-
         taskId = TaskDetailFragmentArgs.fromBundle(arguments!!).TASKID
 
         addContactsFragmentToView(taskId!!)
 
         viewDataBinding.lifecycleOwner = this.viewLifecycleOwner
-
-        viewDataBinding.userActionlistener = object :
-
-            TaskDetailUserActionsListener {
+        viewDataBinding.userActionlistener = object : TaskDetailUserActionsListener {
 
             override fun onAddContactClicked(v: View) {
                 if (viewModel.contactPermissionGranted.value!!) {
@@ -148,7 +141,7 @@ class TaskDetailFragment : Fragment(), TimePickerDialog.OnTimeSetListener, DateP
 
     private fun addContactsFragmentToView(taskId: Int) {
 
-        val fm = fragmentManager
+        val fm = childFragmentManager
         val ft = fm!!.beginTransaction()
 
         fm.beginTransaction()
@@ -229,8 +222,6 @@ class TaskDetailFragment : Fragment(), TimePickerDialog.OnTimeSetListener, DateP
             startActivityForResult(pickContactIntent, ContactBookService.CALL_PICK_CONTACT)
         }
     }
-
-
 
     override fun onTimeSet(p0: TimePicker?, hour: Int, min: Int) {
         val time = "$hour:$min"

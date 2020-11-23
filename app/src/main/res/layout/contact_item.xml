@@ -37,6 +37,18 @@
             android:text="@{contact.contactName}"
             android:textAppearance="?android:attr/textAppearanceMedium" />
 
+
+        <ImageButton
+            android:id="@+id/callPhone"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:background="@android:color/transparent"
+            android:layout_weight="1"
+            android:gravity="end"
+            android:onClick="@{(view) -> listener.onCallNumber(contact.contactPhoneNumber)}"
+            app:srcCompat="@drawable/ic_phone_black" />
+
         <ImageButton
             android:id="@+id/sendEmailButton"
             android:layout_width="wrap_content"
@@ -45,7 +57,7 @@
             android:background="@android:color/transparent"
             android:layout_weight="1"
             android:gravity="end"
-            android:onClick="@{(view) -> listener.onSendEmailClicked(contact.contactEmail,task.title,task.description)}"
+            android:onClick="@{(view) -> listener.onSendEmailClicked(contact.contactEmail)}"
             app:srcCompat="@android:drawable/ic_dialog_email" />
 
         <ImageButton

@@ -6,14 +6,14 @@ import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.example.android.architecture.blueprints.todoapp.Event
 import com.example.android.architecture.blueprints.todoapp.R
 import com.example.android.architecture.blueprints.todoapp.userrepository.User
+import com.example.android.architecture.blueprints.todoapp.util.EspressoIdlingResource
 import com.google.firebase.auth.FirebaseAuth
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.async
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
@@ -31,14 +31,11 @@ class LoginViewModel : ViewModel() {
     private val _snackbarMessage = MutableLiveData<Event<String>>()
     val snackbarMessage: LiveData<Event<String>> = _snackbarMessage
 
-    private val _errorMessageEvent = MutableLiveData<Event<String>>()
-    val errorMessageEvent: LiveData<Event<String>> = _errorMessageEvent
-
     private val _isInternetAvailable = MutableLiveData<Boolean>()
     val isInternetAvailable: LiveData<Boolean> = _isInternetAvailable
 
-    private val _areLoginInFieldCorrect = MutableLiveData<Boolean>()
-    val areLoginInFieldCorrect: LiveData<Boolean> = _areLoginInFieldCorrect
+    private val _areLoginInFieldsCorrect = MutableLiveData<Boolean>()
+    val areLoginInFieldsCorrect: LiveData<Boolean> = _areLoginInFieldsCorrect
 
     private val _loginIsIdle = MutableLiveData<Boolean>()
     val loginIsIdle: LiveData<Boolean> = _loginIsIdle
@@ -87,30 +84,36 @@ class LoginViewModel : ViewModel() {
             if (password == null && !email.isNullOrBlank()) {
                 _loginErrorMessage.value = "no password entered, please fill in your password"
             }
-            _areLoginInFieldCorrect.value = false
+            _areLoginInFieldsCorrect.value = false
             return
         } else {
             _loginIsIdle.value = true
-            FirebaseAuth.getInstance().signInWithEmailAndPassword(email, password)
-                .addOnCompleteListener {
-                    if (!it.isSuccessful) return@addOnCompleteListener
+            EspressoIdlingResource.increment() // Set app as busy.
 
-                    // else if
-                    val userUid = it.result?.user?.uid!!
-                    showSnackbarText(R.string.user_logged_in)
-                    _openTaskListEvent.value = Event(userUid)
-                    Log.i("Login:", "Login succesful")
-                    _areLoginInFieldCorrect.value = true
-                    Thread.sleep(5000)
-                }
-                .addOnFailureListener {
-                    _areLoginInFieldCorrect.value = false
-//                showErrorMessage("Failed to login: ${it.message}")
-                    _loginErrorMessage.value = it.message
-                    Log.i("Login:", "Failed to login: ${it.message}")
+            viewModelScope.launch {
+                async {
+                    delay(2000)
+                    FirebaseAuth.getInstance().signInWithEmailAndPassword(email, password)
+                        .addOnCompleteListener {
+                            if (!it.isSuccessful) return@addOnCompleteListener
 
-                }
-            _loginIsIdle.value = false
+                            // else if
+                            val userUid = it.result?.user?.uid!!
+                            showSnackbarText(R.string.user_logged_in)
+                            _openTaskListEvent.value = Event(userUid)
+                            Log.i("Login:", "Login succesful")
+                            _areLoginInFieldsCorrect.value = true
+                            Thread.sleep(5000)
+                        }
+                        .addOnFailureListener {
+                            _loginErrorMessage.value = it.message
+                            _areLoginInFieldsCorrect.value = false
+                            Log.i("Login:", "Failed to login: ${it.message}")
+                        }
+                    _loginIsIdle.value = false
+                    EspressoIdlingResource.decrement() // Set app as idle.
+                }.await()
+            }
         }
     }
 
@@ -121,17 +124,8 @@ class LoginViewModel : ViewModel() {
         return isInternetAvailable.value!!
     }
 
-    fun displayEmailInvalidPrompt() {
-
-    }
-
     private fun showSnackbarText(message: Int) {
         _snackbarText.value = Event(message)
     }
-
-    private fun showErrorMessage(message: String) {
-        _errorMessageEvent.value = Event(message)
-    }
-
 
 }
